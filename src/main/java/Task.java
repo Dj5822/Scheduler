@@ -12,6 +12,11 @@ public class Task {
     private int weight;
     private String id;
 
+    /**
+     * Gets the Id of the current task
+     * 
+     * @return The Id of this task
+     */
     String getId(){return id;}
 
     /**
