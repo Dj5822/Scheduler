@@ -10,6 +10,9 @@ public class Task {
     private ArrayList<Edge> children;
     private int bottomLevel;
     private int weight;
+    private String id;
+
+    String getId(){return id;}
 
     /**
      * Gets the BottomLevel of the task, which is the 
@@ -47,7 +50,7 @@ public class Task {
      * @return The list of edges that point to parents 
      * of the current task
      */
-    public ArrayList<Task> getParents() {
+    public ArrayList<Edge> getParents() {
         return parents;
     }
 }
