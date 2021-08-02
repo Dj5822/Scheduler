@@ -5,7 +5,7 @@ public class App {
         try {
             DotParser dotParser = new DotParser("example.dot");
         } catch(FileNotFoundException e) {
-            System.out.println("Fail");
+            System.out.println("File not found");
         }
     }
 }
