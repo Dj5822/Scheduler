@@ -1,7 +1,7 @@
 
-import paypal.digraph.parser.antlr.GraphEdge;
-import paypal.digraph.parser.antlr.GraphNode;
-import paypal.digraph.parser.antlr.GraphParser;
+import com.paypal.digraph.parser.GraphEdge;
+import com.paypal.digraph.parser.GraphNode;
+import com.paypal.digraph.parser.GraphParser;
 
 import java.io.*;
 import java.util.Map;
@@ -10,8 +10,7 @@ public class DotParser {
 
     private static final String OUTPUTFILE = "output.dot";
 
-    public static void main(String[] args) throws FileNotFoundException {
-    String dotFile = args[0];
+    public DotParser(String dotFile) throws FileNotFoundException {
     GraphParser parser = new GraphParser(new FileInputStream(dotFile));
         Map<String, GraphNode> nodes = parser.getNodes();
         Map<String, GraphEdge> edges = parser.getEdges();
