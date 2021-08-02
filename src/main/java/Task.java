@@ -13,6 +13,44 @@ public class Task {
     private String id;
 
     /**
+     * Constructor for a Task, defining the weight and id
+     * 
+     * @param weight
+     * @param id
+     */
+    Task(int weight, String id){
+        this.weight=weight;
+        this.id=id;
+    }
+
+    /**
+     * Sets the bottom level for the task
+     * 
+     * @param bottomLevel the value to set the bottom level as
+     */
+    void setBottomLevel(int bottomLevel){
+        this.bottomLevel=bottomLevel;
+    }
+
+    /**
+     * Adds a parent edge to the tasks list of parents
+     * 
+     * @param parentEdge the edge to be added
+     */
+    void addParent(Edge parentEdge){
+        parents.add(parentEdge);
+    }
+
+    /**
+     * Adds a child edge to the tasks list of children
+     * 
+     * @param childEdge the edge to be added
+     */
+    void addChild(Edge childEdge){
+        children.add(childEdge);
+    }
+
+    /**
      * Gets the Id of the current task
      * 
      * @return The Id of this task

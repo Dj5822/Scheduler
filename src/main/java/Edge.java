@@ -9,6 +9,19 @@ public class Edge {
     private int communicationTime;
 
     /**
+     * Constructor for Edge, defining the child task, parent task and communication time
+     * 
+     * @param child
+     * @param parent
+     * @param communicationTime
+     */
+    Edge(Task child, Task parent, int communicationTime){
+        this.child=child;
+        this.parent=parent;
+        this.communicationTime=communicationTime;
+    }
+
+    /**
      * Gets the child of this edge, which is the task that the
      * edge points towards
      * 
