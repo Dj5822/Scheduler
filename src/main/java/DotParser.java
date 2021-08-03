@@ -4,56 +4,52 @@ import com.paypal.digraph.parser.GraphNode;
 import com.paypal.digraph.parser.GraphParser;
 
 import java.io.*;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 
-public class DotParser {
+public class DotParser extends GraphParser{
+    private String outputFile;
 
-    private static final String OUTPUTFILE = "output.dot";
-
-    public DotParser(String dotFile) throws FileNotFoundException {
-    GraphParser parser = new GraphParser(new FileInputStream(dotFile));
-        Map<String, GraphNode> nodes = parser.getNodes();
-        Map<String, GraphEdge> edges = parser.getEdges();
-
-        System.out.println("--- nodes:");
-        for (GraphNode node : nodes.values()) {
-            System.out.println(node.getId() + " " + node.getAttributes());
-        }
-
-        System.out.println("--- edges:");
-        for (GraphEdge edge : edges.values()) {
-            System.out.println(edge.getNode1().getId() + "->" + edge.getNode2().getId() + " " + edge.getAttributes());
-        }
-
-        writeDot(nodes, edges);
+    public DotParser(InputStream is) {
+        super(is);
+        this.outputFile = "output.dot";
     }
-    
+
+    public DotParser(InputStream is, String outputFile) {
+        super(is);
+        this.outputFile = outputFile;
+    }
+
     /**
      * Uses the paypal library to read a .dot file and return the graph as a list of maps
      * @param dotFile input graph file with .dot extension
-     * @return List of maps where the first map contains the nodes and the second contains the edges
+     * @return List of collections where the first collection contains the nodes and the second contains the edges
      * @throws FileNotFoundException
      */
-    public static ArrayList<Map<String, ?>> ParseDotToMaps(String dotFile) throws FileNotFoundException {
-        GraphParser parser = new GraphParser(new FileInputStream(dotFile));
-        ArrayList<Map<String, ?>> maps = new ArrayList<Map<String, ?>>();
-        maps.add(parser.getNodes());
-        maps.add(parser.getEdges());
-        return maps;
+    public Collection<GraphNode> parseNodes() {
+        return getNodes().values();
     }
 
-    public static void writeDot(Map<String, GraphNode> nodes, Map<String, GraphEdge> edges) {
+    public Collection<GraphEdge> parseEdges() {
+        return getEdges().values();
+    }
+
+
+
+
+
+
+    public void writeDot(Map<String, GraphNode> nodes, Map<String, GraphEdge> edges) {
 
         try {
-            File myObj = new File(OUTPUTFILE);
+            File myObj = new File(outputFile);
             if (myObj.createNewFile()) {
                 System.out.println("File created: " + myObj.getName());
             } else {
                 System.out.println("File already exists.");
             }
 
-            FileWriter myWriter = new FileWriter(OUTPUTFILE);
+            FileWriter myWriter = new FileWriter(outputFile);
             myWriter.write("digraph  \"outputExample\" {\n");
 
             for (GraphNode node : nodes.values()) {

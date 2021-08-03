@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Task defines a task from the graph that is inputted into the system,
@@ -6,7 +7,7 @@ import java.util.ArrayList;
  * parent and children edges
  */
 public class Task {
-    private ArrayList<Edge> parents;
+    private HashMap<Task,Integer> parentMap;
     private ArrayList<Edge> children;
     private int bottomLevel;
     private int weight;
@@ -21,6 +22,8 @@ public class Task {
     Task(int weight, String id){
         this.weight=weight;
         this.id=id;
+        this.children = new ArrayList<Edge>();
+        this.parentMap = new HashMap<Task,Integer>();
     }
 
     /**
@@ -33,12 +36,12 @@ public class Task {
     }
 
     /**
-     * Adds a parent edge to the tasks list of parents
+     * Adds a parent to the map of parents
      * 
-     * @param parentEdge the edge to be added
+     * @param parentEdge the edge leading to the parent to be added
      */
     void addParent(Edge parentEdge){
-        parents.add(parentEdge);
+        parentMap.put(parentEdge.getParent(),parentEdge.getCommunicationTime());
     }
 
     /**
@@ -86,14 +89,19 @@ public class Task {
     }
 
      /**
-     * Gets a list of the tasks parents, as a list
-     * of edges, based off the list of edges that the
-     * task stores
-     * 
-     * @return The list of edges that point to parents 
-     * of the current task
+     * @param parent a candidate parent task
+     * @return True if the input task is a parent of this task,
+     *  false otherwise
      */
-    public ArrayList<Edge> getParents() {
-        return parents;
+    public boolean hasParent(Task parent) {
+        return parentMap.containsKey(parent);
+    }
+
+    /**
+     * @param parent a candidate parent task
+     * @return communication time of parent task to this task
+     */
+    public int getParentCommunicationTime(Task parent) {
+        return parentMap.get(parent);
     }
 }
