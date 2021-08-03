@@ -4,6 +4,7 @@ import com.paypal.digraph.parser.GraphNode;
 import com.paypal.digraph.parser.GraphParser;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Map;
 
 public class DotParser {
@@ -27,7 +28,20 @@ public class DotParser {
 
         writeDot(nodes, edges);
     }
-
+    
+    /**
+     * Uses the paypal library to read a .dot file and return the graph as a list of maps
+     * @param dotFile input graph file with .dot extension
+     * @return List of maps where the first map contains the nodes and the second contains the edges
+     * @throws FileNotFoundException
+     */
+    public static ArrayList<Map<String, ?>> ParseDotToMaps(String dotFile) throws FileNotFoundException {
+        GraphParser parser = new GraphParser(new FileInputStream(dotFile));
+        ArrayList<Map<String, ?>> maps = new ArrayList<Map<String, ?>>();
+        maps.add(parser.getNodes());
+        maps.add(parser.getEdges());
+        return maps;
+    }
 
     public static void writeDot(Map<String, GraphNode> nodes, Map<String, GraphEdge> edges) {
 
