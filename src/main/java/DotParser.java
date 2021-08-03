@@ -21,15 +21,16 @@ public class DotParser extends GraphParser{
     }
 
     /**
-     * Uses the paypal library to read a .dot file and return the graph as a list of maps
-     * @param dotFile input graph file with .dot extension
-     * @return List of collections where the first collection contains the nodes and the second contains the edges
-     * @throws FileNotFoundException
+     * return the nodes as a collection
+     * @return Collection of GraphNodes
      */
     public Collection<GraphNode> parseNodes() {
         return getNodes().values();
     }
-
+    /**
+     * return the edges as a collection
+     * @return Collection of GraphNodes
+     */
     public Collection<GraphEdge> parseEdges() {
         return getEdges().values();
     }

@@ -3,8 +3,7 @@ import java.util.HashMap;
 
 /**
  * Task defines a task from the graph that is inputted into the system,
- * it stores its bottomlevel and weight as well as the list of both 
- * parent and children edges
+ * it stores its bottomlevel and weight as well as the list of child edges and map of parent tasks
  */
 public class Task {
     private HashMap<Task,Integer> parentMap;
