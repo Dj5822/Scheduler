@@ -12,8 +12,8 @@ import java.util.HashMap;
  * In our problem, the graph is read-only.
  */
 public class Graph {
-    private HashMap<Character, Task> tasks;
-    private HashMap<Character, GraphNode> nodes;
+    private HashMap<String, Task> tasks;
+    private HashMap<String, GraphNode> nodes;
     private DotParser parser;
 
     /**
@@ -50,9 +50,9 @@ public class Graph {
         // create tasks from parsed nodes
         for (GraphNode node : parser.parseNodes()) {
             int weight = Integer.parseInt((String) node.getAttribute("Weight"));
-            Task task = new Task(weight, node.getId().charAt(0));
-            tasks.put(node.getId().charAt(0), task);
-            nodes.put(node.getId().charAt(0), node);
+            Task task = new Task(weight, node.getId());
+            tasks.put(node.getId(), task);
+            nodes.put(node.getId(), node);
         }
     }
 
@@ -65,8 +65,8 @@ public class Graph {
             int communicationTime = Integer.parseInt((String) parsedEdge.getAttribute("Weight"));
             GraphNode parentNode = parsedEdge.getNode1();
             GraphNode childNode = parsedEdge.getNode2();
-            char parentId = parentNode.getId().charAt(0);
-            char childId = childNode.getId().charAt(0);
+            String parentId = parentNode.getId();
+            String childId = childNode.getId();
 
             Edge edge = new Edge(tasks.get(childId), tasks.get(parentId), communicationTime);
 
@@ -90,7 +90,7 @@ public class Graph {
      * (tasks with no parents).
      * @return list of start tasks
      */
-    private ArrayList<Task>  getStartTasks() {
+    public ArrayList<Task>  getStartTasks() {
         ArrayList<Task> rootTasks = new ArrayList<>();
         for (Task task : tasks.values()) {
             if (task.isRootTask()) {

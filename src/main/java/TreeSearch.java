@@ -17,6 +17,14 @@ public class TreeSearch {
     TreeSearch(Graph graph, int processorCount){
         this.graph = graph;
         this.processorCount = processorCount;
+        bruteForceTest();
+    }
+
+    private void bruteForceTest() {
+        ArrayList<Task> startTasks = graph.getStartTasks();
+        for (Task startTask: startTasks) {
+            System.out.println(startTask.getId());
+        }
     }
 
     /**

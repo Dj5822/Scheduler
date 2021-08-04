@@ -4,7 +4,7 @@ public class App {
         The name of the input graph should be passed in as an argument.
         Should be passed in as a commandline argument later.
          */
-        Graph graph = new Graph("Examples/example.dot");
+        Graph graph = new Graph("Examples/Nodes_11_OutTree.dot");
 
         /*
          The number of processors.
