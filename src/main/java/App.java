@@ -15,7 +15,21 @@ public class App {
         // Start searching the solutions tree.
         TreeSearch testSearch = new TreeSearch(graph, processorCount);
 
-        graph.generateOutputGraph();
+        Node node = generateDebugSchedule(graph);
+        graph.generateOutputGraph(node);
         graph.printBottomLevels();
+    }
+
+    // For testing
+    private static Node generateDebugSchedule(Graph graph) {
+        Node old_node = null;
+        Node node = null;
+        int time = 2;
+        for (Task task : graph.getTasks()) {
+            time += 2;
+            old_node = node;
+            node = new Node(old_node, 0, new State(task, time, time-1));
+        }
+        return node;
     }
 }

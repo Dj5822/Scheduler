@@ -4,6 +4,7 @@ import com.paypal.digraph.parser.GraphNode;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 /**
@@ -101,10 +102,9 @@ public class Graph {
 
     /**
      * Converts the graph back into a dot file.
+     * @param node used to find processor and start times.
      */
-    public void generateOutputGraph() {
-        Node node = generateDebugSchedule();
-
+    public void generateOutputGraph(Node node) {
         while (node != null) {
             State state = node.getState();
             Task task = state.getTask();
@@ -121,6 +121,14 @@ public class Graph {
     }
 
     /**
+     * Gets all the tasks in the graph.
+     * @return a collection of all the tasks in the graph.
+     */
+    public Collection<Task> getTasks() {
+        return tasks.values();
+    }
+
+    /**
      * Debugging tool - prints out the bottom level of every task
      */
     public void printBottomLevels() {
@@ -130,18 +138,5 @@ public class Graph {
                 System.out.println(task.getId() + ": " + task.getBottomLevel());
             }
         }
-    }
-
-    // For testing
-    public Node generateDebugSchedule() {
-        Node old_node = null;
-        Node node = null;
-        int time = 2;
-        for (Task task : tasks.values()) {
-            time += 2;
-            old_node = node;
-            node = new Node(old_node, 0, new State(task, time, time-1));
-        }
-        return node;
     }
 }
