@@ -12,12 +12,20 @@ public class State {
         this.processor = processor;
     }
 
+    public int getStartTime() {
+        return this.startTime;
+    }
+
     public int getFinishTime() {
         return this.startTime + task.getWeight();
     }
 
     public int getProcessor() {
         return this.processor;
+    }
+
+    public Task getTask() {
+        return this.task;
     }
 
 }
