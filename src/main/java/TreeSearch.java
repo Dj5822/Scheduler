@@ -12,9 +12,11 @@ import java.util.Comparator;
 public class TreeSearch {
 
     private Graph graph;
+    private int processorCount;
 
-    TreeSearch(Graph graph){
-        this.graph=graph;
+    TreeSearch(Graph graph, int processorCount){
+        this.graph = graph;
+        this.processorCount = processorCount;
     }
 
     /**
@@ -24,7 +26,7 @@ public class TreeSearch {
      * @return The node that is at the end of the created schedule
      */
     public Node aStar() {
-        PriorityQueue<Node> openList = new PriorityQueue<Node>(new NodeComparator());
+        PriorityQueue<Node> openList = new PriorityQueue<>(new NodeComparator());
         return openList.poll();
     }
 
@@ -82,8 +84,8 @@ public class TreeSearch {
      * a map of each scheduled task to its state
      */
     private Pair getTaskLists(Node node) {
-        ArrayList<Task> schedulable = new ArrayList<Task>();
-        Map<Task, State> scheduled = new HashMap<Task, State>();
+        ArrayList<Task> schedulable = new ArrayList<>();
+        Map<Task, State> scheduled = new HashMap<>();
 
         Pair pair=new Pair(schedulable, scheduled);
         return pair;
