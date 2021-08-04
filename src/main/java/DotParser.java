@@ -127,7 +127,7 @@ public class DotParser extends GraphParser{
 
         try {
             FileWriter writer = new FileWriter(outputFile);
-            writer.write("digraph  \"outputExample\" {\n");
+            writer.write("digraph  \""+ outputFile.replace(".dot","") +"\" {\n");
 
             for (GraphNode graphNode : parseNodes()) {
                 //String attr = graphNode.getAttributes().toString().replace("{", "[").replace("}", "]");
