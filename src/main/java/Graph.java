@@ -95,7 +95,7 @@ public class Graph {
     /**
      * @return list of start tasks (tasks with no parents)
      */
-    public ArrayList<Task>  getStartTasks() {
+    private ArrayList<Task>  getStartTasks() {
         ArrayList<Task> rootTasks = new ArrayList<Task>();
         for (Task task : tasks) {
             if (task.isRootTask()) {
