@@ -7,7 +7,7 @@ import java.util.HashMap;
  */
 public class Task {
     private final int weight;
-    private final String id;
+    private final char id;
 
     /*
     The tasks that point towards this task
@@ -25,7 +25,7 @@ public class Task {
      * @param weight the amount of time needed for the task to finish
      * @param id the character used to identify the task.
      */
-    Task(int weight, String id) {
+    Task(int weight, char id) {
         this.weight = weight;
         this.id = id;
 
@@ -86,7 +86,7 @@ public class Task {
      * 
      * @return The Id of this task
      */
-    String getId(){ return id; }
+    char getId(){ return id; }
 
     /**
      * Gets the BottomLevel of the task, which is the 

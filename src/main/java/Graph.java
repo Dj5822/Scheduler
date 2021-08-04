@@ -33,7 +33,7 @@ public class Graph {
         // create tasks from parsed nodes
         for (GraphNode node : parser.parseNodes()) {
             int weight = Integer.parseInt((String) node.getAttribute("Weight"));
-            Task task = new Task(weight, node.getId());
+            Task task = new Task(weight, node.getId().charAt(0));
             tasks.put(node.getId().charAt(0), task);
             nodes.put(node.getId().charAt(0), node);
         }
@@ -64,7 +64,7 @@ public class Graph {
             State state = node.getState();
             Task task = state.getTask();
 
-            GraphNode mappedNode = nodes.get(task.getId().charAt(0));
+            GraphNode mappedNode = nodes.get(task.getId());
             if (mappedNode != null) {
                 mappedNode.setAttribute("Start",state.getStartTime());
                 mappedNode.setAttribute("Processor",state.getProcessor());
