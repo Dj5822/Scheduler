@@ -22,7 +22,7 @@ public class Graph {
 
     public Graph(String inputFile) {
         try {
-            DotParser parser = new DotParser(new FileInputStream(inputFile), "output.dot");
+            this.parser = new DotParser(new FileInputStream(inputFile), "output.dot");
 
             this.taskMap = new HashMap<>();
             this.nodeMap = new HashMap<>();
@@ -34,13 +34,28 @@ public class Graph {
                 this.taskMap.put(node, task);
                 this.nodeMap.put(task, node);
             }
-
-            Node node = generateDebugSchedule();
-            parser.writeScheduleToDot(node, nodeMap);
         }
         catch (FileNotFoundException e) {
             System.out.println("File not found.");
         }
+    }
+
+    public void generateOutputGraph() {
+        Node node = generateDebugSchedule();
+
+        while (node != null) {
+            State state = node.getState();
+            Task task = state.getTask();
+
+            GraphNode mappedNode = nodeMap.get(task);
+            if (mappedNode != null) {
+                mappedNode.setAttribute("Start",state.getStartTime());
+                mappedNode.setAttribute("Processor",state.getProcessor());
+            }
+
+            node = node.getParent();
+        }
+        parser.writeScheduleToDot();
     }
 
     /**

@@ -33,20 +33,10 @@ public class DotParser extends GraphParser{
         return getEdges().values();
     }
 
-    public void writeScheduleToDot(Node node, Map<Task,GraphNode> nodeMap) {
-        while (node != null) {
-            State state = node.getState();
-            Task task = state.getTask();
-
-            GraphNode mappedNode = nodeMap.get(task);
-            if (mappedNode != null) {
-                mappedNode.setAttribute("Start",state.getStartTime());
-                mappedNode.setAttribute("Processor",state.getProcessor());
-            }
-
-            node = node.getParent();
-        }
-
+    /**
+     * Generate the output file.
+     */
+    public void writeScheduleToDot() {
         try {
             FileWriter writer = new FileWriter(outputFile);
             writer.write("digraph  \""+ outputFile.replace(".dot","") +"\" {\n");
