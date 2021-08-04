@@ -7,5 +7,5 @@
 .project
 .settings
 .vscode
-.idea
+.idea/
 output.dot
