@@ -14,19 +14,13 @@ import java.util.Map;
  * In our problem, the graph is read-only.
  */
 public class Graph {
-    private Map<GraphNode,Task> taskMap;
-    private Map<Task,GraphNode> nodeMap;
-
-    private HashSet<Task> tasks;
+    private HashMap<Character, Task> tasks;
     private DotParser parser;
 
     public Graph(String inputFile) {
         try {
             this.parser = new DotParser(new FileInputStream(inputFile), "output.dot");
-
-            this.taskMap = new HashMap<>();
-            this.nodeMap = new HashMap<>();
-
+            tasks = new HashMap<>();
             assignTasks();
             assignEdges();
             setBottomLevels();
@@ -41,40 +35,30 @@ public class Graph {
         for (GraphNode node : parser.parseNodes()) {
             int weight = Integer.parseInt((String) node.getAttribute("Weight"));
             Task task = new Task(weight, node.getId());
-            this.taskMap.put(node, task);
-            this.nodeMap.put(task, node);
+            tasks.put(node.getId().charAt(0), task);
         }
     }
 
     /**
      * Assigns edges to tasks from a map of nodes to tasks
-     * @return Set of tasks with edges assigned
      */
     private void assignEdges() {
         for (GraphEdge parsedEdge : parser.parseEdges()) {
             int communicationTime = Integer.parseInt((String) parsedEdge.getAttribute("Weight"));
-
-            // get nodes from edges
             GraphNode parentNode = parsedEdge.getNode1();
             GraphNode childNode = parsedEdge.getNode2();
+            char parentId = parentNode.getId().charAt(0);
+            char childId = childNode.getId().charAt(0);
 
-            //find corresponding tasks on map
-            Task parent = taskMap.get(parentNode);
-            Task child = taskMap.get(childNode);
+            Edge edge = new Edge(tasks.get(childId), tasks.get(parentId), communicationTime);
 
-            //convert edge to our desired form
-            Edge edge = new Edge(child, parent, communicationTime);
-
-            // assign edge to tasks
-            child.addParent(edge);
-            parent.addChild(edge);
+            tasks.get(parentId).addChild(edge);
+            tasks.get(childId).addParent(edge);
         }
-
-        // return tasks as a set
-        tasks = new HashSet<Task>(taskMap.values());
     }
 
     public void generateOutputGraph() {
+        /*
         Node node = generateDebugSchedule();
 
         while (node != null) {
@@ -90,14 +74,15 @@ public class Graph {
             node = node.getParent();
         }
         parser.writeScheduleToDot();
+         */
     }
 
     /**
      * @return list of start tasks (tasks with no parents)
      */
     private ArrayList<Task>  getStartTasks() {
-        ArrayList<Task> rootTasks = new ArrayList<Task>();
-        for (Task task : tasks) {
+        ArrayList<Task> rootTasks = new ArrayList<>();
+        for (Task task : tasks.values()) {
             if (task.isRootTask()) {
                 rootTasks.add(task);
             }
@@ -120,7 +105,7 @@ public class Graph {
      */
     public void printBottomLevels() {
         System.out.println("Bottom Levels:");
-        for (Task task : tasks) {
+        for (Task task : tasks.values()) {
             if (task.getBottomLevel() != null) {
                 System.out.println(task.getId() + ": " + task.getBottomLevel());
             }
@@ -132,7 +117,7 @@ public class Graph {
         Node old_node = null;
         Node node = null;
         int time = 2;
-        for (Task task : taskMap.values()) {
+        for (Task task : tasks.values()) {
             time += 2;
             old_node = node;
             node = new Node(old_node, 0, new State(task, time, time-1));
