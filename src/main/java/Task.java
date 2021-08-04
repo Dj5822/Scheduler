@@ -6,23 +6,32 @@ import java.util.HashMap;
  * it stores its bottomlevel and weight as well as the list of child edges and map of parent tasks
  */
 public class Task {
-    private HashMap<Task,Integer> parentMap;
-    private ArrayList<Edge> children;
+    private final int weight;
+    private final String id;
+
+    /*
+    The tasks that point towards this task
+    and the communication time.
+     */
+    private final HashMap<Task,Integer> parentMap;
+    // The tasks that this task points towards.
+    private final ArrayList<Edge> children;
+
     private Integer bottomLevel;
-    private int weight;
-    private String id;
+
 
     /**
      * Constructor for a Task, defining the weight and id
-     * 
-     * @param weight
-     * @param id
+     * @param weight the amount of time needed for the task to finish
+     * @param id the character used to identify the task.
      */
     Task(int weight, String id) {
-        this.weight=weight;
-        this.id=id;
-        this.children = new ArrayList<Edge>();
-        this.parentMap = new HashMap<Task,Integer>();
+        this.weight = weight;
+        this.id = id;
+
+        this.children = new ArrayList<>();
+        this.parentMap = new HashMap<>();
+
         this.bottomLevel = null;
     }
 
@@ -77,7 +86,7 @@ public class Task {
      * 
      * @return The Id of this task
      */
-    String getId(){return id;}
+    String getId(){ return id; }
 
     /**
      * Gets the BottomLevel of the task, which is the 
