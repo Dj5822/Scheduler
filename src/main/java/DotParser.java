@@ -56,6 +56,7 @@ public class DotParser extends GraphParser{
             int weight = Integer.parseInt((String) node.getAttribute("Weight"));
             Task task = new Task(weight, node.getId());
             taskMap.put(node, task);
+            nodeMap.put(task, node);
         }
 
         this.taskMap = taskMap;
@@ -107,13 +108,15 @@ public class DotParser extends GraphParser{
      * @param Node at head of schedule linked list
      */
     public void bindSchedule(Node node) {
-        while (node.getParent() != null) {
+        while (node != null) {
             State state = node.getState();
             Task task = state.getTask();
 
             GraphNode mappedNode = nodeMap.get(task);
-            mappedNode.setAttribute("Start",state.getStartTime());
-            mappedNode.setAttribute("Processor",state.getProcessor());
+            if (mappedNode != null) {
+                mappedNode.setAttribute("Start",state.getStartTime());
+                mappedNode.setAttribute("Processor",state.getProcessor());
+            }
 
             node = node.getParent();
         }
@@ -127,7 +130,11 @@ public class DotParser extends GraphParser{
             writer.write("digraph  \"outputExample\" {\n");
 
             for (GraphNode graphNode : parseNodes()) {
-                String attr = graphNode.getAttributes().toString().replace("{", "[").replace("}", "]");
+                //String attr = graphNode.getAttributes().toString().replace("{", "[").replace("}", "]");
+                String weight = "[Weight=" + graphNode.getAttribute("Weight").toString();
+                String start = ",Start=" + graphNode.getAttribute("Start").toString();
+                String processor = ",Processor=" + graphNode.getAttribute("Processor").toString();
+                String attr = weight + start + processor + "]";
                 writer.write("\t" + graphNode.getId() + "\t" + attr + ";\n");
             }
 
@@ -141,6 +148,18 @@ public class DotParser extends GraphParser{
             System.out.println("Output error occurred.");
             e.printStackTrace();
         }
+    }
+
+    public Node generateDebugSchedule() {
+        Node old_node = null;
+        Node node = null;
+        int time = 2;
+        for (Task task : taskMap.values()) {
+            time += 2;
+            old_node = node;
+            node = new Node(old_node, 0, new State(task, time, time-1));
+        }
+        return node;
     }
 
 }
