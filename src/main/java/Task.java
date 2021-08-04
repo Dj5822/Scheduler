@@ -8,7 +8,7 @@ import java.util.HashMap;
 public class Task {
     private HashMap<Task,Integer> parentMap;
     private ArrayList<Edge> children;
-    private int bottomLevel;
+    private Integer bottomLevel;
     private int weight;
     private String id;
 
@@ -23,15 +23,35 @@ public class Task {
         this.id=id;
         this.children = new ArrayList<Edge>();
         this.parentMap = new HashMap<Task,Integer>();
+        this.bottomLevel = null;
     }
 
     /**
-     * Sets the bottom level for the task
-     * 
-     * @param bottomLevel the value to set the bottom level as
+     * Recursively set the bottom level of this task and all children
+     * Assumes unset bottom levels are null
      */
-    void setBottomLevel(int bottomLevel){
-        this.bottomLevel=bottomLevel;
+    public Integer findBottomLevel(){
+        
+        // bottom level may have already been set by a parent task
+        // do not recalculate, as bottom level never changes
+        if (bottomLevel != null) {
+            return bottomLevel;
+        }
+        
+        // find longest path length
+        int criticalPathTime = 0;
+        for (Edge childEdge : getChildren()) {
+            Task child = childEdge.getChild();
+            // recursively call this function on all children
+            int pathTime = child.findBottomLevel();
+            // update longest path
+            if (pathTime > criticalPathTime) {
+                criticalPathTime = pathTime;
+            }
+        }
+
+        bottomLevel = criticalPathTime + weight;
+        return getBottomLevel();
     }
 
     /**
@@ -65,7 +85,7 @@ public class Task {
      * 
      * @return The bottom level of this task
      */
-    int getBottomLevel(){return bottomLevel;}
+    Integer getBottomLevel(){return bottomLevel;}
 
     /**
      * Gets the weight of the task, which is the
@@ -102,5 +122,19 @@ public class Task {
      */
     public int getParentCommunicationTime(Task parent) {
         return parentMap.get(parent);
+    }
+
+    /**
+     * @return this task's number of parent tasks
+     */
+    public int parentCount() {
+        return parentMap.size();
+    }
+
+    /**
+     * @return True if this task is a root task, false otherwise
+     */
+    public boolean isRootTask() {
+        return parentCount() == 0;
     }
 }
