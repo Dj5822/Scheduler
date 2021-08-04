@@ -1,5 +1,12 @@
+import com.paypal.digraph.parser.GraphEdge;
+import com.paypal.digraph.parser.GraphNode;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 
 /**
@@ -7,11 +14,61 @@ import java.util.HashSet;
  * In our problem, the graph is read-only.
  */
 public class Graph {
-    public HashSet<Task> tasks;
+    private Map<GraphNode,Task> taskMap;
+    private Map<Task,GraphNode> nodeMap;
 
-    public Graph(HashSet<Task> tasks) {
-        this.tasks = tasks;
-        setBottomLevels();
+    private HashSet<Task> tasks;
+    private DotParser parser;
+
+    public Graph(String inputFile) {
+        try {
+            DotParser parser = new DotParser(new FileInputStream(inputFile), "output.dot");
+
+            this.taskMap = new HashMap<>();
+            this.nodeMap = new HashMap<>();
+
+            // create tasks from parsed nodes
+            for (GraphNode node : parser.parseNodes()) {
+                int weight = Integer.parseInt((String) node.getAttribute("Weight"));
+                Task task = new Task(weight, node.getId());
+                this.taskMap.put(node, task);
+                this.nodeMap.put(task, node);
+            }
+
+            Node node = generateDebugSchedule();
+            parser.writeScheduleToDot(node, nodeMap);
+        }
+        catch (FileNotFoundException e) {
+            System.out.println("File not found.");
+        }
+    }
+
+    /**
+     * Assigns edges to tasks from a map of nodes to tasks
+     * @return Set of tasks with edges assigned
+     */
+    private void assignEdges() {
+        for (GraphEdge parsedEdge : parser.parseEdges()) {
+            int communicationTime = Integer.parseInt((String) parsedEdge.getAttribute("Weight"));
+
+            // get nodes from edges
+            GraphNode parentNode = parsedEdge.getNode1();
+            GraphNode childNode = parsedEdge.getNode2();
+
+            //find corresponding tasks on map
+            Task parent = taskMap.get(parentNode);
+            Task child = taskMap.get(childNode);
+
+            //convert edge to our desired form
+            Edge edge = new Edge(child, parent, communicationTime);
+
+            // assign edge to tasks
+            child.addParent(edge);
+            parent.addChild(edge);
+        }
+
+        // return tasks as a set
+        tasks = new HashSet<Task>(taskMap.values());
     }
 
     /**
@@ -25,6 +82,19 @@ public class Graph {
             }
         }
         return rootTasks;
+    }
+
+    // For testing
+    public Node generateDebugSchedule() {
+        Node old_node = null;
+        Node node = null;
+        int time = 2;
+        for (Task task : taskMap.values()) {
+            time += 2;
+            old_node = node;
+            node = new Node(old_node, 0, new State(task, time, time-1));
+        }
+        return node;
     }
 
     /**
