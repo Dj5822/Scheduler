@@ -20,7 +20,7 @@ public class TreeSearch {
     }
 
     /**
-     * Implimentation of the A* algorithm, traversing the tree and creating a
+     * Implementation of the A* algorithm, traversing the tree and creating a
      * viable schedule from it
      * 
      * @return The node that is at the end of the created schedule
@@ -76,24 +76,24 @@ public class TreeSearch {
      * go through set of children, check if they exist in scheduled map
      * and if parents exist in scheduled
      * 
-     * if all parents are scheduled and child isnt, add to schedulable list
+     * if all parents are scheduled and child isn't, add to schedulable list
      * 
      * @param node The node to get the lists of tasks from
      * 
-     * @return A pair containing the list of all scedulable tasks and
+     * @return A pair containing the list of all schedulable tasks and
      * a map of each scheduled task to its state
      */
     private Pair getTaskLists(Node node) {
         ArrayList<Task> schedulable = new ArrayList<>();
         Map<Task, State> scheduled = new HashMap<>();
 
-        Pair pair=new Pair(schedulable, scheduled);
+        Pair pair = new Pair(schedulable, scheduled);
         return pair;
     }
 
     /**
      * A inner class that packages the list of schedulable tasks and the
-     * map of scheduled tasks, in order to be outputed cleanly by getTaskLists
+     * map of scheduled tasks, in order to be outputted cleanly by getTaskLists
      */
     private class Pair {
         public ArrayList<Task> schedulable;
@@ -106,7 +106,7 @@ public class TreeSearch {
 
     /**
      * The comparator for ordering of nodes in the priority queue
-     * Nodes with a lower cost will be prioritesed, putting them at
+     * Nodes with a lower cost will be prioritised, putting them at
      * the front of the priority queue
      */
     private class NodeComparator implements Comparator<Node> {
