@@ -20,15 +20,28 @@ public class TreeSearch {
         bruteForceTest();
     }
 
+    /**
+     * For testing purposes.
+     */
     private void bruteForceTest() {
         ArrayList<Task> startTasks = graph.getStartTasks();
-        ArrayList<State> stateList = new ArrayList<>();
-        for (Task startTask: startTasks) {
-            for (int processorNum=0; processorNum<processorCount; processorNum++) {
-                State state = new State(startTask, 0, processorNum);
-                state.printState();
-                stateList.add(state);
+        Map<Task, State> scheduled = new HashMap<>();
+        ArrayList<Task> schedulable = new ArrayList<>();
+        schedulable.addAll(startTasks);
+
+        while (!schedulable.isEmpty()) {
+            State state = new State(schedulable.get(0), 0, 0);
+            state.printState();
+            Node node = new Node(null, state.getFinishTime(), state);
+
+            scheduled.put(schedulable.get(0), state);
+
+            ArrayList<Edge> edges = schedulable.get(0).getChildren();
+            for (Edge edge: edges) {
+                schedulable.add(edge.getChild());
             }
+
+            schedulable.remove(0);
         }
     }
 
