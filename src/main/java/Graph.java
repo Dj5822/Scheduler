@@ -15,20 +15,36 @@ public class Graph {
     private HashMap<Character, GraphNode> nodes;
     private DotParser parser;
 
+    /**
+     * Creates a graph based on a dot file.
+     * @param inputFile the dot file used to create the graph.
+     */
     public Graph(String inputFile) {
         try {
             this.parser = new DotParser(new FileInputStream(inputFile), "output.dot");
             tasks = new HashMap<>();
             nodes = new HashMap<>();
-            assignTasks();
-            assignEdges();
-            setBottomLevels();
+            setupGraph();
         }
         catch (FileNotFoundException e) {
             System.out.println("File not found.");
         }
     }
 
+    /**
+     * Call all the methods required to setup
+     * the graph.
+     */
+    private void setupGraph() {
+        assignTasks();
+        assignEdges();
+        setBottomLevels();
+    }
+
+    /**
+     * Uses the information from DotParser to
+     * create graph tasks.
+     */
     private void assignTasks() {
         // create tasks from parsed nodes
         for (GraphNode node : parser.parseNodes()) {
@@ -40,7 +56,8 @@ public class Graph {
     }
 
     /**
-     * Assigns edges to tasks from a map of nodes to tasks
+     * Uses the information from DotParser to
+     * create graph edges.
      */
     private void assignEdges() {
         for (GraphEdge parsedEdge : parser.parseEdges()) {
@@ -57,6 +74,34 @@ public class Graph {
         }
     }
 
+    /**
+     * Find bottom level of all start tasks,
+     * And therefore the whole graph.
+     */
+    private void setBottomLevels() {
+        for (Task task : getStartTasks()) {
+            task.findBottomLevel();
+        }
+    }
+
+    /**
+     * Used to get all the start tasks
+     * (tasks with no parents).
+     * @return list of start tasks
+     */
+    private ArrayList<Task>  getStartTasks() {
+        ArrayList<Task> rootTasks = new ArrayList<>();
+        for (Task task : tasks.values()) {
+            if (task.isRootTask()) {
+                rootTasks.add(task);
+            }
+        }
+        return rootTasks;
+    }
+
+    /**
+     * Converts the graph back into a dot file.
+     */
     public void generateOutputGraph() {
         Node node = generateDebugSchedule();
 
@@ -73,29 +118,6 @@ public class Graph {
             node = node.getParent();
         }
         parser.writeScheduleToDot();
-    }
-
-    /**
-     * @return list of start tasks (tasks with no parents)
-     */
-    private ArrayList<Task>  getStartTasks() {
-        ArrayList<Task> rootTasks = new ArrayList<>();
-        for (Task task : tasks.values()) {
-            if (task.isRootTask()) {
-                rootTasks.add(task);
-            }
-        }
-        return rootTasks;
-    }
-
-    /**
-     * Find bottom level of all start tasks,
-     * And therefore the whole graph.
-     */
-    private void setBottomLevels() {
-        for (Task task : getStartTasks()) {
-            task.findBottomLevel();
-        }
     }
 
     /**
