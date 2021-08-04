@@ -5,9 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-
 
 /**
  * Representation of Graph structure as a set of tasks.
@@ -15,12 +12,14 @@ import java.util.Map;
  */
 public class Graph {
     private HashMap<Character, Task> tasks;
+    private HashMap<Character, GraphNode> nodes;
     private DotParser parser;
 
     public Graph(String inputFile) {
         try {
             this.parser = new DotParser(new FileInputStream(inputFile), "output.dot");
             tasks = new HashMap<>();
+            nodes = new HashMap<>();
             assignTasks();
             assignEdges();
             setBottomLevels();
@@ -36,6 +35,7 @@ public class Graph {
             int weight = Integer.parseInt((String) node.getAttribute("Weight"));
             Task task = new Task(weight, node.getId());
             tasks.put(node.getId().charAt(0), task);
+            nodes.put(node.getId().charAt(0), node);
         }
     }
 
@@ -58,14 +58,13 @@ public class Graph {
     }
 
     public void generateOutputGraph() {
-        /*
         Node node = generateDebugSchedule();
 
         while (node != null) {
             State state = node.getState();
             Task task = state.getTask();
 
-            GraphNode mappedNode = nodeMap.get(task);
+            GraphNode mappedNode = nodes.get(task.getId().charAt(0));
             if (mappedNode != null) {
                 mappedNode.setAttribute("Start",state.getStartTime());
                 mappedNode.setAttribute("Processor",state.getProcessor());
@@ -74,7 +73,6 @@ public class Graph {
             node = node.getParent();
         }
         parser.writeScheduleToDot();
-         */
     }
 
     /**
