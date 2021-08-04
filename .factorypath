@@ -1,6 +1,0 @@
-<factorypath>
-    <factorypathentry kind="VARJAR" id="M2_REPO/com/paypal/digraph/digraph-parser/1.0/digraph-parser-1.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/org/antlr/antlr4-runtime/4.2/antlr4-runtime-4.2.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/org/abego/treelayout/org.abego.treelayout.core/1.0.1/org.abego.treelayout.core-1.0.1.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/org/antlr/antlr4-annotations/4.2/antlr4-annotations-4.2.jar" enabled="true" runInBatchMode="false"/>
-</factorypath>

@@ -5,6 +5,7 @@
 *.class
 .classpath
 .project
+.factorypath
 .settings
 .vscode
 .idea/
