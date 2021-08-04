@@ -18,7 +18,7 @@ public class Task {
      * @param weight
      * @param id
      */
-    Task(int weight, String id){
+    Task(int weight, String id) {
         this.weight=weight;
         this.id=id;
         this.children = new ArrayList<Edge>();
@@ -30,7 +30,7 @@ public class Task {
      * Recursively set the bottom level of this task and all children
      * Assumes unset bottom levels are null
      */
-    public Integer findBottomLevel(){
+    public Integer findBottomLevel() {
         
         // bottom level may have already been set by a parent task
         // do not recalculate, as bottom level never changes
@@ -59,7 +59,7 @@ public class Task {
      * 
      * @param parentEdge the edge leading to the parent to be added
      */
-    void addParent(Edge parentEdge){
+    void addParent(Edge parentEdge) {
         parentMap.put(parentEdge.getParent(),parentEdge.getCommunicationTime());
     }
 
@@ -68,7 +68,7 @@ public class Task {
      * 
      * @param childEdge the edge to be added
      */
-    void addChild(Edge childEdge){
+    void addChild(Edge childEdge) {
         children.add(childEdge);
     }
 
@@ -85,7 +85,7 @@ public class Task {
      * 
      * @return The bottom level of this task
      */
-    Integer getBottomLevel(){return bottomLevel;}
+    Integer getBottomLevel() {return bottomLevel;}
 
     /**
      * Gets the weight of the task, which is the
@@ -93,7 +93,7 @@ public class Task {
      * 
      * @return the weight of this task
      */
-    int getWeight(){return weight;}
+    int getWeight() {return weight;}
 
     /**
      * Gets a list of the tasks children, as a list
