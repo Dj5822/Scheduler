@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.Comparator;
 
 /**
  * The method responsible for the creation and traversal of the
@@ -23,6 +24,8 @@ public class TreeSearch {
      * @return The node that is at the end of the created schedule
      */
     public Node aStar() {
+        PriorityQueue<Node> openList = new PriorityQueue<Node>(new NodeComparator());
+        return openList.poll();
     }
 
     /**
@@ -78,7 +81,7 @@ public class TreeSearch {
      * @return A pair containing the list of all scedulable tasks and
      * a map of each scheduled task to its state
      */
-    Pair getTaskLists(Node node) {
+    private Pair getTaskLists(Node node) {
         ArrayList<Task> schedulable = new ArrayList<Task>();
         Map<Task, State> scheduled = new HashMap<Task, State>();
 
@@ -99,6 +102,16 @@ public class TreeSearch {
         }
     }
 
+    /**
+     * The comparator for ordering of nodes in the priority queue
+     * Nodes with a lower cost will be prioritesed, putting them at
+     * the front of the priority queue
+     */
+    private class NodeComparator implements Comparator<Node> {
+        public int compare(Node node1, Node node2) {
+            return node1.getCost() - (node2.getCost());
+        }
+    }
     
 
 }
