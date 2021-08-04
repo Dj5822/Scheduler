@@ -29,6 +29,7 @@ public class Graph {
 
             assignTasks();
             assignEdges();
+            setBottomLevels();
         }
         catch (FileNotFoundException e) {
             System.out.println("File not found.");
@@ -73,19 +74,6 @@ public class Graph {
         tasks = new HashSet<Task>(taskMap.values());
     }
 
-    /**
-     * @return list of start tasks (tasks with no parents)
-     */
-    public ArrayList<Task>  getStartTasks() {
-        ArrayList<Task> rootTasks = new ArrayList<Task>();
-        for (Task task : tasks) {
-            if (task.isRootTask()) {
-                rootTasks.add(task);
-            }
-        }
-        return rootTasks;
-    }
-
     public void generateOutputGraph() {
         Node node = generateDebugSchedule();
 
@@ -104,17 +92,17 @@ public class Graph {
         parser.writeScheduleToDot();
     }
 
-    // For testing
-    public Node generateDebugSchedule() {
-        Node old_node = null;
-        Node node = null;
-        int time = 2;
-        for (Task task : taskMap.values()) {
-            time += 2;
-            old_node = node;
-            node = new Node(old_node, 0, new State(task, time, time-1));
+    /**
+     * @return list of start tasks (tasks with no parents)
+     */
+    public ArrayList<Task>  getStartTasks() {
+        ArrayList<Task> rootTasks = new ArrayList<Task>();
+        for (Task task : tasks) {
+            if (task.isRootTask()) {
+                rootTasks.add(task);
+            }
         }
-        return node;
+        return rootTasks;
     }
 
     /**
@@ -137,5 +125,18 @@ public class Graph {
                 System.out.println(task.getId() + ": " + task.getBottomLevel());
             }
         }
+    }
+
+    // For testing
+    public Node generateDebugSchedule() {
+        Node old_node = null;
+        Node node = null;
+        int time = 2;
+        for (Task task : taskMap.values()) {
+            time += 2;
+            old_node = node;
+            node = new Node(old_node, 0, new State(task, time, time-1));
+        }
+        return node;
     }
 }
