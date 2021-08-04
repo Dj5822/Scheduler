@@ -2,6 +2,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 
+/**
+ * Representation of Graph structure as a set of tasks.
+ * In our problem, the graph is read-only.
+ */
 public class Graph {
     public HashSet<Task> tasks;
 
