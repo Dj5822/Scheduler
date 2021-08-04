@@ -3,4 +3,9 @@
 .settings/org.eclipse.jdt.apt.core.prefs
 .settings/org.eclipse.jdt.core.prefs
 *.class
-*.class
+.classpath
+.project
+.settings
+.vscode
+.idea
+output.dot
