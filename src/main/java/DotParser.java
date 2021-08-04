@@ -5,10 +5,6 @@ import com.paypal.digraph.parser.GraphParser;
 
 import java.io.*;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-
 
 public class DotParser extends GraphParser{
     private final String outputFile;
