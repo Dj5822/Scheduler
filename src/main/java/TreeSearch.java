@@ -17,7 +17,21 @@ public class TreeSearch {
     TreeSearch(Graph graph, int processorCount){
         this.graph = graph;
         this.processorCount = processorCount;
+        bruteForceTest();
     }
+
+    private void bruteForceTest() {
+        ArrayList<Task> startTasks = graph.getStartTasks();
+        ArrayList<State> stateList = new ArrayList<>();
+        for (Task startTask: startTasks) {
+            for (int processorNum=0; processorNum<processorCount; processorNum++) {
+                State state = new State(startTask, 0, processorNum);
+                state.printState();
+                stateList.add(state);
+            }
+        }
+    }
+
 
     /**
      * Implementation of the A* algorithm, traversing the tree and creating a
