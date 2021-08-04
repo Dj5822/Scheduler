@@ -4,16 +4,19 @@
  * time between them if they are on different processors
  */
 public class Edge {
-    private Task child;
-    private Task parent;
-    private int communicationTime;
+    private final Task child;
+    private final Task parent;
+    private final int communicationTime;
 
     /**
-     * Constructor for Edge, defining the child task, parent task and communication time
+     * Constructor for Edge, defining the child task, parent task and communication time.
      * 
      * @param child
+     * The task that the edge is pointing to.
      * @param parent
+     * The task that the edge is coming out of.
      * @param communicationTime
+     * Extra time taken when a task is not scheduled on the same processor.
      */
     Edge(Task child, Task parent, int communicationTime){
         this.child=child;
@@ -21,29 +24,14 @@ public class Edge {
         this.communicationTime=communicationTime;
     }
 
-    /**
-     * Gets the child of this edge, which is the task that the
-     * edge points towards
-     * 
-     * @return the child task of this edge
-     */
-    public Task getChild() {return child;}
+    public Task getChild() {
+        return child;
+    }
 
-     /**
-     * Gets the parent of this edge, which is the task that the
-     * edge points from
-     * 
-     * @return the parent task of this edge
-     */
-    public Task getParent() {return parent;}
+    public Task getParent() {
+        return parent;
+    }
 
-     /**
-     * Gets the communication time of this edge, whcih is the
-     * time that is spent if the tasks of the edge are scheduled
-     * on different processors
-     * 
-     * @return the communication time of this edge
-     */
-    public int getCommunicationTime() {return communicationTime;}
+    public int getCommunicationTime() { return communicationTime; }
 
 }
