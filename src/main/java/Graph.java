@@ -27,35 +27,22 @@ public class Graph {
             this.taskMap = new HashMap<>();
             this.nodeMap = new HashMap<>();
 
-            // create tasks from parsed nodes
-            for (GraphNode node : parser.parseNodes()) {
-                int weight = Integer.parseInt((String) node.getAttribute("Weight"));
-                Task task = new Task(weight, node.getId());
-                this.taskMap.put(node, task);
-                this.nodeMap.put(task, node);
-            }
+            assignTasks();
+            assignEdges();
         }
         catch (FileNotFoundException e) {
             System.out.println("File not found.");
         }
     }
 
-    public void generateOutputGraph() {
-        Node node = generateDebugSchedule();
-
-        while (node != null) {
-            State state = node.getState();
-            Task task = state.getTask();
-
-            GraphNode mappedNode = nodeMap.get(task);
-            if (mappedNode != null) {
-                mappedNode.setAttribute("Start",state.getStartTime());
-                mappedNode.setAttribute("Processor",state.getProcessor());
-            }
-
-            node = node.getParent();
+    private void assignTasks() {
+        // create tasks from parsed nodes
+        for (GraphNode node : parser.parseNodes()) {
+            int weight = Integer.parseInt((String) node.getAttribute("Weight"));
+            Task task = new Task(weight, node.getId());
+            this.taskMap.put(node, task);
+            this.nodeMap.put(task, node);
         }
-        parser.writeScheduleToDot();
     }
 
     /**
@@ -97,6 +84,24 @@ public class Graph {
             }
         }
         return rootTasks;
+    }
+
+    public void generateOutputGraph() {
+        Node node = generateDebugSchedule();
+
+        while (node != null) {
+            State state = node.getState();
+            Task task = state.getTask();
+
+            GraphNode mappedNode = nodeMap.get(task);
+            if (mappedNode != null) {
+                mappedNode.setAttribute("Start",state.getStartTime());
+                mappedNode.setAttribute("Processor",state.getProcessor());
+            }
+
+            node = node.getParent();
+        }
+        parser.writeScheduleToDot();
     }
 
     // For testing
