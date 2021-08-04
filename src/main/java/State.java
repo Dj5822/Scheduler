@@ -3,20 +3,20 @@
  **/
 public class State {
     private Task task;
-    private int start_time;
+    private int startTime;
     private int processor;
 
-    public State(Task task, int start_time, int processor) {
+    public State(Task task, int startTime, int processor) {
         this.task = task;
-        this.start_time = start_time;
+        this.startTime = startTime;
         this.processor = processor;
     }
 
-    public int get_finish_time() {
-        return this.start_time + task.get_compute_time();
+    public int getFinishTime() {
+        return this.startTime + task.getWeight();
     }
 
-    public int get_processor() {
+    public int getProcessor() {
         return this.processor;
     }
 

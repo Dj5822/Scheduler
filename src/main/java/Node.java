@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 
 /**
  * A Node in the search tree. Represents a possible scheduling State for a single Task.
@@ -12,9 +11,7 @@ class Node {
      * Constructor for a search tree node
      * @param parent
      * @param cost
-     * @param task
-     * @param start_time
-     * @param processor
+     * @param state
      */
     public Node(Node parent, int cost, State state) {
         this.parent = parent;
@@ -29,22 +26,22 @@ class Node {
     public Node(Task task) {
         this.parent = null;
         this.state = new State(task, 0, 0);
-        this.cost = task.get_compute_time();
+        this.cost = task.getWeight();
     }
 
-    public State get_state() {
+    public State getState() {
         return this.state;
     }
 
-    public int get_cost() {
+    public int getCost() {
         return this.cost;
     }
 
-    public void set_cost(int cost) {
+    public void setCost(int cost) {
         this.cost = cost;
     }
 
-    public Node get_parent() {
+    public Node getParent() {
         return this.parent;
     }
 
