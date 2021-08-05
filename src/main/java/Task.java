@@ -126,10 +126,6 @@ public class Task {
         return parentMap.containsKey(parent);
     }
 
-    public Set<Task> getParents() {
-        return parentMap.keySet();
-    }
-
     /**
      * @param parent a candidate parent task
      * @return communication time of parent task to this task
