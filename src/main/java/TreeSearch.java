@@ -29,47 +29,44 @@ public class TreeSearch {
             state.printState();
         }
 
-
         while (!openNodeList.isEmpty()) {
             ArrayList<Node> newOpenNodeList = new ArrayList<>();
 
             // Go through every node in the openNodeList.
             for (Node node: openNodeList) {
                 // Figure out which nodes are schedulable.
+                Map<Task, State> scheduled = new HashMap<>();
                 ArrayList<Task> schedulable = new ArrayList<>();
-                System.out.println(node.getState().getTask().getChildren());
+                int[] processorFinishTimes = new int[processorCount];
 
-                /*
-                for (int i=0; i<processorCount; i++) {
-                    // We need to get finish time of processor i
-                    int startTime = 0;
-                    int scheduleCost = node.getCost();
+                Node currentNode = node;
 
-                    Node currentNode = node;
-                    while (currentNode.getParent() != null) {
-                        if (currentNode.getState().getProcessor() == i) {
-                            startTime = currentNode.getState().getFinishTime();
-                            break;
-                        }
-                        currentNode = currentNode.getParent();
+                // Get scheduled tasks.
+                while (currentNode != null) {
+                    scheduled.put(currentNode.getState().getTask(), currentNode.getState());
+                    if (processorFinishTimes[currentNode.getState().getProcessor()] == 0) {
+                        processorFinishTimes[currentNode.getState().getProcessor()] = currentNode.getState().getFinishTime();
                     }
-
-                    // We also need to look at parents and figure out communication time.
-
-                    state = new State(currentTask, startTime, i);
-
-                    if (scheduleCost < state.getFinishTime()) {
-                        scheduleCost = state.getFinishTime();
-                    }
-
-                    newOpenNodeList.add(new Node(node, scheduleCost, state));
-
-                    state.printState();
-                    scheduled.put(schedulable.get(0), state);
+                    currentNode = currentNode.getParent();
                 }
 
-                 */
+                // Get schedulable tasks.
+                for (Task task: scheduled.keySet()) {
+                    for (Edge edge: task.getChildren()) {
+                        if (checkParentsVisited(edge.getChild(), scheduled)) {
+                            schedulable.add(edge.getChild());
+                        }
+                    }
+                }
 
+                // Loop through schedulable tasks.
+                for (Task task: schedulable) {
+                    for (int i=0; i<processorCount; i++) {
+                        new Node(node, 0, new State(task, 0, i));
+                        System.out.println(task.getId());
+                        System.out.println(i);
+                    }
+                }
             }
 
             openNodeList = newOpenNodeList;
