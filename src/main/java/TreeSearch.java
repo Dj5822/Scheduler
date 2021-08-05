@@ -62,7 +62,31 @@ public class TreeSearch {
                 // Loop through schedulable tasks.
                 for (Task task: schedulable) {
                     for (int i=0; i<processorCount; i++) {
-                        new Node(node, 0, new State(task, 0, i));
+                        /*
+                         1) Task must be scheduled after the finish time of the processor
+                         it is going to get assigned to.
+
+                         2) Task must be scheduled after the latest finish time
+                         of all the parents.
+
+                         3) If the task is being assigned to a process that is different
+                         to that of it's parent, you must add in the communication time.
+                         */
+                        int startTime = processorFinishTimes[i];
+
+                        for (Task parentTask: task.getParents()) {
+                            int parentFinishTime = scheduled.get(parentTask).getFinishTime();
+                            if (scheduled.get(parentTask).getProcessor() != i) {
+                                parentFinishTime += task.getParentCommunicationTime(parentTask);
+                            }
+                            if (parentFinishTime > startTime) {
+                                startTime = parentFinishTime;
+                            }
+                        }
+                        System.out.println("start time: ");
+                        System.out.println(startTime);
+
+                        new Node(node, 0, new State(task, startTime, i));
                         System.out.println(task.getId());
                         System.out.println(i);
                     }
