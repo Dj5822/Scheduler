@@ -1,11 +1,5 @@
 import java.sql.Struct;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Set;
-import java.util.Comparator;
+import java.util.*;
 
 /**
  * The method responsible for the creation and traversal of the
@@ -20,6 +14,112 @@ public class TreeSearch {
         this.graph = graph;
         this.processorCount = processorCount;
     }
+
+    /**
+     * For testing purposes.
+     */
+    public Node bruteForceTest() {
+        ArrayList<Node> openNodeList = new ArrayList<>();
+
+        for (Task task : graph.getStartTasks()) {
+            State state = new State(task, 0, 0);
+            openNodeList.add(new Node(null, state.getFinishTime(), state));
+        }
+
+        while (!openNodeList.isEmpty()) {
+            ArrayList<Node> newOpenNodeList = new ArrayList<>();
+
+            // Go through every node in the openNodeList.
+            for (Node node: openNodeList) {
+                // Figure out which nodes are schedulable.
+                Map<Task, State> scheduled = new HashMap<>();
+                ArrayList<Task> schedulable = new ArrayList<>();
+                int[] processorFinishTimes = new int[processorCount];
+
+                Node currentNode = node;
+
+                // Get scheduled tasks.
+                while (currentNode != null) {
+                    scheduled.put(currentNode.getState().getTask(), currentNode.getState());
+                    if (processorFinishTimes[currentNode.getState().getProcessor()] == 0) {
+                        processorFinishTimes[currentNode.getState().getProcessor()] = currentNode.getState().getFinishTime();
+                    }
+                    currentNode = currentNode.getParent();
+                }
+
+                // Get schedulable tasks.
+                for (Task task: scheduled.keySet()) {
+                    for (Edge edge: task.getChildren()) {
+                        if (checkParentsVisited(edge.getChild(), scheduled)) {
+                            if (!scheduled.containsKey(edge.getChild())) {
+                                schedulable.add(edge.getChild());
+                            }
+                        }
+                    }
+                }
+
+                // Loop through schedulable tasks.
+                for (Task task: schedulable) {
+                    for (int i=0; i<processorCount; i++) {
+                        /*
+                         1) Task must be scheduled after the finish time of the processor
+                         it is going to get assigned to.
+
+                         2) Task must be scheduled after the latest finish time
+                         of all the parents.
+
+                         3) If the task is being assigned to a process that is different
+                         to that of it's parent, you must add in the communication time.
+                         */
+                        int startTime = processorFinishTimes[i];
+
+                        for (Task parentTask: task.getParents()) {
+                            int parentFinishTime = scheduled.get(parentTask).getFinishTime();
+                            if (scheduled.get(parentTask).getProcessor() != i) {
+                                parentFinishTime += task.getParentCommunicationTime(parentTask);
+                            }
+                            if (parentFinishTime > startTime) {
+                                startTime = parentFinishTime;
+                            }
+                        }
+
+                        State newState = new State(task, startTime, i);
+                        int newCost = Math.max(node.getCost(), newState.getFinishTime());
+
+                        newOpenNodeList.add(new Node(node, newCost, newState));
+                    }
+                }
+            }
+            if (newOpenNodeList.isEmpty()) {
+                break;
+            }
+            else {
+                openNodeList = newOpenNodeList;
+            }
+        }
+
+        int bestTime = openNodeList.get(0).getCost();
+        Node bestNode = openNodeList.get(0);
+        for (Node node : openNodeList) {
+               if (node.getCost() < bestTime) {
+                   bestTime = node.getCost();
+                   bestNode = node;
+               }
+        }
+
+        return bestNode;
+    }
+
+    // Parents visited constraint.
+    private boolean checkParentsVisited(Task task, Map<Task, State> scheduled) {
+        for (Task parent: task.getParents()) {
+            if (!scheduled.containsKey(parent)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     /**
      * Implementation of the A* algorithm, traversing the tree and creating a

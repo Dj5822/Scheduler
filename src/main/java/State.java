@@ -28,4 +28,12 @@ public class State {
         return this.task;
     }
 
+    // For testing
+    public void printState() {
+        System.out.println("Task ID: " + task.getId());
+        System.out.println("start time: " + startTime);
+        System.out.println("processor: " + processor);
+        System.out.println();
+    }
+
 }
