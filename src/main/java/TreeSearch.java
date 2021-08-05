@@ -27,18 +27,40 @@ public class TreeSearch {
         ArrayList<Task> startTasks = graph.getStartTasks();
         Map<Task, State> scheduled = new HashMap<>();
         ArrayList<Task> schedulable = new ArrayList<>();
+        Node finalNode = null;
         schedulable.addAll(startTasks);
 
         while (!schedulable.isEmpty()) {
-            State state = new State(schedulable.get(0), 0, 0);
+            Task currentTask = schedulable.get(0);
+            State state;
+
+            if (finalNode == null) {
+                state = new State(currentTask, 0, 0);
+                finalNode = new Node(null, state.getFinishTime(), state);
+            }
+            else {
+                state = new State(currentTask, finalNode.getCost(), 0);
+                finalNode = new Node(finalNode, state.getFinishTime(), state);
+            }
+
+
             state.printState();
-            Node node = new Node(null, state.getFinishTime(), state);
 
             scheduled.put(schedulable.get(0), state);
 
-            ArrayList<Edge> edges = schedulable.get(0).getChildren();
+            ArrayList<Edge> edges = currentTask.getChildren();
             for (Edge edge: edges) {
-                schedulable.add(edge.getChild());
+                Task candidate = edge.getChild();
+                boolean allParentsScheduled = true;
+                for (Task parent : candidate.getParents()) {
+                    if (!scheduled.containsKey(parent)) {
+                        allParentsScheduled = false;
+                    }
+                }
+
+                if (allParentsScheduled){
+                    schedulable.add(edge.getChild());
+                }
             }
 
             schedulable.remove(0);
