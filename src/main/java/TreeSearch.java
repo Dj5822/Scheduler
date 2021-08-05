@@ -25,8 +25,6 @@ public class TreeSearch {
         for (Task task : graph.getStartTasks()) {
             State state = new State(task, 0, 0);
             openNodeList.add(new Node(null, state.getFinishTime(), state));
-
-            state.printState();
         }
 
         while (!openNodeList.isEmpty()) {
@@ -54,7 +52,9 @@ public class TreeSearch {
                 for (Task task: scheduled.keySet()) {
                     for (Edge edge: task.getChildren()) {
                         if (checkParentsVisited(edge.getChild(), scheduled)) {
-                            schedulable.add(edge.getChild());
+                            if (!scheduled.containsKey(edge.getChild())) {
+                                schedulable.add(edge.getChild());
+                            }
                         }
                     }
                 }
@@ -83,18 +83,23 @@ public class TreeSearch {
                                 startTime = parentFinishTime;
                             }
                         }
-                        System.out.println("start time: ");
-                        System.out.println(startTime);
 
-                        new Node(node, 0, new State(task, startTime, i));
-                        System.out.println(task.getId());
-                        System.out.println(i);
+                        State newState = new State(task, startTime, i);
+                        int newCost = Math.max(node.getCost(), newState.getFinishTime());
+
+                        newOpenNodeList.add(new Node(node, newCost, newState));
                     }
                 }
             }
-
-            openNodeList = newOpenNodeList;
+            if (newOpenNodeList.isEmpty()) {
+                break;
+            }
+            else {
+                openNodeList = newOpenNodeList;
+            }
         }
+
+        System.out.println(openNodeList);
     }
 
     // Parents visited constraint.
