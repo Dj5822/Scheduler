@@ -27,27 +27,40 @@ public class TreeSearch {
         ArrayList<Task> startTasks = graph.getStartTasks();
         Map<Task, State> scheduled = new HashMap<>();
         ArrayList<Task> schedulable = new ArrayList<>();
-        Node finalNode = null;
+        ArrayList<Node> openNodeList = new ArrayList<>();
         schedulable.addAll(startTasks);
+
+        openNodeList.add(null);
 
         while (!schedulable.isEmpty()) {
             Task currentTask = schedulable.get(0);
-            State state;
+            State state = null;
 
-            if (finalNode == null) {
-                state = new State(currentTask, 0, 0);
-                finalNode = new Node(null, state.getFinishTime(), state);
+            ArrayList<Node> newOpenNodeList = new ArrayList<>();
+
+            // Go through every node in the openNodeList.
+            for (Node node: openNodeList) {
+                if (node == null) {
+                    state = new State(currentTask, 0, 0);
+                    newOpenNodeList.add(new Node(null, state.getFinishTime(), state));
+
+                    state.printState();
+                    scheduled.put(schedulable.get(0), state);
+                }
+                else {
+                    for (int i=0; i<processorCount; i++) {
+                        state = new State(currentTask, node.getCost(), i);
+                        newOpenNodeList.add(new Node(node, state.getFinishTime(), state));
+
+                        state.printState();
+                        scheduled.put(schedulable.get(0), state);
+                    }
+                }
             }
-            else {
-                state = new State(currentTask, finalNode.getCost(), 0);
-                finalNode = new Node(finalNode, state.getFinishTime(), state);
-            }
 
+            openNodeList = newOpenNodeList;
 
-            state.printState();
-
-            scheduled.put(schedulable.get(0), state);
-
+            // Parents visited constraint.
             ArrayList<Edge> edges = currentTask.getChildren();
             for (Edge edge: edges) {
                 Task candidate = edge.getChild();
@@ -63,6 +76,7 @@ public class TreeSearch {
                 }
             }
 
+            // Each task can only be scheduled once.
             schedulable.remove(0);
         }
     }
