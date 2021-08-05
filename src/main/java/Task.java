@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * Task defines a task from the graph that is inputted into the system,
@@ -145,5 +146,9 @@ public class Task {
      */
     public boolean isRootTask() {
         return parentCount() == 0;
+    }
+
+    public Set<Task> getParents() {
+        return parentMap.keySet();
     }
 }
