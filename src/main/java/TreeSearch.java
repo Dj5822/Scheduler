@@ -13,13 +13,12 @@ public class TreeSearch {
     TreeSearch(Graph graph, int processorCount){
         this.graph = graph;
         this.processorCount = processorCount;
-        bruteForceTest();
     }
 
     /**
      * For testing purposes.
      */
-    private void bruteForceTest() {
+    public Node bruteForceTest() {
         ArrayList<Node> openNodeList = new ArrayList<>();
 
         for (Task task : graph.getStartTasks()) {
@@ -99,7 +98,16 @@ public class TreeSearch {
             }
         }
 
-        System.out.println(openNodeList);
+        int bestTime = openNodeList.get(0).getCost();
+        Node bestNode = openNodeList.get(0);
+        for (Node node : openNodeList) {
+               if (node.getCost() < bestTime) {
+                   bestTime = node.getCost();
+                   bestNode = node;
+               }
+        }
+
+        return bestNode;
     }
 
     // Parents visited constraint.
