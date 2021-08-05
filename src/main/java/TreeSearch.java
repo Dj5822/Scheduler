@@ -106,6 +106,7 @@ public class TreeSearch {
                    bestNode = node;
                }
         }
+        System.out.println("Optimal length: " + bestTime);
 
         return bestNode;
     }
