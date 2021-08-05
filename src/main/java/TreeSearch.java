@@ -1,9 +1,5 @@
 import java.sql.Struct;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Comparator;
+import java.util.*;
 
 /**
  * The method responsible for the creation and traversal of the
@@ -24,61 +20,70 @@ public class TreeSearch {
      * For testing purposes.
      */
     private void bruteForceTest() {
-        ArrayList<Task> startTasks = graph.getStartTasks();
-        Map<Task, State> scheduled = new HashMap<>();
-        ArrayList<Task> schedulable = new ArrayList<>();
         ArrayList<Node> openNodeList = new ArrayList<>();
-        schedulable.addAll(startTasks);
 
-        openNodeList.add(null);
+        for (Task task : graph.getStartTasks()) {
+            State state = new State(task, 0, 0);
+            openNodeList.add(new Node(null, state.getFinishTime(), state));
 
-        while (!schedulable.isEmpty()) {
-            Task currentTask = schedulable.get(0);
-            State state = null;
+            state.printState();
+        }
 
+
+        while (!openNodeList.isEmpty()) {
             ArrayList<Node> newOpenNodeList = new ArrayList<>();
 
             // Go through every node in the openNodeList.
             for (Node node: openNodeList) {
-                if (node == null) {
-                    state = new State(currentTask, 0, 0);
-                    newOpenNodeList.add(new Node(null, state.getFinishTime(), state));
+                // Figure out which nodes are schedulable.
+                ArrayList<Task> schedulable = new ArrayList<>();
+                System.out.println(node.getState().getTask().getChildren());
+
+                /*
+                for (int i=0; i<processorCount; i++) {
+                    // We need to get finish time of processor i
+                    int startTime = 0;
+                    int scheduleCost = node.getCost();
+
+                    Node currentNode = node;
+                    while (currentNode.getParent() != null) {
+                        if (currentNode.getState().getProcessor() == i) {
+                            startTime = currentNode.getState().getFinishTime();
+                            break;
+                        }
+                        currentNode = currentNode.getParent();
+                    }
+
+                    // We also need to look at parents and figure out communication time.
+
+                    state = new State(currentTask, startTime, i);
+
+                    if (scheduleCost < state.getFinishTime()) {
+                        scheduleCost = state.getFinishTime();
+                    }
+
+                    newOpenNodeList.add(new Node(node, scheduleCost, state));
 
                     state.printState();
                     scheduled.put(schedulable.get(0), state);
                 }
-                else {
-                    for (int i=0; i<processorCount; i++) {
-                        state = new State(currentTask, node.getCost(), i);
-                        newOpenNodeList.add(new Node(node, state.getFinishTime(), state));
 
-                        state.printState();
-                        scheduled.put(schedulable.get(0), state);
-                    }
-                }
+                 */
+
             }
 
             openNodeList = newOpenNodeList;
-
-            // Parents visited constraint.
-            ArrayList<Edge> edges = currentTask.getChildren();
-            for (Edge edge: edges) {
-                Task candidate = edge.getChild();
-                boolean allParentsScheduled = true;
-                for (Task parent : candidate.getParents()) {
-                    if (!scheduled.containsKey(parent)) {
-                        allParentsScheduled = false;
-                    }
-                }
-
-                if (allParentsScheduled){
-                    schedulable.add(edge.getChild());
-                }
-            }
-
-            // Each task can only be scheduled once.
-            schedulable.remove(0);
         }
+    }
+
+    // Parents visited constraint.
+    private boolean checkParentsVisited(Task task, Map<Task, State> scheduled) {
+        for (Task parent: task.getParents()) {
+            if (!scheduled.containsKey(parent)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 
