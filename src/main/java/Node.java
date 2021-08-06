@@ -19,6 +19,11 @@ class Node {
         this.cost = cost;
     }
 
+    public Node(Node parent, State state) {
+        this.parent = parent;
+        this.state = state;
+    }
+
     /**
      * Constructor for the root node, sets time and processor to zero.
      * @param task
@@ -26,7 +31,6 @@ class Node {
     public Node(Task task) {
         this.parent = null;
         this.state = new State(task, 0, 0);
-        this.cost = task.getWeight();
     }
 
     public State getState() {
