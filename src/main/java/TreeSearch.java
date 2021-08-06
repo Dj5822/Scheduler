@@ -30,7 +30,21 @@ public class TreeSearch {
      */
     public Node aStar() {
         PriorityQueue<Node> openList = new PriorityQueue<>(new NodeComparator());
-        return openList.poll();
+        for (Task startTask : graph.getStartTasks()) {
+            Node rootNode = new Node(startTask);
+            rootNode.setCost(getBackwardsCost(rootNode) + startTask.getWeight());
+            openList.add(rootNode);
+        }
+        while (!openList.isEmpty()) {
+            Node node = openList.poll();
+            ScheduleData schedule = getScheduleData(node);
+            if (schedule.scheduled.size() == graph.getTasks().size()) {
+                return node;
+            }
+
+            expandNode(openList, node, schedule);
+        }
+        return null;
     }
 
     /**
@@ -43,14 +57,13 @@ public class TreeSearch {
      * @param queue the priority queue of nodes
      * @param node the node to be expanded
      */
-    private void expandNode(PriorityQueue<Node> queue, Node node) {
+    private void expandNode(PriorityQueue<Node> queue, Node node, ScheduleData schedule) {
 
         // attempt to minimise repeated branches by limiting duplicate empty processors
         if (processorsInUse < processorCount) {
             processorsInUse += 1;
         }
 
-        ScheduleData schedule = getScheduleData(node);
         // make a child node for every processor * schedulable task
         for (Task task : schedule.schedulable) {
             for (int processor = 0; processor < processorsInUse; processor++) {

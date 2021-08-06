@@ -31,7 +31,6 @@ class Node {
     public Node(Task task) {
         this.parent = null;
         this.state = new State(task, 0, 0);
-        this.cost = task.getWeight();
     }
 
     public State getState() {
