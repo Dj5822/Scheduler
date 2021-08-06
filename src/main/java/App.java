@@ -12,7 +12,7 @@ public class App {
          The number of processors.
          Should be passed in as a commandline argument later.
          */
-        int processorCount = 2;
+        int processorCount = 4;
 
         // Start searching the solutions tree.
         TreeSearch testSearch = new TreeSearch(graph, processorCount);

@@ -1,4 +1,3 @@
-import java.sql.Struct;
 import java.util.*;
 
 /**
@@ -9,7 +8,6 @@ public class TreeSearch {
 
     private Graph graph;
     private int processorCount;
-    private int processorsInUse;
 
     TreeSearch(Graph graph, int processorCount){
         this.graph = graph;
@@ -159,6 +157,12 @@ public class TreeSearch {
      * @param node the node to be expanded
      */
     private void expandNode(PriorityQueue<Node> queue, Node node, ScheduleData schedule) {
+        int processorsInUse = 0;
+        for (int i = 0; i < schedule.processorFinishTimes.length; i++) {
+            if (schedule.processorFinishTimes[i] > 0) {
+                processorsInUse++;
+            }
+        }
 
         // attempt to minimise repeated branches by limiting duplicate empty processors
         if (processorsInUse < processorCount) {
