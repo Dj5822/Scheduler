@@ -6,7 +6,7 @@ public class App {
         The name of the input graph should be passed in as an argument.
         Should be passed in as a commandline argument later.
          */
-        Graph graph = new Graph("examples/Nodes_7_OutTree.dot");
+        Graph graph = new Graph("examples/Nodes_11_OutTree.dot");
 
         /*
          The number of processors.
@@ -16,9 +16,9 @@ public class App {
 
         // Start searching the solutions tree.
         TreeSearch testSearch = new TreeSearch(graph, processorCount);
-        Node node = testSearch.bruteForceTest();
-        graph.generateOutputGraph(node);
 
-        //graph.printBottomLevels();
+        Node node = testSearch.aStar();
+        graph.generateOutputGraph(node);
+        graph.printBottomLevels();
     }
 }

@@ -9,6 +9,7 @@ public class TreeSearch {
 
     private Graph graph;
     private int processorCount;
+    private int processorsInUse;
 
     TreeSearch(Graph graph, int processorCount){
         this.graph = graph;
@@ -130,7 +131,21 @@ public class TreeSearch {
      */
     public Node aStar() {
         PriorityQueue<Node> openList = new PriorityQueue<>(new NodeComparator());
-        return openList.poll();
+        for (Task startTask : graph.getStartTasks()) {
+            Node rootNode = new Node(startTask);
+            rootNode.setCost(getBackwardsCost(rootNode) + startTask.getWeight());
+            openList.add(rootNode);
+        }
+        while (!openList.isEmpty()) {
+            Node node = openList.poll();
+            ScheduleData schedule = getScheduleData(node);
+            if (schedule.scheduled.size() == graph.getTasks().size()) {
+                return node;
+            }
+
+            expandNode(openList, node, schedule);
+        }
+        return null;
     }
 
     /**
@@ -138,13 +153,48 @@ public class TreeSearch {
      * child nodes are every viable schedule that we can reach by adding one
      * additional task to the current schedule (the input node)
      * Number of child nodes of a node is 
-     * (number of non-empty processors +1) * (number of child tasks)
+     * (number of non-empty processors +1) * (number of schedulable tasks)
      * 
      * @param queue the priority queue of nodes
      * @param node the node to be expanded
      */
-    private void expandNode(PriorityQueue queue, Node node) {
+    private void expandNode(PriorityQueue<Node> queue, Node node, ScheduleData schedule) {
 
+        // attempt to minimise repeated branches by limiting duplicate empty processors
+        if (processorsInUse < processorCount) {
+            processorsInUse += 1;
+        }
+
+        // make a child node for every processor * schedulable task
+        for (Task task : schedule.schedulable) {
+            for (int processor = 0; processor < processorsInUse; processor++) {
+                int startTime = schedule.processorFinishTimes[processor];
+                
+                // child should not be scheduled before parent finish time (+ communication time)
+                for (Task parentTask : task.getParents()) {
+                    State parentState = schedule.scheduled.get(parentTask);
+                    int parentFinishTime = parentState.getFinishTime();
+                    if (parentState.getProcessor() != processor) {
+                        parentFinishTime += task.getParentCommunicationTime(parentTask);
+                    }
+                    if (startTime < parentFinishTime) {
+                        startTime = parentFinishTime;
+                    }
+                }
+                State state = new State(task, startTime, processor);
+                Node newNode = new Node(node, state);
+
+                // forward cost is finish time of new schedule
+                int finishTime = state.getFinishTime();
+                for (int i = 0; i < schedule.processorFinishTimes.length; i++ ) {
+                    if (schedule.processorFinishTimes[i] > finishTime) {
+                        finishTime = schedule.processorFinishTimes[i];
+                    }
+                }
+                newNode.setCost(getBackwardsCost(newNode) + finishTime);
+                queue.add(newNode);
+            }
+        }
     }
 
     /**
@@ -169,18 +219,6 @@ public class TreeSearch {
         }
         return maxCost;
     }
-
-    /**
-     * Calculates the forwards cost for the input node
-     * 
-     * 
-     * @param node the node to appraise
-     * @return the forwards cost of the node
-     */
-    private int getForwardsCost(Node node) {
-        return 0; // Greedy search
-    }
-
 
     /**
      * Move up schedule, creating map of scheduled tasks to states
