@@ -148,6 +148,9 @@ public class Task {
         return parentCount() == 0;
     }
 
+    /**
+     * @return set of parent tasks
+     */
     public Set<Task> getParents() {
         return parentMap.keySet();
     }
