@@ -286,6 +286,13 @@ public class TreeSearch {
             }
         }
 
+        // add unscheduled start tasks to child set
+        for (Task startTask : graph.getStartTasks()) {
+            if (!scheduled.containsKey(startTask)) {
+                schedulable.add(startTask);
+            }
+        }
+
         ScheduleData scheduleData = new ScheduleData(schedulable, scheduled, processorFinishTimes);
         return scheduleData;
     }
