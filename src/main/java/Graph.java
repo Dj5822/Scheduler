@@ -139,4 +139,9 @@ public class Graph {
             }
         }
     }
+
+    public int getTaskCount() {
+        return tasks.size();
+    }
+
 }
