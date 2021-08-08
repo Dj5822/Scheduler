@@ -87,7 +87,9 @@ public class Task {
      * 
      * @return The Id of this task
      */
-    String getId(){ return id; }
+    String getId(){
+        return id; 
+    }
 
     /**
      * Gets the BottomLevel of the task, which is the 
@@ -95,7 +97,9 @@ public class Task {
      * 
      * @return The bottom level of this task
      */
-    Integer getBottomLevel() {return bottomLevel;}
+    Integer getBottomLevel() {
+        return bottomLevel;
+    }
 
     /**
      * Gets the weight of the task, which is the
@@ -103,7 +107,9 @@ public class Task {
      * 
      * @return the weight of this task
      */
-    int getWeight() {return weight;}
+    int getWeight() {
+        return weight;
+    }
 
     /**
      * Gets a list of the tasks children, as a list
@@ -153,6 +159,5 @@ public class Task {
      */
     public Set<Task> getParents() {
         return parentMap.keySet();
-    }
-    
+    }   
 }

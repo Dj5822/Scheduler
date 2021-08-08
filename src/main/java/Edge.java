@@ -24,14 +24,25 @@ public class Edge {
         this.communicationTime=communicationTime;
     }
 
+    /**
+     * @return This edges child task
+     */
     public Task getChild() {
         return child;
     }
 
+    /**
+     * @return This edges parent task
+     */
     public Task getParent() {
         return parent;
     }
 
-    public int getCommunicationTime() { return communicationTime; }
+    /**
+     * @return This edges communication time
+     */
+    public int getCommunicationTime() {
+        return communicationTime;
+    }
 
 }

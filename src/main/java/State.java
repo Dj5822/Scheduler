@@ -12,18 +12,30 @@ public class State {
         this.processor = processor;
     }
 
+    /**
+     * @return The start time for this scheduled task
+     */
     public int getStartTime() {
         return this.startTime;
     }
 
+    /**
+     * @return The finish time for this scheduled task
+     */
     public int getFinishTime() {
         return this.startTime + task.getWeight();
     }
 
+    /**
+     * @return The processor that the task is scheduled on
+     */
     public int getProcessor() {
         return this.processor;
     }
 
+    /**
+     * @return The task that is scheduled in this state
+     */
     public Task getTask() {
         return this.task;
     }

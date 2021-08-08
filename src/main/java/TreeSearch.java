@@ -120,7 +120,6 @@ public class TreeSearch {
         return true;
     }
 
-
     /**
      * Implementation of the A* algorithm, traversing the tree and creating a
      * viable schedule from it
@@ -232,6 +231,9 @@ public class TreeSearch {
      * and if parents exist in scheduled
      * 
      * if all parents are scheduled and child isn't, add to schedulable list
+     * 
+     * as this is done, create a list of processors, finding the finish time for each
+     * based on the max finish time of all tasks scheduled on the processor
      * 
      * @param node The node to get the lists of tasks from
      * 

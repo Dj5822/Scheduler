@@ -6,6 +6,10 @@ import com.paypal.digraph.parser.GraphParser;
 import java.io.*;
 import java.util.Collection;
 
+/**
+ * DotParser defines the parsing of the Dot format file
+ * that is provided as an input to the program
+ */
 public class DotParser extends GraphParser{
     private final String outputFile;
 
@@ -36,7 +40,6 @@ public class DotParser extends GraphParser{
         try {
             FileWriter writer = new FileWriter(outputFile);
             writer.write("digraph  \""+ outputFile.replace(".dot","") +"\" {\n");
-
             for (GraphNode graphNode : parseNodes()) {
                 //String attr = graphNode.getAttributes().toString().replace("{", "[").replace("}", "]");
                 String weight = "[Weight=" + graphNode.getAttribute("Weight").toString();

@@ -33,18 +33,30 @@ class Node {
         this.state = new State(task, 0, 0);
     }
 
+    /**
+     * @return This nodes corresponding scheduling state
+     */
     public State getState() {
         return this.state;
     }
 
+    /**
+     * @return The cost of this node
+     */
     public int getCost() {
         return this.cost;
     }
 
+    /**
+     * @param cost The cost of this node
+     */
     public void setCost(int cost) {
         this.cost = cost;
     }
 
+    /**
+     * @return The parent of this node
+     */
     public Node getParent() {
         return this.parent;
     }
