@@ -12,7 +12,7 @@ public class App {
         The name of the input graph should be passed in as an argument.
         Should be passed in as a commandline argument later.
          */
-        Graph graph = new Graph("examples/" + args[0]);
+        Graph graph = new Graph(args[0]);
 
         /*
          The number of processors.
@@ -25,7 +25,8 @@ public class App {
 
         Node node = testSearch.aStar();
         graph.generateOutputGraph(node);
-        graph.printBottomLevels();
+        System.out.println("output.dot generated.");
+        //graph.printBottomLevels();
     }
 
     public static void checkArgs(String[] args) throws IllegalArgumentException {
