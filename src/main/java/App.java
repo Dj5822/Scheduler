@@ -1,3 +1,7 @@
+/**
+ * The main class for the program, interacting with the other major classes 
+ * in order to create a final solution.
+ */
 public class App {
     public static void main(String[] args) {
 
@@ -29,6 +33,13 @@ public class App {
         //graph.printBottomLevels();
     }
 
+    /**
+     * Checks the args that are provided in the input to ensure that they are valid,
+     * throwing an exception if they are not
+     * 
+     * @param args The args to be checked
+     * @throws IllegalArgumentException an exception indicating that the args are not valid
+     */
     public static void checkArgs(String[] args) throws IllegalArgumentException {
 
         if (args.length != 2) { // exactly two args for Milestone 1
