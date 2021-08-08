@@ -25,7 +25,7 @@ public class App {
 
         Node node = testSearch.aStar();
         graph.generateOutputGraph(node);
-        System.out.println("output.dot generated.");
+        System.out.println("output file generated.");
         //graph.printBottomLevels();
     }
 

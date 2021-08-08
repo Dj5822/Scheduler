@@ -22,7 +22,7 @@ public class Graph {
      */
     public Graph(String inputFile) {
         try {
-            this.parser = new DotParser(new FileInputStream(inputFile), "output.dot");
+            this.parser = new DotParser(new FileInputStream(inputFile), inputFile.replaceAll("(.dot)$", "-output.dot"));
             tasks = new HashMap<>();
             nodes = new HashMap<>();
             setupGraph();
