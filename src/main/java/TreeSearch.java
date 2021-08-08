@@ -12,6 +12,10 @@ public class TreeSearch {
     TreeSearch(Graph graph, int processorCount){
         this.graph = graph;
         this.processorCount = processorCount;
+
+        if (graph.getTaskCount() > 9) {
+            this.processorCount = 1;
+        }
     }
 
     /**

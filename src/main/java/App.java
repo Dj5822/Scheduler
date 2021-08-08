@@ -22,7 +22,10 @@ public class App {
          The number of processors.
          Should be passed in as a commandline argument later.
          */
-        int processorCount = Integer.parseInt(args[1]);
+        int processorCount = 1;
+        if (!args[1].matches("1")) {
+            processorCount = 2;
+        }
 
         // Start searching the solutions tree.
         TreeSearch testSearch = new TreeSearch(graph, processorCount);
