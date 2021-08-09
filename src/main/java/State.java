@@ -15,6 +15,11 @@ public class State {
         this.processor = processor;
     }
 
+    public State(Task task, int processor) {
+        this.task = task;
+        this.processor = processor;
+    }
+
     public State(Task task) {
         this.task = task;
         this.startTime = 0;
@@ -59,8 +64,8 @@ class Schedule extends State {
      * @param processor processor assigned to parameter task
      * @param parentSchedule parent schedule to derive from
      */
-    public Schedule(Task task, int startTime, int processor, Schedule parentSchedule) {
-        super(task, startTime, processor);
+    public Schedule(Task task, int processor, Schedule parentSchedule) {
+        super(task, processor);
 
         scheduled = new HashMap<Task,State>(parentSchedule.getScheduledTasks());
         scheduled.put(task, this);
@@ -68,8 +73,28 @@ class Schedule extends State {
         schedulable = new ArrayList<Task>(parentSchedule.getSchedulableTasks());
         schedulable.remove(task);
 
-        processorFinishTimes = parentSchedule.getProcessorFinishTimes().clone();
-        processorFinishTimes[processor] = processorFinishTimes[getFinishTime()];
+        int[] parentTimes = parentSchedule.getProcessorFinishTimes();
+        if (processor < parentSchedule.getProcessorFinishTimes().length) {
+            processorFinishTimes = parentSchedule.getProcessorFinishTimes().clone();
+        } else {
+            processorFinishTimes = new int[processor];
+            System.arraycopy(parentTimes, 0, processorFinishTimes, 0, parentTimes.length);
+        }
+
+        int startTime = processorFinishTimes[processor];
+        for (Task parentTask : task.getParents()) {
+            State parentState = getTaskState(parentTask);
+            int parentFinishTime = parentState.getFinishTime();
+            if (parentState.getProcessor() != processor) {
+                parentFinishTime += task.getParentCommunicationTime(parentTask);
+            }
+            if (startTime < parentFinishTime) {
+                startTime = parentFinishTime;
+            }
+        }
+        this.startTime = startTime;
+
+        processorFinishTimes[processor] = getFinishTime();
 
         // mark children whose parents are all scheduled for scheduling
         for (Edge childEdge : task.getChildren()) {
@@ -93,7 +118,7 @@ class Schedule extends State {
      * @param processorCount number of processors to schedule for
      * @param startTasks array of every start task
      */
-    public Schedule(Task task, short processorCount, ArrayList<Task> startTasks) {
+    public Schedule(Task task, int processorCount, ArrayList<Task> startTasks) {
         super(task);
 
         scheduled = new HashMap<Task,State>();
@@ -102,7 +127,7 @@ class Schedule extends State {
         schedulable = new ArrayList<Task>(startTasks);
         schedulable.remove(task);
         
-        processorFinishTimes = new int[processorCount];
+        processorFinishTimes = new int[1];
         processorFinishTimes[processor] = processorFinishTimes[getFinishTime()];
 
         // mark children whose parents are all scheduled for scheduling
@@ -139,5 +164,15 @@ class Schedule extends State {
 
     public int[] getProcessorFinishTimes() {
         return processorFinishTimes;
+    }
+
+    public int getScheduleFinishTime() {
+        int max = 0;
+        for (int i = 0; i < processorFinishTimes.length; i++) {
+            if (max < processorFinishTimes[i]) {
+                max = processorFinishTimes[i];
+            }
+        }
+        return max;
     }
 }
