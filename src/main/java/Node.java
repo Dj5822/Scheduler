@@ -4,10 +4,10 @@ import java.util.Map.Entry;
 
 abstract class Node<S extends State, N extends Node<S,N>> {
     protected N parent;
-    protected int cost;
+    protected short cost;
     protected S state;
 
-    public Node(N parent, int cost, S state) {
+    public Node(N parent, short cost, S state) {
         this.parent = parent;
         this.state = state;
         this.cost = cost;
@@ -27,11 +27,11 @@ abstract class Node<S extends State, N extends Node<S,N>> {
         return this.state;
     }
 
-    public int getCost() {
+    public short getCost() {
         return this.cost;
     }
 
-    public void setCost(int cost) {
+    public void setCost(short cost) {
         this.cost = cost;
     }
 
@@ -94,13 +94,13 @@ abstract class Node<S extends State, N extends Node<S,N>> {
      * @param node the node to appraise
      * @return the backwards cost of the node
      */
-    protected int getBackwardsCost() {
-        int maxCost = 0;
+    protected short getBackwardsCost() {
+        short maxCost = 0;
         Node<S,N> node = this;
         while (node != null) {
-            int bottomLevel = node.getState().getTask().getBottomLevel();
-            int startTime = node.getState().getStartTime();
-            int pathCost = bottomLevel + startTime;
+            short bottomLevel = node.getState().getTask().getBottomLevel();
+            short startTime = node.getState().getStartTime();
+            short pathCost = bottomLevel + startTime;
 
             if (pathCost > maxCost) {
                 maxCost = pathCost;
@@ -117,7 +117,7 @@ abstract class Node<S extends State, N extends Node<S,N>> {
  * A Node in the search tree. Represents a possible scheduling State for a single Task.
  */
 class TaskNode extends Node<State,TaskNode> {
-    public TaskNode(TaskNode parent, int cost, State state) {
+    public TaskNode(TaskNode parent, short cost, State state) {
         super(parent, cost, state);
     }
 
@@ -140,9 +140,9 @@ class TaskNode extends Node<State,TaskNode> {
 }
 
 class BoundedNode extends Node<State,BoundedNode> {
-    private HashMap<State, Integer> forgottenMap = new HashMap<State, Integer>();
+    private HashMap<State, Short> forgottenMap = new HashMap<State, Short>();
     
-    public BoundedNode(BoundedNode parent, int cost, State state) {
+    public BoundedNode(BoundedNode parent, short cost, State state) {
         super(parent, cost, state);
     }
     public BoundedNode(BoundedNode parent,State state) {
@@ -175,7 +175,7 @@ class BoundedNode extends Node<State,BoundedNode> {
 
     public ArrayList<BoundedNode> getForgottenSuccessors() {
         ArrayList<BoundedNode> successors = new ArrayList<BoundedNode>();
-        for (Entry<State, Integer> entry : forgottenMap.entrySet()) {
+        for (Entry<State, Short> entry : forgottenMap.entrySet()) {
             BoundedNode successor = new BoundedNode(this, entry.getValue(), entry.getKey());
             successors.add(successor);
         }

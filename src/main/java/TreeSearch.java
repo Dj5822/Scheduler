@@ -83,7 +83,7 @@ public class TreeSearch {
                         }
 
                         State newState = new State(task, startTime, i);
-                        int newCost = Math.max(node.getCost(), newState.getFinishTime());
+                        short newCost = (short) Math.max(node.getCost(), newState.getFinishTime());
 
                         newOpenNodeList.add(new TaskNode(node, newCost, newState));
                     }
@@ -131,7 +131,7 @@ public class TreeSearch {
         PriorityQueue<TaskNode> openList = new PriorityQueue<TaskNode>(new NodeComparator<TaskNode>());
         for (Task startTask : graph.getStartTasks()) {
             TaskNode rootNode = new TaskNode(new State(startTask));
-            rootNode.setCost(rootNode.getBackwardsCost() + startTask.getWeight());
+            rootNode.setCost((short) (rootNode.getBackwardsCost() + startTask.getWeight()));
             openList.add(rootNode);
         }
         while (!openList.isEmpty()) {
@@ -142,7 +142,7 @@ public class TreeSearch {
             }
 
             node.expandNode(schedule, processorCount);
-            node.setCost(schedule.getBackwardsCost() + schedule.getFinishTime());
+            node.setCost((short) (schedule.getBackwardsCost() + schedule.getFinishTime()));
         }
         return null;
     }
@@ -274,13 +274,13 @@ public class TreeSearch {
             for (BoundedNode successor : successorList) {
                 Schedule successorSchedule = new Schedule(successor.getState().getTask(), successor.getState().getProcessor(), schedule);
                 if (bestNode.hasForgottenSuccessor(successor)) {
-                    successor.setCost(bestNode.updateForgottenSuccessor(successor));
+                    successor.setCost((short) bestNode.updateForgottenSuccessor(successor));
                 } else if (successorSchedule.getScheduledTasks().size() != graph.getTasks().size() &&
                  (successorSchedule.getSchedulableTasks().isEmpty() ||
                   successorSchedule.getScheduledTasks().size() >= nodeLimit-1)) {
-                    successor.setCost(Integer.MAX_VALUE);
+                    successor.setCost((short) Integer.MAX_VALUE);
                 } else {
-                    successor.setCost(successorSchedule.getBackwardsCost() + successorSchedule.getFinishTime());
+                    successor.setCost((short) (successorSchedule.getBackwardsCost() + successorSchedule.getFinishTime()));
                     if (bestNode.getCost() > successor.getCost()) {
                         successor.setCost(bestNode.getCost());
                     }

@@ -18,7 +18,7 @@ public class Task {
     // The tasks that this task points towards.
     private final ArrayList<Edge> children;
 
-    private Integer bottomLevel;
+    private Short bottomLevel;
 
 
     /**
@@ -40,7 +40,7 @@ public class Task {
      * Recursively set the bottom level of this task and all children
      * Assumes unset bottom levels are null
      */
-    public Integer findBottomLevel() {
+    public Short findBottomLevel() {
         
         // bottom level may have already been set by a parent task
         // do not recalculate, as bottom level never changes
@@ -49,18 +49,18 @@ public class Task {
         }
         
         // find longest path length
-        int criticalPathTime = 0;
+        short criticalPathTime = 0;
         for (Edge childEdge : getChildren()) {
             Task child = childEdge.getChild();
             // recursively call this function on all children
-            int pathTime = child.findBottomLevel();
+            short pathTime = child.findBottomLevel();
             // update longest path
             if (pathTime > criticalPathTime) {
                 criticalPathTime = pathTime;
             }
         }
 
-        bottomLevel = criticalPathTime + weight;
+        bottomLevel = (short) (criticalPathTime + weight);
         return getBottomLevel();
     }
 
@@ -95,7 +95,7 @@ public class Task {
      * 
      * @return The bottom level of this task
      */
-    Integer getBottomLevel() {return bottomLevel;}
+    Short getBottomLevel() {return bottomLevel;}
 
     /**
      * Gets the weight of the task, which is the
