@@ -2,42 +2,29 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-/**
- * A Node in the search tree. Represents a possible scheduling State for a single Task.
- */
-class Node {
-    protected Node parent;
+abstract class Node<S extends State, N extends Node<S,N>> {
+    protected N parent;
     protected int cost;
-    protected State state;
+    protected S state;
 
-    /**
-     * Constructor for a search tree node
-     * @param parent
-     * @param cost
-     * @param state
-     */
-    public Node(Node parent, int cost, State state) {
+    public Node(N parent, int cost, S state) {
         this.parent = parent;
         this.state = state;
         this.cost = cost;
     }
 
-    public Node(Node parent, State state) {
+    public Node(N parent, S state) {
         this.parent = parent;
         this.state = state;
     }
 
-    /**
-     * Constructor for the root node, sets time and processor to zero.
-     * @param task
-     */
-    public Node(Task task) {
+    public Node(S state) {
         this.parent = null;
-        this.state = new State(task, 0, 1);
+        this.state = state;
     }
 
-    public State getState() {
-        return (Schedule) this.state;
+    public S getState() {
+        return this.state;
     }
 
     public int getCost() {
@@ -48,54 +35,43 @@ class Node {
         this.cost = cost;
     }
 
-    public Node getParent() {
+    public N getParent() {
         return this.parent;
-    }
-
-    /**
-     * Calculates the estimated remaining time
-     * Max (start time of scheduled tasks plus their bottom level)
-     * Second example heuristic from lectures
-     * @return the backwards cost of the node
-     */
-    protected int getBackwardsCost() {
-        int maxCost = 0;
-        Node node = this;
-        while (node != null) {
-            int bottomLevel = node.getState().getTask().getBottomLevel();
-            int startTime = node.getState().getStartTime();
-            int pathCost = bottomLevel + startTime;
-
-            if (pathCost > maxCost) {
-                maxCost = pathCost;
-            }
-            node = getParent();
-        }
-        return maxCost;
     }
 }
 
-class BoundedNode extends Node {
-    private Schedule state;
-    private HashMap<Schedule, Integer> forgottenMap = new HashMap<Schedule, Integer>();
-    
-    public BoundedNode(Node parent, int cost, Schedule state) {
+/**
+ * A Node in the search tree. Represents a possible scheduling State for a single Task.
+ */
+class TaskNode extends Node<State,TaskNode> {
+    public TaskNode(TaskNode parent, int cost, State state) {
         super(parent, cost, state);
     }
-    public BoundedNode(Node parent, Schedule state) {
+
+    public TaskNode(TaskNode parent, State state) {
         super(parent, state);
-        setCost(calculateCost());
-    }
-    public BoundedNode(Task task) {
-        super(task);
     }
 
-    public Schedule getState() {
-        return state;
+    public TaskNode(State state) {
+        super(state);
+    }
+}
+
+class BoundedNode extends Node<Schedule,BoundedNode> {
+    private HashMap<Schedule, Integer> forgottenMap = new HashMap<Schedule, Integer>();
+    
+    public BoundedNode(BoundedNode parent, int cost, Schedule state) {
+        super(parent, cost, state);
+    }
+    public BoundedNode(BoundedNode parent,Schedule state) {
+        super(parent, state);
+    }
+    public BoundedNode(Schedule state) {
+        super(state);
     }
 
     public boolean hasBeenExpanded() {
-        return forgottenMap.isEmpty();
+        return !forgottenMap.isEmpty();
     }
 
     public int updateForgottenSuccessor(BoundedNode node) {
@@ -108,8 +84,15 @@ class BoundedNode extends Node {
         return forgottenMap.containsKey(node.getState());
     }
 
-    private int calculateCost() {
-        return getBackwardsCost() + state.getScheduleFinishTime();
+    public void addForgottenSuccessor(BoundedNode node) {
+        if (cost > node.getCost() || forgottenMap.isEmpty()) {
+            cost = node.getCost();
+        }
+        forgottenMap.put(node.getState(), node.getCost());
+    }
+
+    public int calculateCost() {
+        return state.getBackwardsCost() + state.getScheduleFinishTime();
     }
 
     public ArrayList<BoundedNode> getForgottenSuccessors() {
@@ -138,4 +121,5 @@ class BoundedNode extends Node {
 
         return successors;
     }
+
 }

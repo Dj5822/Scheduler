@@ -56,6 +56,7 @@ class Schedule extends State {
     private HashMap<Task,State> scheduled;
     private ArrayList<Task> schedulable;
     private int[] processorFinishTimes;
+    private int backwardsCost = 0;
 
     /**
      * Constructor for a schedule derived from a parent schedule
@@ -74,10 +75,10 @@ class Schedule extends State {
         schedulable.remove(task);
 
         int[] parentTimes = parentSchedule.getProcessorFinishTimes();
-        if (processor < parentSchedule.getProcessorFinishTimes().length) {
+        if (processor + 1 < parentSchedule.getProcessorFinishTimes().length) {
             processorFinishTimes = parentSchedule.getProcessorFinishTimes().clone();
         } else {
-            processorFinishTimes = new int[processor];
+            processorFinishTimes = new int[processor + 1];
             System.arraycopy(parentTimes, 0, processorFinishTimes, 0, parentTimes.length);
         }
 
@@ -95,6 +96,11 @@ class Schedule extends State {
         this.startTime = startTime;
 
         processorFinishTimes[processor] = getFinishTime();
+
+        int tempBackwardsCost = startTime + task.getBottomLevel();
+        if (tempBackwardsCost > backwardsCost) {
+            backwardsCost = tempBackwardsCost;
+        }
 
         // mark children whose parents are all scheduled for scheduling
         for (Edge childEdge : task.getChildren()) {
@@ -128,7 +134,9 @@ class Schedule extends State {
         schedulable.remove(task);
         
         processorFinishTimes = new int[1];
-        processorFinishTimes[processor] = processorFinishTimes[getFinishTime()];
+        processorFinishTimes[processor] = getFinishTime();
+
+        backwardsCost = startTime + task.getBottomLevel();
 
         // mark children whose parents are all scheduled for scheduling
         for (Edge childEdge : task.getChildren()) {
@@ -164,6 +172,10 @@ class Schedule extends State {
 
     public int[] getProcessorFinishTimes() {
         return processorFinishTimes;
+    }
+
+    public int getBackwardsCost() {
+        return backwardsCost;
     }
 
     public int getScheduleFinishTime() {
