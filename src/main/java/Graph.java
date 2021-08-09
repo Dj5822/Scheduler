@@ -49,7 +49,7 @@ public class Graph {
     private void assignTasks() {
         // create tasks from parsed nodes
         for (GraphNode node : parser.parseNodes()) {
-            int weight = Integer.parseInt((String) node.getAttribute("Weight"));
+            short weight = Short.parseShort((String) node.getAttribute("Weight"));
             Task task = new Task(weight, node.getId());
             tasks.put(node.getId(), task);
             nodes.put(node.getId(), node);

@@ -21,7 +21,7 @@ public class App {
         // Start searching the solutions tree.
         TreeSearch testSearch = new TreeSearch(graph, processorCount);
 
-        Node<?,?> node = testSearch.smastarplus(7500000);
+        Node<?,?> node = testSearch.smastarplus(2000000000);
         graph.generateOutputGraph(node);
         graph.printBottomLevels();
     }

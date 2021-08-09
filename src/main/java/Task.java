@@ -7,7 +7,7 @@ import java.util.Set;
  * it stores its bottomlevel and weight as well as the list of child edges and map of parent tasks
  */
 public class Task {
-    private final int weight;
+    private final short weight;
     private final String id;
 
     /*
@@ -26,7 +26,7 @@ public class Task {
      * @param weight the amount of time needed for the task to finish
      * @param id the character used to identify the task.
      */
-    Task(int weight, String id) {
+    Task(short weight, String id) {
         this.weight = weight;
         this.id = id;
 
@@ -103,7 +103,7 @@ public class Task {
      * 
      * @return the weight of this task
      */
-    int getWeight() {return weight;}
+    short getWeight() {return weight;}
 
     /**
      * Gets a list of the tasks children, as a list

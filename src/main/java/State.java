@@ -1,21 +1,18 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-
 /**
  * Represents a possible scheduling State for a single Task.
  **/
 public class State {
     protected Task task;
-    protected int startTime;
-    protected int processor;
+    protected short startTime;
+    protected byte processor;
 
-    public State(Task task, int startTime, int processor) {
+    public State(Task task, short startTime, byte processor) {
         this.task = task;
         this.startTime = startTime;
         this.processor = processor;
     }
 
-    public State(Task task, int processor) {
+    public State(Task task, byte processor) {
         this.task = task;
         this.processor = processor;
     }
@@ -26,15 +23,15 @@ public class State {
         this.processor = 0;
     }
 
-    public int getStartTime() {
+    public short getStartTime() {
         return this.startTime;
     }
 
-    public int getFinishTime() {
-        return this.startTime + task.getWeight();
+    public short getFinishTime() {
+        return (short) (this.startTime + task.getWeight());
     }
 
-    public int getProcessor() {
+    public byte getProcessor() {
         return this.processor;
     }
 
@@ -50,141 +47,4 @@ public class State {
         System.out.println();
     }
 
-}
-
-class Schedule extends State {
-    private HashMap<Task,State> scheduled;
-    private ArrayList<Task> schedulable;
-    private int[] processorFinishTimes;
-    private int backwardsCost = 0;
-
-    /**
-     * Constructor for a schedule derived from a parent schedule
-     * @param task most recently scheduled task
-     * @param startTime start time of parameter task
-     * @param processor processor assigned to parameter task
-     * @param parentSchedule parent schedule to derive from
-     */
-    public Schedule(Task task, int processor, Schedule parentSchedule) {
-        super(task, processor);
-
-        scheduled = new HashMap<Task,State>(parentSchedule.getScheduledTasks());
-        scheduled.put(task, this);
-
-        schedulable = new ArrayList<Task>(parentSchedule.getSchedulableTasks());
-        schedulable.remove(task);
-
-        int[] parentTimes = parentSchedule.getProcessorFinishTimes();
-        if (processor + 1 < parentSchedule.getProcessorFinishTimes().length) {
-            processorFinishTimes = parentSchedule.getProcessorFinishTimes().clone();
-        } else {
-            processorFinishTimes = new int[processor + 1];
-            System.arraycopy(parentTimes, 0, processorFinishTimes, 0, parentTimes.length);
-        }
-
-        int startTime = processorFinishTimes[processor];
-        for (Task parentTask : task.getParents()) {
-            State parentState = getTaskState(parentTask);
-            int parentFinishTime = parentState.getFinishTime();
-            if (parentState.getProcessor() != processor) {
-                parentFinishTime += task.getParentCommunicationTime(parentTask);
-            }
-            if (startTime < parentFinishTime) {
-                startTime = parentFinishTime;
-            }
-        }
-        this.startTime = startTime;
-
-        processorFinishTimes[processor] = getFinishTime();
-
-        int tempBackwardsCost = startTime + task.getBottomLevel();
-        if (tempBackwardsCost > backwardsCost) {
-            backwardsCost = tempBackwardsCost;
-        }
-
-        // mark children whose parents are all scheduled for scheduling
-        for (Edge childEdge : task.getChildren()) {
-            Task child = childEdge.getChild();
-            boolean allParentsScheduled = true;
-            for  (Task parentTask : child.getParents()) {
-                if (!taskisScheduled(parentTask)) {
-                    allParentsScheduled = false;
-                    break;
-                }
-            }
-            if (allParentsScheduled) {
-                schedulable.add(child);
-            }
-        }
-    }
-
-    /**
-     * Constructor for a start task schedule
-     * @param task start task
-     * @param processorCount number of processors to schedule for
-     * @param startTasks array of every start task
-     */
-    public Schedule(Task task, int processorCount, ArrayList<Task> startTasks) {
-        super(task);
-
-        scheduled = new HashMap<Task,State>();
-        scheduled.put(task, this);
-
-        schedulable = new ArrayList<Task>(startTasks);
-        schedulable.remove(task);
-        
-        processorFinishTimes = new int[1];
-        processorFinishTimes[processor] = getFinishTime();
-
-        backwardsCost = startTime + task.getBottomLevel();
-
-        // mark children whose parents are all scheduled for scheduling
-        for (Edge childEdge : task.getChildren()) {
-            Task child = childEdge.getChild();
-            boolean allParentsScheduled = true;
-            for  (Task parentTask : child.getParents()) {
-                if (!taskisScheduled(parentTask)) {
-                    allParentsScheduled = false;
-                    break;
-                }
-            }
-            if (allParentsScheduled) {
-                schedulable.add(child);
-            }
-        }
-    }
-
-    public boolean taskisScheduled(Task task) {
-        return scheduled.containsKey(task);
-    }
-
-    public State getTaskState(Task task) {
-        return scheduled.get(task);
-    }
-
-    public HashMap<Task,State> getScheduledTasks() {
-        return scheduled;
-    }
-
-    public ArrayList<Task> getSchedulableTasks() {
-        return schedulable;
-    }
-
-    public int[] getProcessorFinishTimes() {
-        return processorFinishTimes;
-    }
-
-    public int getBackwardsCost() {
-        return backwardsCost;
-    }
-
-    public int getScheduleFinishTime() {
-        int max = 0;
-        for (int i = 0; i < processorFinishTimes.length; i++) {
-            if (max < processorFinishTimes[i]) {
-                max = processorFinishTimes[i];
-            }
-        }
-        return max;
-    }
 }
