@@ -100,6 +100,15 @@ public class Graph {
         return rootTasks;
     }
 
+    public Task getDummyStart() {
+        Task dummy = new Task(0, "%%%");
+        dummy.findBottomLevel();
+        for (Task startTask : getStartTasks()) {
+            dummy.addChild(new Edge(startTask, dummy, 0));
+        }
+        return dummy;
+    }
+
     /**
      * Converts the graph back into a dot file.
      * @param node used to find processor and start times.
