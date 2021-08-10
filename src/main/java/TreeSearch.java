@@ -131,18 +131,16 @@ public class TreeSearch {
         PriorityQueue<TaskNode> openList = new PriorityQueue<TaskNode>(new NodeComparator<TaskNode>());
         for (Task startTask : graph.getStartTasks()) {
             TaskNode rootNode = new TaskNode(new State(startTask));
-            rootNode.setCost((short) (rootNode.getBackwardsCost() + startTask.getWeight()));
             openList.add(rootNode);
         }
         while (!openList.isEmpty()) {
             TaskNode node = openList.poll();
             Schedule schedule = getScheduleData(node);
-            if (schedule.getScheduledTasks().size() == graph.getTasks().size()) {
+            if (node.getDepth() == graph.getTasks().size()) {
                 return node;
             }
 
-            node.expandNode(schedule, processorCount);
-            node.setCost((short) (schedule.getBackwardsCost() + schedule.getFinishTime()));
+            openList.addAll(node.getSuccessors(schedule, processorCount));
         }
         return null;
     }
@@ -240,13 +238,13 @@ public class TreeSearch {
      * @return a node that represents a complete schedule
      */
     public BoundedNode smastarplus(long nodeLimit) {
-        long nodeCount = 0;
         // add start task nodes to open list
         DualOpenList openList = new DualOpenList(new NodeComparator<BoundedNode>());
         for (Task task : graph.getStartTasks()) {
             State state = new State(task);
-            openList.add(new BoundedNode(state));
-            nodeCount++;
+            BoundedNode rootNode = new BoundedNode(state);
+            rootNode.setCost((short) ((short) state.getFinishTime() + (short)rootNode.getBackwardsCost()));
+            openList.add(rootNode);
         }
 
         while (!openList.isEmpty()) {
@@ -286,13 +284,11 @@ public class TreeSearch {
                     }
                 }
                 openList.add(successor);
-                nodeCount++;
             }
             
             // cull worst leaves
-            while (nodeCount > nodeLimit) {
+            while (openList.size() > nodeLimit) {
                 openList.cull();
-                nodeCount--;
             }
         }
         return null;
@@ -338,12 +334,11 @@ public class TreeSearch {
                 worstNode = cullList.poll();
                 cullList.add(temp);
             }
-
             super.remove(worstNode);
 
             BoundedNode parent = worstNode.getParent();
-            parent.addForgottenSuccessor(worstNode);
-            if (!contains(parent)) {
+            if (parent != null) {
+                parent.addForgottenSuccessor(worstNode);
                 add(parent);
             }
         }
@@ -357,4 +352,52 @@ public class TreeSearch {
             }
         }
     }
+
+    public TaskNode idaStar() {
+        // add start task nodes to open list
+        TaskNode dummy = new TaskNode(new State(graph.getDummyStart()));
+        short bound = dummy.getBackwardsCost();
+        LinkedList<TaskNode> path = new LinkedList<TaskNode>();
+        path.add(dummy);
+        while (true) {
+            Short t = dfs(path, (short)0, bound);
+            if (t == null) {
+                return path.getLast();
+            }
+            if (t == Short.MAX_VALUE) {
+                return null;
+            }
+            bound = t;
+        }
+    }
+
+    private Short dfs(LinkedList<TaskNode> path, short g, short bound) {
+        TaskNode node = path.getLast();
+        Short f = (short) (g + node.getBackwardsCost());
+        if (f > bound) {
+            return f;
+        }
+        Schedule schedule = getScheduleData(node);
+        if (schedule.getScheduledTasks().size() == graph.getTasks().size()) {
+            return null;
+        }
+        Short min = Short.MAX_VALUE;
+        for (TaskNode successor : node.getSuccessors(schedule, processorCount)) {
+            path.add(successor);
+            short successorCost = successor.getState().getFinishTime();
+            if (schedule.getFinishTime() >= successorCost) {
+                successorCost = (short) schedule.getFinishTime();
+            }
+            Short t = dfs(path, (short) (g - schedule.getFinishTime() + successorCost) , bound);
+            if (t == null) {
+                return null;
+            }
+            if (t < min) {
+                min = t;
+            }
+            path.removeLast();
+        }
+        return min;
+    }
+
 }

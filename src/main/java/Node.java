@@ -6,21 +6,25 @@ abstract class Node<S extends State, N extends Node<S,N>> {
     protected N parent;
     protected short cost;
     protected S state;
+    protected byte depth;
 
     public Node(N parent, short cost, S state) {
         this.parent = parent;
         this.state = state;
         this.cost = cost;
+        this.depth = (byte) (parent.depth + 1);
     }
 
     public Node(N parent, S state) {
         this.parent = parent;
         this.state = state;
+        this.depth = (byte) (parent.depth + 1);
     }
 
     public Node(S state) {
         this.parent = null;
         this.state = state;
+        this.depth = 1;
     }
 
     public S getState() {
@@ -37,6 +41,10 @@ abstract class Node<S extends State, N extends Node<S,N>> {
 
     public N getParent() {
         return this.parent;
+    }
+
+    public byte getDepth() {
+        return depth;
     }
 
     /**
@@ -100,7 +108,7 @@ abstract class Node<S extends State, N extends Node<S,N>> {
         while (node != null) {
             short bottomLevel = node.getState().getTask().getBottomLevel();
             short startTime = node.getState().getStartTime();
-            short pathCost = bottomLevel + startTime;
+            short pathCost = (short) (bottomLevel + startTime);
 
             if (pathCost > maxCost) {
                 maxCost = pathCost;
@@ -117,16 +125,23 @@ abstract class Node<S extends State, N extends Node<S,N>> {
  * A Node in the search tree. Represents a possible scheduling State for a single Task.
  */
 class TaskNode extends Node<State,TaskNode> {
+
     public TaskNode(TaskNode parent, short cost, State state) {
         super(parent, cost, state);
     }
 
     public TaskNode(TaskNode parent, State state) {
         super(parent, state);
+        short cost = state.getFinishTime();
+        if (parent.getCost() > cost) {
+            cost = parent.getCost();
+        }
+        this.cost = (short) (cost + getBackwardsCost());
     }
 
     public TaskNode(State state) {
         super(state);
+        this.cost = (short) (getBackwardsCost() + state.getFinishTime());
     }
 
     public ArrayList<TaskNode> getSuccessors(Schedule schedule, int processorCount) {

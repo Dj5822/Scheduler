@@ -42,6 +42,16 @@ public class Graph {
         setBottomLevels();
     }
 
+    public Task getDummyStart() {
+        Task dummy = new Task((short)0, "Dummy");
+        dummy.findBottomLevel();
+        for (Task startTask : getStartTasks()) {
+            Edge fakeEdge = new Edge(startTask, dummy, 0);
+            dummy.addChild(fakeEdge);
+        }
+        return dummy;
+    }
+
     /**
      * Uses the information from DotParser to
      * create graph tasks.
@@ -108,7 +118,6 @@ public class Graph {
         while (node != null) {
             State state = node.getState();
             Task task = state.getTask();
-
             GraphNode mappedNode = nodes.get(task.getId());
             if (mappedNode != null) {
                 mappedNode.setAttribute("Start",state.getStartTime());
