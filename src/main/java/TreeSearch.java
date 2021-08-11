@@ -12,10 +12,6 @@ public class TreeSearch {
     TreeSearch(Graph graph, int processorCount){
         this.graph = graph;
         this.processorCount = processorCount;
-
-        if (graph.getTaskCount() > 9) {
-            this.processorCount = 1;
-        }
     }
 
     /**
@@ -144,7 +140,7 @@ public class TreeSearch {
                 return node;
             }
 
-            expandNode(openList, node, schedule);
+            openList.addAll(expandNode(node, schedule));
         }
         return null;
     }
@@ -159,8 +155,9 @@ public class TreeSearch {
      * @param queue the priority queue of nodes
      * @param node the node to be expanded
      */
-    private void expandNode(PriorityQueue<Node> queue, Node node, ScheduleData schedule) {
+    private ArrayList<Node> expandNode(Node node, ScheduleData schedule) {
         int processorsInUse = 0;
+        ArrayList<Node> nodeList = new ArrayList<Node>();
         for (int i = 0; i < schedule.processorFinishTimes.length; i++) {
             if (schedule.processorFinishTimes[i] > 0) {
                 processorsInUse++;
@@ -199,9 +196,10 @@ public class TreeSearch {
                     }
                 }
                 newNode.setCost(getBackwardsCost(newNode) + finishTime);
-                queue.add(newNode);
+                nodeList.add(newNode);
             }
         }
+        return nodeList;
     }
 
     /**
@@ -316,6 +314,15 @@ public class TreeSearch {
             this.scheduled=scheduled;
             this.processorFinishTimes = processorFinishTimes;
         }
+        public int getFinishTime() {
+            int max = 0;
+            for (int i : processorFinishTimes) {
+                if (i > max) {
+                    max = i;
+                }
+            }
+            return max;
+        }
     }
 
     /**
@@ -329,5 +336,51 @@ public class TreeSearch {
         }
     }
     
+    public Node idaStar() {
+        // add start task nodes to open list
+        Node dummy = new Node(graph.getDummyStart());
+        int bound = getBackwardsCost(dummy);
+        LinkedList<Node> path = new LinkedList<Node>();
+        path.add(dummy);
+        while (true) {
+            Integer t = dfs(path, 0, bound);
+            if (t == null) {
+                return path.getLast();
+            }
+            if (t == Integer.MAX_VALUE) {
+                return null;
+            }
+            bound = t;
+        }
+    }
+
+    private Integer dfs(LinkedList<Node> path, int g, int bound) {
+        Node node = path.getLast();
+        Integer f = (g + getBackwardsCost(node));
+        if (f > bound) {
+            return f;
+        }
+        ScheduleData schedule = getScheduleData(node);
+        if (schedule.scheduled.size() - 1 == graph.getTasks().size()) {
+            return null;
+        }
+        Integer min = Integer.MAX_VALUE;
+        for (Node successor : expandNode(node, schedule)) {
+            path.add(successor);
+            int successorCost = successor.getState().getFinishTime();
+            if (schedule.getFinishTime() >= successorCost) {
+                successorCost = schedule.getFinishTime();
+            }
+            Integer t = dfs(path, g - schedule.getFinishTime() + successorCost, bound);
+            if (t == null) {
+                return null;
+            }
+            if (t < min) {
+                min = t;
+            }
+            path.removeLast();
+        }
+        return min;
+    }
 
 }

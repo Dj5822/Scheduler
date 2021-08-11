@@ -20,9 +20,9 @@ public class Graph {
      * Creates a graph based on a dot file.
      * @param inputFile the dot file used to create the graph.
      */
-    public Graph(String inputFile) {
+    public Graph(String inputFile, String outputFileName) {
         try {
-            this.parser = new DotParser(new FileInputStream(inputFile), inputFile.replaceAll("(.dot)$", "-output.dot"));
+            this.parser = new DotParser(new FileInputStream(inputFile), outputFileName);
             tasks = new HashMap<>();
             nodes = new HashMap<>();
             setupGraph();
@@ -98,6 +98,15 @@ public class Graph {
             }
         }
         return rootTasks;
+    }
+
+    public Task getDummyStart() {
+        Task dummy = new Task(0, "%%%");
+        dummy.findBottomLevel();
+        for (Task startTask : getStartTasks()) {
+            dummy.addChild(new Edge(startTask, dummy, 0));
+        }
+        return dummy;
     }
 
     /**

@@ -43,6 +43,9 @@ public class DotParser extends GraphParser{
             for (GraphNode graphNode : parseNodes()) {
                 //String attr = graphNode.getAttributes().toString().replace("{", "[").replace("}", "]");
                 String weight = "[Weight=" + graphNode.getAttribute("Weight").toString();
+                if (graphNode.getAttribute("Start") == null) {
+                    continue;
+                }
                 String start = ",Start=" + graphNode.getAttribute("Start").toString();
                 String processor = ",Processor=" + graphNode.getAttribute("Processor").toString();
                 String attr = weight + start + processor + "]";

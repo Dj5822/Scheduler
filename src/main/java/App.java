@@ -12,11 +12,21 @@ public class App {
             return;
         }
 
+        String outputFileName = "";
+        if (args.length == 4) {
+            if (args[2].equals("-o")) {
+                outputFileName = args[3] + ".dot";
+            }
+        }
+        else {
+            outputFileName = args[0].replaceAll("(.dot)$", "-output.dot");
+        }
+
         /*
         The name of the input graph should be passed in as an argument.
         Should be passed in as a commandline argument later.
          */
-        Graph graph = new Graph(args[0]);
+        Graph graph = new Graph(args[0], outputFileName);
 
         /*
          The number of processors.
@@ -30,7 +40,7 @@ public class App {
         // Start searching the solutions tree.
         TreeSearch testSearch = new TreeSearch(graph, processorCount);
 
-        Node node = testSearch.aStar();
+        Node node = testSearch.idaStar();
         graph.generateOutputGraph(node);
         System.out.println("output file generated.");
         //graph.printBottomLevels();
@@ -45,7 +55,7 @@ public class App {
      */
     public static void checkArgs(String[] args) throws IllegalArgumentException {
 
-        if (args.length != 2) { // exactly two args for Milestone 1
+        if (args.length < 2) { // exactly two args for Milestone 1
             throw new IllegalArgumentException("Please enter two arguments: input dot file and processor count.");
         }
         else if (!args[0].matches("[^.]+\\.dot$")) {
@@ -57,6 +67,5 @@ public class App {
                 throw new IllegalArgumentException("Please enter a valid number of processors.");
             }
         }
-
     }
 }
