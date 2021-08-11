@@ -1,23 +1,23 @@
 /**
  * Represents a possible scheduling State for a single Task.
  **/
-public class State {
+public class TaskVariant {
     protected Task task;
     protected short startTime;
     protected byte processor;
 
-    public State(Task task, short startTime, byte processor) {
+    public TaskVariant(Task task, short startTime, byte processor) {
         this.task = task;
         this.startTime = startTime;
         this.processor = processor;
     }
 
-    public State(Task task, byte processor) {
+    public TaskVariant(Task task, byte processor) {
         this.task = task;
         this.processor = processor;
     }
 
-    public State(Task task) {
+    public TaskVariant(Task task) {
         this.task = task;
         this.startTime = 0;
         this.processor = 0;

@@ -2,33 +2,28 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-abstract class Node<S extends State, N extends Node<S,N>> {
+abstract class Node<N extends Node<N>> {
     protected N parent;
     protected short cost;
-    protected S state;
-    protected byte depth;
+    protected Schedule schedule;
 
-    public Node(N parent, short cost, S state) {
+    public Node(N parent, short cost, Schedule schedule) {
         this.parent = parent;
-        this.state = state;
-        this.cost = cost;
-        this.depth = (byte) (parent.depth + 1);
+        this.schedule = schedule;
     }
 
-    public Node(N parent, S state) {
+    public Node(N parent, Schedule schedule) {
         this.parent = parent;
-        this.state = state;
-        this.depth = (byte) (parent.depth + 1);
+        this.schedule = schedule;
     }
 
-    public Node(S state) {
+    public Node(Task task, ArrayList<Task> startTasks)  {
         this.parent = null;
-        this.state = state;
-        this.depth = 1;
+        this.schedule = new Schedule(task, startTasks);
     }
 
-    public S getState() {
-        return this.state;
+    public Schedule getState() {
+        return this.schedule;
     }
 
     public short getCost() {
@@ -43,10 +38,6 @@ abstract class Node<S extends State, N extends Node<S,N>> {
         return this.parent;
     }
 
-    public byte getDepth() {
-        return depth;
-    }
-
     /**
      * Expands a node, adding children nodes to the priority queue
      * child nodes are every viable schedule that we can reach by adding one
@@ -57,114 +48,66 @@ abstract class Node<S extends State, N extends Node<S,N>> {
      * @param queue the priority queue of nodes
      * @param node the node to be expanded
      */
-    public ArrayList<State> expandNode(Schedule schedule, int processorCount) {
-        int processorsInUse = 0;
-        for (int i = 0; i < schedule.getProcessorFinishTimes().length; i++) {
-            if (schedule.getProcessorFinishTimes()[i] > 0) {
-                processorsInUse++;
-            }
-        }
+    public ArrayList<Schedule> expandNode(int processorCount) {
+        int processorsInUse = schedule.getProcessorFinishTimes().length;
 
         // attempt to minimise repeated branches by limiting duplicate empty processors
         if (processorsInUse < processorCount) {
             processorsInUse += 1;
         }
 
-        ArrayList<State> successorList = new ArrayList<State>();
+        ArrayList<Schedule> successorList = new ArrayList<Schedule>();
         // make a child node for every processor * schedulable task
         for (Task task : schedule.getSchedulableTasks()) {
             for (byte processor = 0; processor < processorsInUse; processor++) {
-                short startTime = schedule.getProcessorFinishTimes()[processor];
-                
-                // child should not be scheduled before parent finish time (+ communication time)
-                for (Task parentTask : task.getParents()) {
-                    State parentState = schedule.getScheduledTasks().get(parentTask);
-                    short parentFinishTime = parentState.getFinishTime();
-                    if (parentState.getProcessor() != processor) {
-                        parentFinishTime += task.getParentCommunicationTime(parentTask);
-                    }
-                    if (startTime < parentFinishTime) {
-                        startTime = parentFinishTime;
-                    }
-                }
-                State newState = new State(task, startTime, processor);
-                successorList.add(newState);
+                Schedule newSchedule = new Schedule(task, processor, schedule);
+                successorList.add(newSchedule);
             }
         }
         return successorList;
     }
 
-    /**
-     * Calculates the backwards cost for the input node
-     * The backwards cost is
-     * Max (start time of scheduled tasks plus their bottom level)
-     * Second example heuristic from lectures
-     * @param node the node to appraise
-     * @return the backwards cost of the node
-     */
-    protected short getBackwardsCost() {
-        short maxCost = 0;
-        Node<S,N> node = this;
-        while (node != null) {
-            short bottomLevel = node.getState().getTask().getBottomLevel();
-            short startTime = node.getState().getStartTime();
-            short pathCost = (short) (bottomLevel + startTime);
-
-            if (pathCost > maxCost) {
-                maxCost = pathCost;
-            }
-            node = node.getParent();
-        }
-        return maxCost;
-    }
-
-    abstract public ArrayList<N> getSuccessors(Schedule schedule, int processorCount);
+    abstract public ArrayList<N> getSuccessors(int processorCount);
 }
 
 /**
  * A Node in the search tree. Represents a possible scheduling State for a single Task.
  */
-class TaskNode extends Node<State,TaskNode> {
+class TaskNode extends Node<TaskNode> {
 
-    public TaskNode(TaskNode parent, short cost, State state) {
-        super(parent, cost, state);
+    public TaskNode(TaskNode parent, short cost, Schedule schedule) {
+        super(parent, cost, schedule);
     }
 
-    public TaskNode(TaskNode parent, State state) {
-        super(parent, state);
-        short cost = state.getFinishTime();
-        if (parent.getCost() > cost) {
-            cost = parent.getCost();
-        }
-        this.cost = (short) (cost + getBackwardsCost());
+    public TaskNode(TaskNode parent, Schedule schedule) {
+        super(parent, schedule);
     }
 
-    public TaskNode(State state) {
-        super(state);
-        this.cost = (short) (getBackwardsCost() + state.getFinishTime());
+    public TaskNode(Task task, ArrayList<Task> startTasks) {
+        super(task, startTasks);
     }
 
-    public ArrayList<TaskNode> getSuccessors(Schedule schedule, int processorCount) {
+    public ArrayList<TaskNode> getSuccessors(int processorCount) {
         ArrayList<TaskNode> successorList = new ArrayList<TaskNode>();
-        for (State newState : expandNode(schedule, processorCount)) {
-            TaskNode node = new TaskNode(this, newState);
+        for (Schedule newSchedule : expandNode(processorCount)) {
+            TaskNode node = new TaskNode(this, newSchedule);
             successorList.add(node);
         }
         return successorList;
     }
 }
 
-class BoundedNode extends Node<State,BoundedNode> {
-    private HashMap<State, Short> forgottenMap = new HashMap<State, Short>();
+class BoundedNode extends Node<BoundedNode> {
+    private HashMap<Schedule, Short> forgottenMap = new HashMap<Schedule, Short>();
     
-    public BoundedNode(BoundedNode parent, short cost, State state) {
-        super(parent, cost, state);
+    public BoundedNode(BoundedNode parent, short cost, Schedule schedule) {
+        super(parent, cost, schedule);
     }
-    public BoundedNode(BoundedNode parent,State state) {
-        super(parent, state);
+    public BoundedNode(BoundedNode parent,Schedule schedule) {
+        super(parent, schedule);
     }
-    public BoundedNode(State state) {
-        super(state);
+    public BoundedNode(Task task, ArrayList<Task> startTasks) {
+        super(task, startTasks);
     }
 
     public boolean hasBeenExpanded() {
@@ -190,17 +133,17 @@ class BoundedNode extends Node<State,BoundedNode> {
 
     public ArrayList<BoundedNode> getForgottenSuccessors() {
         ArrayList<BoundedNode> successors = new ArrayList<BoundedNode>();
-        for (Entry<State, Short> entry : forgottenMap.entrySet()) {
+        for (Entry<Schedule, Short> entry : forgottenMap.entrySet()) {
             BoundedNode successor = new BoundedNode(this, entry.getValue(), entry.getKey());
             successors.add(successor);
         }
         return successors;
     }
 
-    public ArrayList<BoundedNode> getSuccessors(Schedule schedule, int processorCount) {
+    public ArrayList<BoundedNode> getSuccessors(int processorCount) {
         ArrayList<BoundedNode> successorList = new ArrayList<BoundedNode>();
-        for (State newState : expandNode(schedule, processorCount)) {
-            BoundedNode node = new BoundedNode(this, newState);
+        for (Schedule newSchedule : expandNode(processorCount)) {
+            BoundedNode node = new BoundedNode(this, newSchedule);
             successorList.add(node);
         }
         return successorList;

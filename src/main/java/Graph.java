@@ -114,17 +114,11 @@ public class Graph {
      * Converts the graph back into a dot file.
      * @param node used to find processor and start times.
      */
-    public void generateOutputGraph(Node<?,?> node) {
-        while (node != null) {
-            State state = node.getState();
-            Task task = state.getTask();
-            GraphNode mappedNode = nodes.get(task.getId());
-            if (mappedNode != null) {
-                mappedNode.setAttribute("Start",state.getStartTime());
-                mappedNode.setAttribute("Processor",state.getProcessor());
-            }
-
-            node = node.getParent();
+    public void generateOutputGraph(Node<?> node) {
+        for (TaskVariant state : node.getState().getScheduledTasks().values()) {
+            GraphNode mappedNode = nodes.get(state.getTask().getId());
+            mappedNode.setAttribute("Start",state.getStartTime());
+            mappedNode.setAttribute("Processor",state.getProcessor());
         }
         parser.writeScheduleToDot();
     }
