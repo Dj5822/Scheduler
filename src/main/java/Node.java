@@ -22,7 +22,12 @@ abstract class Node<N extends Node<N>> {
         this.schedule = new Schedule(task, startTasks);
     }
 
-    public Schedule getState() {
+    public Node(ArrayList<Task> startTasks) {
+        this.parent = null;
+        this.schedule = new Schedule(startTasks);
+    }
+
+    public Schedule getSchedule() {
         return this.schedule;
     }
 
@@ -87,6 +92,10 @@ class TaskNode extends Node<TaskNode> {
         super(task, startTasks);
     }
 
+    public TaskNode(ArrayList<Task> startTasks) {
+        super(startTasks);
+    } 
+
     public ArrayList<TaskNode> getSuccessors(int processorCount) {
         ArrayList<TaskNode> successorList = new ArrayList<TaskNode>();
         for (Schedule newSchedule : expandNode(processorCount)) {
@@ -115,20 +124,20 @@ class BoundedNode extends Node<BoundedNode> {
     }
 
     public int updateForgottenSuccessor(BoundedNode node) {
-        int cost = forgottenMap.get(node.getState());
-        forgottenMap.remove(node.getState());
+        int cost = forgottenMap.get(node.getSchedule());
+        forgottenMap.remove(node.getSchedule());
         return cost;
     }
 
     public boolean hasForgottenSuccessor(BoundedNode node) {
-        return forgottenMap.containsKey(node.getState());
+        return forgottenMap.containsKey(node.getSchedule());
     }
 
     public void addForgottenSuccessor(BoundedNode node) {
         if (cost > node.getCost() || forgottenMap.isEmpty()) {
             cost = node.getCost();
         }
-        forgottenMap.put(node.getState(), node.getCost());
+        forgottenMap.put(node.getSchedule(), node.getCost());
     }
 
     public ArrayList<BoundedNode> getForgottenSuccessors() {

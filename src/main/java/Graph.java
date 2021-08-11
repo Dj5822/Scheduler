@@ -42,16 +42,6 @@ public class Graph {
         setBottomLevels();
     }
 
-    public Task getDummyStart() {
-        Task dummy = new Task((short)0, "Dummy");
-        dummy.findBottomLevel();
-        for (Task startTask : getStartTasks()) {
-            Edge fakeEdge = new Edge(startTask, dummy, 0);
-            dummy.addChild(fakeEdge);
-        }
-        return dummy;
-    }
-
     /**
      * Uses the information from DotParser to
      * create graph tasks.
@@ -115,10 +105,12 @@ public class Graph {
      * @param node used to find processor and start times.
      */
     public void generateOutputGraph(Node<?> node) {
-        for (TaskVariant state : node.getState().getScheduledTasks().values()) {
+        for (TaskVariant state : node.getSchedule().getScheduledTasks().values()) {
             GraphNode mappedNode = nodes.get(state.getTask().getId());
-            mappedNode.setAttribute("Start",state.getStartTime());
-            mappedNode.setAttribute("Processor",state.getProcessor());
+            if (mappedNode != null) {
+                mappedNode.setAttribute("Start",state.getStartTime());
+                mappedNode.setAttribute("Processor",state.getProcessor());
+            }
         }
         parser.writeScheduleToDot();
     }

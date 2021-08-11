@@ -40,10 +40,12 @@ public class DotParser extends GraphParser{
             for (GraphNode graphNode : parseNodes()) {
                 //String attr = graphNode.getAttributes().toString().replace("{", "[").replace("}", "]");
                 String weight = "[Weight=" + graphNode.getAttribute("Weight").toString();
-                String start = ",Start=" + graphNode.getAttribute("Start").toString();
-                String processor = ",Processor=" + graphNode.getAttribute("Processor").toString();
-                String attr = weight + start + processor + "]";
-                writer.write("\t" + graphNode.getId() + "\t" + attr + ";\n");
+                if (graphNode.getAttribute("Start") != null) {
+                    String start = ",Start=" + graphNode.getAttribute("Start").toString();
+                    String processor = ",Processor=" + graphNode.getAttribute("Processor").toString();
+                    String attr = weight + start + processor + "]";
+                    writer.write("\t" + graphNode.getId() + "\t" + attr + ";\n");
+                }
             }
 
             for (GraphEdge edge : parseEdges()) {

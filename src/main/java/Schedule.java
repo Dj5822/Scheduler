@@ -22,6 +22,9 @@ class Schedule {
         scheduled = new HashMap<Task, TaskVariant>(parentSchedule.getScheduledTasks());
 
         short[] parentTimes = parentSchedule.getProcessorFinishTimes();
+        if (parentTimes == null) {
+            parentTimes = new short[1];
+        }
         if (processor < parentSchedule.getProcessorFinishTimes().length) {
             processorFinishTimes = parentSchedule.getProcessorFinishTimes().clone();
         } else {
@@ -93,6 +96,18 @@ class Schedule {
                 schedulable.add(child);
             }
         }
+    }
+
+    public Schedule(ArrayList<Task> startTasks) {
+        Task dummy = new Task((short)0, "Dummy");
+        dummy.findBottomLevel();
+        for (Task startTask : startTasks) {
+            Edge fakeEdge = new Edge(startTask, dummy, 0);
+            dummy.addChild(fakeEdge);
+        }
+        scheduled = new HashMap<Task, TaskVariant>();
+        this.schedulable = new ArrayList<Task>(startTasks);
+        this.processorFinishTimes = new short[0];
     }
 
     public boolean taskisScheduled(Task task) {
