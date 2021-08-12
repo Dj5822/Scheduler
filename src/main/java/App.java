@@ -5,6 +5,9 @@
 public class App {
     public static void main(String[] args) {
 
+        Visualiser visualiser = new Visualiser();
+        visualiser.visualise();
+        
         try {
             checkArgs(args);
         } catch (IllegalArgumentException e) {
