@@ -1,12 +1,21 @@
+import javafx.application.Application;
+import javafx.stage.Stage;
+
 /**
  * The main class for the program, interacting with the other major classes 
  * in order to create a final solution.
  */
-public class App {
-    public static void main(String[] args) {
+public class App extends Application{
 
+    @Override
+    public void start(final Stage stage) {
         Visualiser visualiser = new Visualiser();
         visualiser.visualise();
+    }
+
+    public static void main(String[] args) {
+
+        
         
         try {
             checkArgs(args);
@@ -71,4 +80,6 @@ public class App {
             }
         }
     }
+
+    
 }

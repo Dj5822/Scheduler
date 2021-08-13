@@ -14,7 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-public class Visualiser {
+public final class Visualiser {
     /**
      * Things to consider: 
      * 
@@ -33,11 +33,15 @@ public class Visualiser {
 
     public Visualiser(){
         try {
-            Scene scene = loadFXML();
+            
             Stage stage = new Stage();
+            Scene scene = loadFXML();
             stage.setScene(scene);
             stage.show();
         } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -52,5 +56,4 @@ public class Visualiser {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("views/test_page.fxml"));
         return loader.load();
     }
-
 }
