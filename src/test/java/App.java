@@ -63,7 +63,7 @@ public class App {
         }
         else {
             int p = Integer.parseInt(args[1]);
-            if (p < 0 || p > 10) {
+            if (p < 1 || p > 10) {
                 throw new IllegalArgumentException("Please enter a valid number of processors.");
             }
         }
