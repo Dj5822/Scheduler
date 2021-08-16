@@ -12,6 +12,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 public class Visualiser extends Application{
@@ -50,7 +51,9 @@ public class Visualiser extends Application{
         try {
             stage = new Stage();
             String location = "views/test_page.fxml";
-            scene = loadFXML(location);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(location));
+            AnchorPane pane = loader.load();
+            scene = new Scene(pane);
             stage.setScene(scene);
             stage.show();
         } catch (IOException e) {
