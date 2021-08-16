@@ -1,17 +1,12 @@
-import javafx.application.Application;
-import javafx.stage.Stage;
+import javax.swing.ViewportLayout;
 
 /**
  * The main class for the program, interacting with the other major classes 
  * in order to create a final solution.
  */
-public class App extends Application{
+public class App {
 
-    @Override
-    public void start(final Stage stage) {
-        Visualiser visualiser = new Visualiser();
-        visualiser.visualise();
-    }
+    
 
     public static void main(String[] args) {
 
@@ -48,6 +43,8 @@ public class App extends Application{
         if (!args[1].matches("1")) {
             processorCount = 2;
         }
+
+        Visualiser.launch(Visualiser.class);
 
         // Start searching the solutions tree.
         TreeSearch testSearch = new TreeSearch(graph, processorCount);

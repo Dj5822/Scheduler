@@ -14,7 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-public final class Visualiser {
+public class Visualiser extends Application{
     /**
      * Things to consider: 
      * 
@@ -31,11 +31,26 @@ public final class Visualiser {
      * up to date information
      */
 
-    public Visualiser(){
+    private Stage stage;
+    private Scene scene;
+
+
+
+    public static void visualise(){
+
+    }
+
+    private Scene loadFXML(String location) throws IOException{
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(location));
+        return loader.load();
+    }
+
+    @Override
+    public void start(Stage stage) throws Exception {
         try {
-            
-            Stage stage = new Stage();
-            Scene scene = loadFXML();
+            stage = new Stage();
+            String location = "views/test_page.fxml";
+            scene = loadFXML(location);
             stage.setScene(scene);
             stage.show();
         } catch (IOException e) {
@@ -46,14 +61,5 @@ public final class Visualiser {
             e.printStackTrace();
         }
         
-    }
-
-    public void visualise(){
-
-    }
-
-    private Scene loadFXML() throws IOException{
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("views/test_page.fxml"));
-        return loader.load();
     }
 }
