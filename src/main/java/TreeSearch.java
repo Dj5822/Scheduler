@@ -3,6 +3,8 @@ import javafx.application.Platform;
 
 import java.util.*;
 
+import controllers.MainController;
+
 /**
  * The method responsible for the creation and traversal of the
  * schedule tree, a tree of each possible schedule and partial schedule
@@ -12,6 +14,8 @@ public class TreeSearch {
     private Graph graph;
     private int processorCount;
     boolean visualize;
+    private int expandedCount;
+    private Visualiser visualiser;
 
     TreeSearch(Graph graph, int processorCount, boolean visualize){
         this.graph = graph;
@@ -20,6 +24,7 @@ public class TreeSearch {
 
         if (this.visualize) {
             new Thread(() -> Visualiser.launch(Visualiser.class)).start();
+            visualiser=Visualiser.getVisualiser();
         }
     }
 
@@ -142,7 +147,7 @@ public class TreeSearch {
             rootNode.setCost(getBackwardsCost(rootNode) + startTask.getWeight());
             openList.add(rootNode);
             if (visualize) {
-                Visualiser.incrementExploredNodesCount();
+                visualiser.incrementExploredNodesCount();
             }
         }
         while (!openList.isEmpty()) {
@@ -156,7 +161,7 @@ public class TreeSearch {
 
             openList.addAll(nodesToAdd);
             if (visualize) {
-                Visualiser.incrementExploredNodesCount();
+                visualiser.incrementExploredNodesCount();
             }
         }
         return null;
@@ -204,6 +209,8 @@ public class TreeSearch {
                 }
                 State state = new State(task, startTime, processor);
                 Node newNode = new Node(node, state);
+                expandedCount++;
+                //Platform.runLater(MainController.changeLabel(Integer.toString(expandedCount));
 
                 // forward cost is finish time of new schedule
                 int finishTime = state.getFinishTime();
@@ -368,7 +375,7 @@ public class TreeSearch {
                 return null;
             }
             bound = t;
-            Visualiser.incrementExploredNodesCount();
+            visualiser.incrementExploredNodesCount();
         }
     }
 

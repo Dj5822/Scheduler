@@ -7,6 +7,7 @@
 
 import java.io.IOException;
 
+import controllers.MainController;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -35,13 +36,22 @@ public class Visualiser extends Application{
     private Stage stage;
     private Scene scene;
     private static int exploredNodesCount = 0;
+    private MainController controller;
+    private static Visualiser visualiser;
+
+
+    public static Visualiser getVisualiser() {
+        return visualiser;
+    }
 
     @Override
     public void start(Stage stage) throws Exception {
         try {
+            Visualiser.visualiser=this;
             stage = new Stage();
             String location = "views/test_page.fxml";
             FXMLLoader loader = new FXMLLoader(getClass().getResource(location));
+            controller = loader.getController();
             AnchorPane pane = loader.load();
             scene = new Scene(pane);
             stage.setScene(scene);
@@ -55,8 +65,9 @@ public class Visualiser extends Application{
         }
     }
 
-    public static void incrementExploredNodesCount() {
+    public void incrementExploredNodesCount() {
         exploredNodesCount ++;
         System.out.println(exploredNodesCount);
+        Platform.runLater(() -> controller.changeLabel(Integer.toString(exploredNodesCount)));;
     }
 }
