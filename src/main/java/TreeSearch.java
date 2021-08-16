@@ -9,9 +9,12 @@ public class TreeSearch {
     private Graph graph;
     private int processorCount;
 
-    TreeSearch(Graph graph, int processorCount){
+    TreeSearch(Graph graph, int processorCount, boolean visualize){
         this.graph = graph;
         this.processorCount = processorCount;
+        if (visualize) {
+            Visualiser.launch(Visualiser.class);
+        }
     }
 
     /**
