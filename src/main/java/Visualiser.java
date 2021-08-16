@@ -36,11 +36,6 @@ public class Visualiser extends Application{
     private Scene scene;
     private static int exploredNodesCount = 0;
 
-    private Scene loadFXML(String location) throws IOException{
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(location));
-        return loader.load();
-    }
-
     @Override
     public void start(Stage stage) throws Exception {
         try {
@@ -58,7 +53,6 @@ public class Visualiser extends Application{
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
     }
 
     public static void incrementExploredNodesCount() {

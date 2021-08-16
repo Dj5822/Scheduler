@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.application.Platform;
 
 import java.util.*;
 
@@ -16,10 +17,10 @@ public class TreeSearch {
         this.graph = graph;
         this.processorCount = processorCount;
         this.visualize = visualize;
-        if (this.visualize) {
-            Visualiser.launch(Visualiser.class);
-        }
 
+        if (this.visualize) {
+            new Thread(() -> Visualiser.launch(Visualiser.class)).start();
+        }
     }
 
     /**
@@ -367,6 +368,7 @@ public class TreeSearch {
                 return null;
             }
             bound = t;
+            Visualiser.incrementExploredNodesCount();
         }
     }
 
