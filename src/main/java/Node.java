@@ -108,6 +108,7 @@ class TaskNode extends Node<TaskNode> {
 
 class BoundedNode extends Node<BoundedNode> {
     private HashMap<Schedule, Short> forgottenMap = new HashMap<Schedule, Short>();
+    private int numChildren = 0;
     
     public BoundedNode(BoundedNode parent, short cost, Schedule schedule) {
         super(parent, cost, schedule);
@@ -138,6 +139,7 @@ class BoundedNode extends Node<BoundedNode> {
             cost = node.getCost();
         }
         forgottenMap.put(node.getSchedule(), node.getCost());
+        numChildren--;
     }
 
     public ArrayList<BoundedNode> getForgottenSuccessors() {
@@ -146,6 +148,7 @@ class BoundedNode extends Node<BoundedNode> {
             BoundedNode successor = new BoundedNode(this, entry.getValue(), entry.getKey());
             successors.add(successor);
         }
+        numChildren+=successors.size();
         return successors;
     }
 
@@ -155,7 +158,16 @@ class BoundedNode extends Node<BoundedNode> {
             BoundedNode node = new BoundedNode(this, newSchedule);
             successorList.add(node);
         }
+        numChildren+=successorList.size();
         return successorList;
+    }
+
+    public boolean isLeafNode() {
+        return numChildren == 0;
+    }
+
+    public int getChildCount() {
+        return numChildren;
     }
 
 }
