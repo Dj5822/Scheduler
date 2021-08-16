@@ -34,12 +34,7 @@ public class Visualiser extends Application{
 
     private Stage stage;
     private Scene scene;
-
-
-
-    public static void visualise(){
-
-    }
+    private static int exploredNodesCount = 0;
 
     private Scene loadFXML(String location) throws IOException{
         FXMLLoader loader = new FXMLLoader(getClass().getResource(location));
@@ -64,5 +59,10 @@ public class Visualiser extends Application{
             e.printStackTrace();
         }
         
+    }
+
+    public static void incrementExploredNodesCount() {
+        exploredNodesCount ++;
+        System.out.println(exploredNodesCount);
     }
 }

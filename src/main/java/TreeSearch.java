@@ -1,3 +1,5 @@
+import javafx.application.Application;
+
 import java.util.*;
 
 /**
@@ -8,13 +10,16 @@ public class TreeSearch {
 
     private Graph graph;
     private int processorCount;
+    boolean visualize;
 
     TreeSearch(Graph graph, int processorCount, boolean visualize){
         this.graph = graph;
         this.processorCount = processorCount;
-        if (visualize) {
+        this.visualize = visualize;
+        if (this.visualize) {
             Visualiser.launch(Visualiser.class);
         }
+
     }
 
     /**
@@ -135,6 +140,9 @@ public class TreeSearch {
             Node rootNode = new Node(startTask);
             rootNode.setCost(getBackwardsCost(rootNode) + startTask.getWeight());
             openList.add(rootNode);
+            if (visualize) {
+                Visualiser.incrementExploredNodesCount();
+            }
         }
         while (!openList.isEmpty()) {
             Node node = openList.poll();
@@ -143,7 +151,12 @@ public class TreeSearch {
                 return node;
             }
 
-            openList.addAll(expandNode(node, schedule));
+            ArrayList<Node> nodesToAdd = expandNode(node, schedule);
+
+            openList.addAll(nodesToAdd);
+            if (visualize) {
+                Visualiser.incrementExploredNodesCount();
+            }
         }
         return null;
     }
