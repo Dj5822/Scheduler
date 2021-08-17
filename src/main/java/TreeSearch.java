@@ -59,20 +59,17 @@ public class TreeSearch {
      * @return a node that represents a complete schedule
      */
     public BoundedNode smastarplus(long nodeLimit) {
-        int nodeCount = 0;
         // add start task nodes to open list
         DualOpenList openList = new DualOpenList(new NodeComparator<BoundedNode>());
         for (Task task : graph.getStartTasks()) {
             BoundedNode rootNode = new BoundedNode(task, graph.getStartTasks());
             rootNode.setCost(rootNode.getSchedule().getCost());
             openList.add(rootNode);
-            nodeCount++;
         }
 
         while (!openList.isEmpty()) {
             // get best node in open list
             BoundedNode bestNode = openList.poll();
-            nodeCount--;
 
             // check if node is goal
             if (bestNode.getSchedule().getScheduledTasks().size() == graph.getTasks().size()) {
@@ -105,14 +102,13 @@ public class TreeSearch {
                         successor.setCost(bestNode.getCost());
                     }
                 }
-                nodeCount++;
+
                 openList.add(successor);
             }
             
             // cull worst leaves
             while (openList.size() > nodeLimit) {
                 openList.cull();
-                nodeCount--;
             }
         }
         return null;
@@ -192,7 +188,7 @@ public class TreeSearch {
         LinkedList<TaskNode> path = new LinkedList<TaskNode>();
         path.add(dummy);
         while (true) {
-            Short t = dfs(path, 0, bound);
+            Short t = dfsida(path, 0, bound);
             if (t == null) {
                 return path.getLast();
             }
@@ -203,7 +199,7 @@ public class TreeSearch {
         }
     }
 
-    private Short dfs(LinkedList<TaskNode> path, int g, short bound) {
+    private Short dfsida(LinkedList<TaskNode> path, int g, short bound) {
         TaskNode node = path.getLast();
         Short f = (short) (g + node.getSchedule().getBackwardsCost());
         if (f > bound) {
@@ -217,7 +213,7 @@ public class TreeSearch {
         for (TaskNode successor : node.getSuccessors(processorCount)) {
             successor.setCost(successor.getSchedule().getCost());
             path.add(successor);
-            Short t = dfs(path, g + (successor.getSchedule().getFinishTime() - node.getSchedule().getFinishTime()), bound);
+            Short t = dfsida(path, g + (successor.getSchedule().getFinishTime() - node.getSchedule().getFinishTime()), bound);
             if (t == null) {
                 return null;
             }
@@ -228,5 +224,28 @@ public class TreeSearch {
         }
         return min;
     }
+
+    // public TaskNode branchAndBound() {
+    //     // add start task nodes to open list
+    //     TaskNode dummy = new TaskNode(graph.getStartTasks());
+    //     short bound = dummy.getSchedule().getBackwardsCost();
+    //     dummy.setCost(dummy.getSchedule().getCost());
+    //     LinkedList<TaskNode> path = new LinkedList<TaskNode>();
+    //     path.add(dummy);
+    //     while (true) {
+    //         Short t = dfsida(path, 0, bound);
+    //         if (t == null) {
+    //             return path.getLast();
+    //         }
+    //         if (t == Short.MAX_VALUE) {
+    //             return null;
+    //         }
+    //         bound = t;
+    //     }
+
+
+    //     short bestValue = Short.MIN_VALUE;
+    //     short currentBest 
+    // }
 
 }
