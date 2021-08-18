@@ -2,11 +2,12 @@ DotParser.class
 Task.class
 State.class
 App.class
+Data.class
 Visualiser.class
 Node.class
+MainController.class
 TreeSearch$ScheduleData.class
 TreeSearch.class
-controllers\MainController.class
 Graph.class
 TreeSearch$NodeComparator.class
 Edge.class

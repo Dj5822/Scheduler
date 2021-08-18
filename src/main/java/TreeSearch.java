@@ -1,9 +1,9 @@
-import javafx.application.Application;
-import javafx.application.Platform;
+//import javafx.application.Application;
+//import javafx.application.Platform;
 
 import java.util.*;
 
-import controllers.MainController;
+//import controllers.MainController;
 
 /**
  * The method responsible for the creation and traversal of the
@@ -14,8 +14,7 @@ public class TreeSearch {
     private Graph graph;
     private int processorCount;
     boolean visualize;
-    private int expandedCount;
-    private Visualiser visualiser;
+    //private int expandedCount;
 
     TreeSearch(Graph graph, int processorCount, boolean visualize){
         this.graph = graph;
@@ -24,7 +23,6 @@ public class TreeSearch {
 
         if (this.visualize) {
             new Thread(() -> Visualiser.launch(Visualiser.class)).start();
-            visualiser=Visualiser.getVisualiser();
         }
     }
 
@@ -147,7 +145,7 @@ public class TreeSearch {
             rootNode.setCost(getBackwardsCost(rootNode) + startTask.getWeight());
             openList.add(rootNode);
             if (visualize) {
-                visualiser.incrementExploredNodesCount();
+                Data.data++;
             }
         }
         while (!openList.isEmpty()) {
@@ -161,7 +159,7 @@ public class TreeSearch {
 
             openList.addAll(nodesToAdd);
             if (visualize) {
-                visualiser.incrementExploredNodesCount();
+                Data.data++;
             }
         }
         return null;
@@ -209,7 +207,6 @@ public class TreeSearch {
                 }
                 State state = new State(task, startTime, processor);
                 Node newNode = new Node(node, state);
-                expandedCount++;
                 //Platform.runLater(MainController.changeLabel(Integer.toString(expandedCount));
 
                 // forward cost is finish time of new schedule
@@ -375,7 +372,7 @@ public class TreeSearch {
                 return null;
             }
             bound = t;
-            visualiser.incrementExploredNodesCount();
+            Data.data++;
         }
     }
 
