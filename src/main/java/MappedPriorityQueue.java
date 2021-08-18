@@ -78,7 +78,7 @@ class MappedPriorityQueue {
 
         while (costsLess(heap[current], heap[parent(current)])) {
             if (heap[current] == null || heap[parent(current)]== null)
-            System.out.println("insert borked!");
+//            System.out.println("insert borked!");
             swap(current, parent(current));
             current = parent(current);
         }
@@ -88,12 +88,16 @@ class MappedPriorityQueue {
         if (task2 == null) {
             return true;
         }
+        if (task1 == null) {
+            return false;
+        }
         return task1.getCost() < task2.getCost();
     }
 
     public BoundedNode pop() {
         BoundedNode popped = heap[FRONT];
-        heap[FRONT] = heap[size--];
+        size--;
+        heap[FRONT] = heap[size];
         indexMap.put(heap[FRONT], FRONT);
         indexMap.remove(popped);
         minHeapify(FRONT);
@@ -112,8 +116,9 @@ class MappedPriorityQueue {
     public void remove(BoundedNode node) {
         int index = indexMap.get(node);
 
-        swap(index, size--);
         heap[size] = null;
+        size--;
+        swap(index, size);
         indexMap.remove(node);
 
         while (costsLess(heap[index], heap[parent(index)]) && index >= 1) {
