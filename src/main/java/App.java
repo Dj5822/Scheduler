@@ -44,8 +44,6 @@ public class App {
             processorCount = 2;
         }
 
-        Visualiser.launch(Visualiser.class);
-
         // Start searching the solutions tree.
         TreeSearch testSearch = new TreeSearch(graph, processorCount, true);
 

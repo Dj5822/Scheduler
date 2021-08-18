@@ -37,8 +37,6 @@ public class Visualiser extends Application{
     private static int exploredNodesCount = 0;
     private MainController controller;
 
-
-
     @Override
     public void start(Stage stage) throws Exception {
         try {

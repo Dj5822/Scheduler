@@ -14,7 +14,6 @@ public class TreeSearch {
     private Graph graph;
     private int processorCount;
     boolean visualize;
-    //private int expandedCount;
 
     TreeSearch(Graph graph, int processorCount, boolean visualize){
         this.graph = graph;
