@@ -1,10 +1,11 @@
 import java.util.HashMap;
+import java.util.Set;
 
 class MappedPriorityQueue {
-    private TaskNode[] heap;
+    private BoundedNode[] heap;
     private int size;
     private int maxsize;
-    private HashMap<TaskNode,Integer> indexMap;
+    private HashMap<BoundedNode,Integer> indexMap = new HashMap<BoundedNode,Integer>();
 
     private static final int FRONT = 0;
 
@@ -12,7 +13,7 @@ class MappedPriorityQueue {
         this.maxsize = maxsize;
         this.size = 0;
 
-        heap = new TaskNode[this.maxsize+1];
+        heap = new BoundedNode[this.maxsize];
     }
 
     private int parent(int pos) {
@@ -28,7 +29,7 @@ class MappedPriorityQueue {
     }
 
     private boolean isLeaf(int pos) {
-        if (pos > ((size-1)/2) && pos <= size) {
+        if (pos > ((size)/2) && pos <= size) {
             return true;
         } else {
             return false;
@@ -36,16 +37,21 @@ class MappedPriorityQueue {
     }
 
     private void swap(int fpos, int spos) {
-        TaskNode temp;
+        BoundedNode temp;
         temp = heap[fpos];
         heap[fpos] = heap[spos];
         heap[spos] = temp;
+
+        if (heap[fpos] == null || heap[spos] == null) {
+            System.out.println("oh no!");
+        }
+
         indexMap.put(heap[fpos], fpos);
         indexMap.put(heap[spos], spos);
     }
 
     private void minHeapify(int pos) {
-        if (!isLeaf(pos)) {
+        if (!isLeaf(pos) && heap[leftChild(pos)] != null ) {
             if (costsLess(heap[leftChild(pos)], heap[pos])
              || costsLess(heap[rightChild(pos)], heap[pos])) {
                 if (costsLess(heap[leftChild(pos)], heap[rightChild(pos)])) {
@@ -59,7 +65,8 @@ class MappedPriorityQueue {
         }
     }
 
-    public void insert(TaskNode node) {
+    public void insert(BoundedNode node) {
+
         if (size >= maxsize) {
             return;
         }
@@ -70,25 +77,31 @@ class MappedPriorityQueue {
         size++;
 
         while (costsLess(heap[current], heap[parent(current)])) {
+            if (heap[current] == null || heap[parent(current)]== null)
+            System.out.println("insert borked!");
             swap(current, parent(current));
             current = parent(current);
         }
     }
 
-    protected boolean costsLess(TaskNode task1, TaskNode task2) {
+    protected boolean costsLess(BoundedNode task1, BoundedNode task2) {
+        if (task2 == null) {
+            return true;
+        }
         return task1.getCost() < task2.getCost();
     }
 
-    public TaskNode pop() {
-        TaskNode popped = heap[FRONT];
+    public BoundedNode pop() {
+        BoundedNode popped = heap[FRONT];
         heap[FRONT] = heap[size--];
+        indexMap.put(heap[FRONT], FRONT);
         indexMap.remove(popped);
         minHeapify(FRONT);
 
         return popped;
     }
 
-    public TaskNode peek() {
+    public BoundedNode peek() {
         return heap[FRONT];
     }
 
@@ -96,7 +109,7 @@ class MappedPriorityQueue {
         return this.size;
     }
 
-    public void remove(TaskNode node) {
+    public void remove(BoundedNode node) {
         int index = indexMap.get(node);
 
         swap(index, size--);
@@ -110,9 +123,14 @@ class MappedPriorityQueue {
         minHeapify(index);
     }
 
-    public boolean contains(TaskNode node) {
+    public boolean contains(BoundedNode node) {
         return indexMap.containsKey(node);
     }
+    
+    public Set<BoundedNode> getNodes() {
+        return indexMap.keySet();
+    }
+
 }
 
 class MappedCullQueue extends MappedPriorityQueue {
@@ -121,7 +139,7 @@ class MappedCullQueue extends MappedPriorityQueue {
     }
     
     @Override
-    protected boolean costsLess(TaskNode task1, TaskNode task2) {
+    protected boolean costsLess(BoundedNode task1, BoundedNode task2) {
         return !super.costsLess(task1, task2);
     }
 }

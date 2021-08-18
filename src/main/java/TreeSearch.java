@@ -58,9 +58,9 @@ public class TreeSearch {
      * @param nodeLimit maximum number of nodes allowed in memory
      * @return a node that represents a complete schedule
      */
-    public BoundedNode smastarplus(long nodeLimit) {
+    public BoundedNode smastarplus(int nodeLimit) {
         // add start task nodes to open list
-        DualOpenList openList = new DualOpenList(new NodeComparator<BoundedNode>());
+        DualOpenList openList = new DualOpenList(nodeLimit);
         for (Task task : graph.getStartTasks()) {
             BoundedNode rootNode = new BoundedNode(task, graph.getStartTasks());
             rootNode.setCost(rootNode.getSchedule().getCost());
@@ -114,69 +114,66 @@ public class TreeSearch {
         return null;
     }
 
-    private class DualOpenList extends PriorityQueue<BoundedNode>{
-        private PriorityQueue<BoundedNode> cullList = null;
+    private class DualOpenList {
+        private MappedCullQueue cullList = null;
+        private MappedPriorityQueue openList;
 
-        public DualOpenList(NodeComparator<BoundedNode> nodeComparator) {
-            super(nodeComparator);
+        public DualOpenList(int nodeLimit) {
+            this.openList = new MappedPriorityQueue(nodeLimit + graph.getTasks().size());
         }
 
-        @Override
         public BoundedNode poll() {
-            BoundedNode bestNode = super.poll();
+            BoundedNode bestNode = openList.pop();
             if (cullList != null && cullList.contains(bestNode)) {
                 cullList.remove(bestNode);
             }
             return bestNode;
         }
 
-        @Override
-        public boolean add(BoundedNode node) {
-            boolean success = super.add(node);
+        public void add(BoundedNode node) {
+            openList.insert(node);
             if (cullList != null && node.isLeafNode()) {
-                success = success && cullList.add(node);
+                cullList.insert(node);
             }
-            return success;
         }
 
         public void cull() {
 
             if (cullList == null) {
                 System.out.println("cull creation");
-                cullList = new PriorityQueue<BoundedNode>(new CullComparator());
-                for (BoundedNode node : toArray(new BoundedNode[cullList.size()])) {
+                cullList = new MappedCullQueue(openList.size());
+                for (BoundedNode node : openList.getNodes()) {
                     if (node.isLeafNode()) {
-                        cullList.add(node);
+                        cullList.insert(node);
                     }
                 }   
             }
 
-            BoundedNode worstNode = cullList.poll();
+            BoundedNode worstNode = cullList.pop();
             // get second worst node if node is also best for safety
-            if (worstNode == super.peek()) {
+            if (worstNode == openList.peek()) {
                 BoundedNode temp = worstNode;
-                worstNode = cullList.poll();
-                cullList.add(temp);
+                worstNode = cullList.pop();
+                cullList.insert(temp);
             }
 
-            super.remove(worstNode);
+            openList.remove(worstNode);
 
             BoundedNode parent = worstNode.getParent();
             if (parent != null) {
                 parent.addForgottenSuccessor(worstNode);
-                if (!contains(parent)) {
+                if (!openList.contains(parent)) {
                     add(parent);
                 }
             }
         }
 
-        /**
-         * SMA*+ inverse open list for efficient culling operations. 
-         */
-        private class CullComparator implements Comparator<BoundedNode> {
-            public int compare(BoundedNode node1, BoundedNode node2) {
-                return - node1.getCost() + (node2.getCost());
-            }
+        public boolean isEmpty() {
+            return openList.size() < 1;
+        }
+
+        public int size() {
+            return openList.size();
         }
     }
 
