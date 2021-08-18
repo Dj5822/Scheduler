@@ -119,7 +119,7 @@ public class TreeSearch {
         private MappedPriorityQueue openList;
 
         public DualOpenList(int nodeLimit) {
-            this.openList = new MappedPriorityQueue(nodeLimit + graph.getTasks().size());
+            this.openList = new MappedPriorityQueue(nodeLimit + graph.getTasks().size() * processorCount);
         }
 
         public BoundedNode poll() {

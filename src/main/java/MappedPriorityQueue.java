@@ -1,19 +1,14 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
 class MappedPriorityQueue {
-    private BoundedNode[] heap;
-    private int size;
+    private ArrayList<BoundedNode> heap;
     private int maxsize;
     private HashMap<BoundedNode,Integer> indexMap = new HashMap<BoundedNode,Integer>();
 
-    private static final int FRONT = 0;
-
     public MappedPriorityQueue(int maxsize) {
-        this.maxsize = maxsize;
-        this.size = 0;
-
-        heap = new BoundedNode[this.maxsize];
+        heap = new ArrayList<BoundedNode>(this.maxsize);
     }
 
     private int parent(int pos) {
@@ -28,104 +23,106 @@ class MappedPriorityQueue {
         return pos*2 + 2;
     }
 
-    private boolean isLeaf(int pos) {
-        if (pos > ((size)/2) && pos <= size) {
-            return true;
+    private void swap(int i, int j) {
+        BoundedNode temp = heap.get(i);
+        heap.set(i, heap.get(j));
+		heap.set(j, temp);
+
+        indexMap.put(heap.get(i), i);
+        indexMap.put(heap.get(j), j);
+    }
+
+    private void minHeapify(int i) {
+        int left = leftChild(i);
+		int right = rightChild(i);
+        int smallest;
+
+		if (left <= heap.size()-1 && costsLess(heap.get(left),heap.get(i))) {
+            smallest = left;
         } else {
-            return false;
-        }
-    }
-
-    private void swap(int fpos, int spos) {
-        BoundedNode temp;
-        temp = heap[fpos];
-        heap[fpos] = heap[spos];
-        heap[spos] = temp;
-
-        if (heap[fpos] == null || heap[spos] == null) {
-            System.out.println("oh no!");
+            smallest = i;
         }
 
-        indexMap.put(heap[fpos], fpos);
-        indexMap.put(heap[spos], spos);
-    }
+		// Is there a right child and, if so, does the right child have an
+		// element smaller than the smaller of node i and the left child?
+		if (right <= heap.size()-1 && costsLess(heap.get(right),heap.get(smallest)))
+			smallest = right;  // yes, so the right child is the smallest
 
-    private void minHeapify(int pos) {
-        if (!isLeaf(pos) && heap[leftChild(pos)] != null ) {
-            if (costsLess(heap[leftChild(pos)], heap[pos])
-             || costsLess(heap[rightChild(pos)], heap[pos])) {
-                if (costsLess(heap[leftChild(pos)], heap[rightChild(pos)])) {
-                    swap(pos, leftChild(pos));
-                    minHeapify(leftChild(pos));
-                } else {
-                    swap(pos, rightChild(pos));
-                    minHeapify(rightChild(pos));
-                }
-            }
+		// If node i holds an element smaller than both the left and right
+		// children, then the max-heap property already held, and we need do
+		// nothing more.  Otherwise, we need to swap node i with the smaller
+		// of the two children, and then recurse down the heap from the smaller child.
+		if (smallest != i) {
+			swap(i, smallest);
+			minHeapify(smallest);
         }
     }
 
     public void insert(BoundedNode node) {
 
-        if (size >= maxsize) {
-            return;
-        }
+        heap.add(node);        // Put new value at end;
+		int loc = heap.size()-1;  // and get its location
+        indexMap.put(node, loc);
 
-        heap[size] = node;
-        int current = size;
-        indexMap.put(node, size);
-        size++;
+		siftup(loc);
+    }
 
-        while (costsLess(heap[current], heap[parent(current)])) {
-            if (heap[current] == null || heap[parent(current)]== null)
-//            System.out.println("insert borked!");
-            swap(current, parent(current));
-            current = parent(current);
-        }
+    public void siftup(int loc) {
+        // Swap with parent until parent not larger
+		while (loc > 0 && costsLess(heap.get(loc),heap.get(parent(loc)))) {
+			swap(loc, parent(loc));
+			loc = parent(loc);
+		}
     }
 
     protected boolean costsLess(BoundedNode task1, BoundedNode task2) {
-        if (task2 == null) {
-            return true;
-        }
-        if (task1 == null) {
-            return false;
-        }
         return task1.getCost() < task2.getCost();
     }
 
     public BoundedNode pop() {
-        BoundedNode popped = heap[FRONT];
-        size--;
-        heap[FRONT] = heap[size];
-        indexMap.put(heap[FRONT], FRONT);
-        indexMap.remove(popped);
-        minHeapify(FRONT);
-
-        return popped;
+        if (heap.size() <= 0)
+			return null;
+		else {
+			BoundedNode minVal = heap.get(0);
+			heap.set(0, heap.get(heap.size()-1));  // Move last to position 0
+			heap.remove(heap.size()-1);
+            indexMap.remove(minVal);
+            if (size() > 0) {
+                indexMap.put(heap.get(0),0);
+            }
+			minHeapify(0);
+			return minVal;
+		}
     }
 
     public BoundedNode peek() {
-        return heap[FRONT];
+        return heap.get(0);
     }
 
     public int size() {
-        return this.size;
+        return heap.size();
     }
 
     public void remove(BoundedNode node) {
         int index = indexMap.get(node);
 
-        heap[size] = null;
-        size--;
-        swap(index, size);
-        indexMap.remove(node);
-
-        while (costsLess(heap[index], heap[parent(index)]) && index >= 1) {
-            swap(index, parent(index));
-            index = parent(index);
+        if (index == heap.size()-1) {
+            heap.set(index, heap.get(heap.size()-1));
+            heap.remove(heap.size()-1);
+            indexMap.remove(node);
+            return;
         }
-        minHeapify(index);
+
+        heap.set(index, heap.get(heap.size()-1));
+        heap.remove(heap.size()-1);
+        indexMap.remove(node);
+        indexMap.put(heap.get(index),index);
+
+        if (index > 0 && costsLess(heap.get(index),heap.get(parent(index)))) {
+            siftup(index);
+        } else if (index < heap.size()/2) {
+            minHeapify(index);
+        }
     }
 
     public boolean contains(BoundedNode node) {
