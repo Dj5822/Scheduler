@@ -15,6 +15,8 @@ public class TreeSearch {
     private int processorCount;
     boolean visualize;
 
+    Visualiser visualiser;
+
 
     public TreeSearch(Graph graph, int processorCount, boolean visualize){
         this.graph = graph;
@@ -25,6 +27,9 @@ public class TreeSearch {
             new Thread(() -> {
                 Visualiser.launch(Visualiser.class);
             }).start();
+            while (visualiser == null) {
+                this.visualiser = Visualiser.getVisualiser();
+            }
         }
     }
 
