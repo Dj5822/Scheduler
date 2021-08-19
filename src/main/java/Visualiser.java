@@ -105,12 +105,12 @@ public class Visualiser extends Application{
         searchTimeLabel = new Label("Search time: 0 min 0 sec");
 
         // Button sizes.
-        expandedNodesLabel.setPrefHeight(height);
-        expandedNodesLabel.setPrefWidth(width);
-        memoryUsageLabel.setPrefHeight(height);
-        memoryUsageLabel.setPrefWidth(width);
-        searchTimeLabel.setPrefHeight(height);
-        searchTimeLabel.setPrefWidth(width);
+        expandedNodesLabel.setPrefHeight(height/5);
+        expandedNodesLabel.setPrefWidth(width/6);
+        memoryUsageLabel.setPrefHeight(height/5);
+        memoryUsageLabel.setPrefWidth(width/6);
+        searchTimeLabel.setPrefHeight(height/5);
+        searchTimeLabel.setPrefWidth(width/6);
 
         statsPane.add(expandedNodesLabel, 0, 0);
         statsPane.add(memoryUsageLabel, 0, 1);
@@ -153,7 +153,8 @@ public class Visualiser extends Application{
 
         ganttChart.getData().addAll(processorSchedule);
 
-        ganttChart.setPrefWidth(width);
+        ganttChart.setPrefWidth(width*5/6);
+        ganttChart.setPrefHeight(height);
 
         mainPane.add(ganttChart, 0, 0, 1, 4);
     }
