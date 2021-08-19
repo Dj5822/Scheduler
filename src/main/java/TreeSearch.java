@@ -275,6 +275,7 @@ public class TreeSearch {
 
         while (!path.isEmpty()) {
             TaskNode node = path.pop();
+            expandedNodesCount ++;
             if (node.getSchedule().getScheduledTasks().size() == graph.getTasks().size()) {
                 if (node.getSchedule().getCost() < upperBound) {
                     currentBest = node;
