@@ -6,6 +6,7 @@ class Schedule {
     private ArrayList<Task> schedulable;
     private short[] processorFinishTimes;
     private short backwardsCost = 0;
+    private boolean expanded = false;
 
     /**
      * Constructor for a schedule derived from a parent schedule
@@ -146,5 +147,13 @@ class Schedule {
             }
         }
         return max;
+    }
+
+    public boolean hasBeenExpanded() {
+        return expanded;
+    }
+
+    public void setExpanded() {
+        expanded = true;
     }
 }

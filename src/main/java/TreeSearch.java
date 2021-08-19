@@ -81,17 +81,18 @@ public class TreeSearch {
 
             // get successor nodes
             ArrayList<BoundedNode> successorList = new ArrayList<BoundedNode>();
-            if (bestNode.hasBeenExpanded()) {
+            if (bestNode.getSchedule().hasBeenExpanded()) {
                 successorList = bestNode.getForgottenSuccessors();
             } else {
                 successorList = bestNode.getSuccessors(processorCount);
+                bestNode.getSchedule().setExpanded();
             }
 
             // set cost of successor nodes and add to open list
             for (BoundedNode successor : successorList) {
                 Schedule successorSchedule = successor.getSchedule();
                 if (bestNode.hasForgottenSuccessor(successor)) {
-                    successor.setCost((short) bestNode.updateForgottenSuccessor(successor));
+                    bestNode.removeForgottenSuccessor(successor);
                 } else if (successorSchedule.getScheduledTasks().size() != graph.getTasks().size() &&
                  (successorSchedule.getSchedulableTasks().isEmpty() ||
                   successorSchedule.getScheduledTasks().size() >= nodeLimit-1)) {

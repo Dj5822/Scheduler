@@ -76,6 +76,11 @@ class MappedPriorityQueue {
     }
 
     protected boolean costsLess(BoundedNode task1, BoundedNode task2) {
+        if (task1.hasBeenExpanded() && !task2.hasBeenExpanded()) {
+            return false;
+        } else if (task2.hasBeenExpanded() && !task1.hasBeenExpanded()) {
+            return true;
+        }
         return task1.getCost() < task2.getCost();
     }
 
@@ -141,7 +146,8 @@ class MappedCullQueue extends MappedPriorityQueue {
     }
     
     @Override
-    protected boolean costsLess(BoundedNode task1, BoundedNode task2) {
-        return !super.costsLess(task1, task2);
+    protected boolean costsLess(BoundedNode i, BoundedNode j) {
+        return i.getCost()/(Math.log(i.getSchedule().getScheduledTasks().size() + Math.exp(1))) < 
+        j.getCost()/(Math.log(j.getSchedule().getScheduledTasks().size() + Math.exp(1)));
     }
 }

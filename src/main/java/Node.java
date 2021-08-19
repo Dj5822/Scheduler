@@ -124,10 +124,8 @@ class BoundedNode extends Node<BoundedNode> {
         return !forgottenMap.isEmpty();
     }
 
-    public int updateForgottenSuccessor(BoundedNode node) {
-        int cost = forgottenMap.get(node.getSchedule());
+    public void removeForgottenSuccessor(BoundedNode node) {
         forgottenMap.remove(node.getSchedule());
-        return cost;
     }
 
     public boolean hasForgottenSuccessor(BoundedNode node) {
