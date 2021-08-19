@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 
 <AnchorPane fx:id="Main_Page" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="VisualiserController">
    <children>
-      <ButtonBar layoutX="100.0" layoutY="124.0" prefHeight="40.0" prefWidth="200.0">
-        <buttons>
-          <Button mnemonicParsing="false" text="Button" />
-        </buttons>
-      </ButtonBar>
+      <ButtonBar layoutX="100.0" layoutY="124.0" prefHeight="40.0" prefWidth="200.0" />
       <Label fx:id="expandedNodeCountLabel" layoutX="107.0" layoutY="53.0" prefHeight="58.0" prefWidth="353.0" text="Expanded Node Count: 0" />
    </children>
 </AnchorPane>
