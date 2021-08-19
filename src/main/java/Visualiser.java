@@ -221,12 +221,12 @@ public class Visualiser extends Application{
         // clear the existing data.
         ganttChart.getData().clear();
 
-        HashMap<Task,TaskVariant> scheduledTasks = schedule.getScheduledTasks();
-
         // Clear every row.
         for (XYChart.Series processor : processorSchedule) {
             processor.getData().clear();
         }
+
+        HashMap<Task,TaskVariant> scheduledTasks = schedule.getScheduledTasks();
 
         /*
         We need the following information for each scheduled task:
@@ -241,8 +241,11 @@ public class Visualiser extends Application{
             short startTime = scheduledTasks.get(scheduledTask).getStartTime();
             short weight = scheduledTask.getWeight();
 
+            /*
+            To avoid the same adjacent color, make the color dependent on the start time.
+             */
             processorSchedule[processor].getData().add(new XYChart.Data(startTime, "processor " + processor,
-                    new GanttChart.ExtraData( weight, colorSelection[currentColorIndex%colorSelection.length])));
+                    new GanttChart.ExtraData( weight, "rgba(" + weight % 255 + "," + (startTime*20) % 255 + "," + startTime % 255 + ",0.7)")));
 
             currentColorIndex ++;
         }
