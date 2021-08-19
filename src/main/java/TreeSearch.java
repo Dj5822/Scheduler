@@ -27,6 +27,7 @@ public class TreeSearch {
         this.expandedNodesCount = 0;
 
         if (this.visualize) {
+            // Sets up the visualiser.
             new Thread(() -> {
                 Visualiser.launch(Visualiser.class);
             }).start();
@@ -34,15 +35,16 @@ public class TreeSearch {
                 this.visualiser = Visualiser.getVisualiser();
             }
             this.visualiser.setupGanttChart(processorCount);
-            /*
+
+            // Updates the visualiser every second.
             Timer timer = new Timer();
             timer.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
-                    Platform.runLater(() -> visualiser.setExpandedNodesCount(expandedNodesCount));
+                    Platform.runLater(() -> visualiser.updateVisualiser(expandedNodesCount));
                 }
             }, 0, 1000);
-             */
+
         }
     }
 

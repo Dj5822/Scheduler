@@ -195,5 +195,8 @@ public class Visualiser extends Application{
         mainPane.add(ganttChart, 0, 0, 1, 4);
     }
 
+    public void updateVisualiser(int expandedNodesCount) {
+        expandedNodesValueLabel.setText(Integer.toString(expandedNodesCount));
+    }
 
 }
