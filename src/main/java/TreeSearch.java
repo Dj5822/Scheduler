@@ -226,8 +226,9 @@ public class TreeSearch {
     public TaskNode branchAndBound() {
         // add start task nodes to open list
         TaskNode dummy = new TaskNode(graph.getStartTasks());
-        TaskNode currentBest = aStar();
-        short upperBound = aStar().schedule.getCost();
+        short upperBound = Short.MAX_VALUE;
+        TaskNode currentBest = dummy;
+
         dummy.setCost(dummy.getSchedule().getCost());
 
         LinkedList<TaskNode> path = new LinkedList<>();
