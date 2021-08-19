@@ -1,12 +1,12 @@
 
 
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
 public class MainController {
 
-    private TreeSearch treeSearch;
 
     @FXML
     protected Label TestLabel;
@@ -16,8 +16,6 @@ public class MainController {
     }
 
     public void initialize(){
-        //treeSearch=TreeSearch.GetTreeSearch();
-        changeLabel("random words");
     }
 
     

@@ -11,19 +11,12 @@ import java.util.*;
  */
 public class TreeSearch {
 
-    private static TreeSearch treeSearch;
     private Graph graph;
     private int processorCount;
     boolean visualize;
 
-    public static TreeSearch GetTreeSearch(Graph graph, int processorCount, boolean visualize) {
-        if (treeSearch==null) {
-            treeSearch=new TreeSearch(graph, processorCount, visualize);
-        }
-        return treeSearch;
-    }
 
-    private TreeSearch(Graph graph, int processorCount, boolean visualize){
+    public TreeSearch(Graph graph, int processorCount, boolean visualize){
         this.graph = graph;
         this.processorCount = processorCount;
         this.visualize = visualize;
