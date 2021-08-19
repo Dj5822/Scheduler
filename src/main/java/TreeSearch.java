@@ -33,6 +33,7 @@ public class TreeSearch {
             while (visualiser == null) {
                 this.visualiser = Visualiser.getVisualiser();
             }
+            this.visualiser.setupGanttChart(processorCount);
             /*
             Timer timer = new Timer();
             timer.scheduleAtFixedRate(new TimerTask() {
