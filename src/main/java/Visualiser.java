@@ -71,6 +71,7 @@ public class Visualiser extends Application{
     private int processorCount;
 
     private DecimalFormat df;
+    private String[] colorSelection = {"blue", "red", "green"};
 
     public static Visualiser getVisualiser(){
         return visualiser;
@@ -233,13 +234,17 @@ public class Visualiser extends Application{
         - Start time
         - Weight
          */
+        int currentColorIndex = 0;
+
         for (Task scheduledTask : scheduledTasks.keySet()) {
             byte processor = scheduledTasks.get(scheduledTask).getProcessor();
             short startTime = scheduledTasks.get(scheduledTask).getStartTime();
             short weight = scheduledTask.getWeight();
 
             processorSchedule[processor].getData().add(new XYChart.Data(startTime, "processor " + processor,
-                    new GanttChart.ExtraData( weight, "blue")));
+                    new GanttChart.ExtraData( weight, colorSelection[currentColorIndex%colorSelection.length])));
+
+            currentColorIndex ++;
         }
 
 
