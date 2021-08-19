@@ -25,29 +25,23 @@ public class App {
         }
 
         /*
+         The number of processors.
+         */
+        int processorCount = Integer.parseInt(args[1]);
+
+        /*
         The name of the input graph should be passed in as an argument.
         Should be passed in as a commandline argument later.
          */
         Graph graph = new Graph("examples/" + args[0], outputFileName);
 
-        /*
-         The number of processors.
-         Should be passed in as a commandline argument later.
-         */
-        int processorCount = 1;
-        if (!args[1].matches("1")) {
-            processorCount = 2;
-        }
-
-        //Visualiser.launch(Visualiser.class);
-
         // Start searching the solutions tree.
         TreeSearch testSearch = new TreeSearch(graph, processorCount, true);
 
-        Node node = testSearch.aStar();
+        Node<?> node = testSearch.branchAndBound();
         graph.generateOutputGraph(node);
+        graph.printBottomLevels();
         System.out.println("output file generated.");
-        //graph.printBottomLevels();
     }
 
     /**
@@ -71,7 +65,6 @@ public class App {
                 throw new IllegalArgumentException("Please enter a valid number of processors.");
             }
         }
+
     }
-
-
 }

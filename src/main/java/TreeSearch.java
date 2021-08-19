@@ -1,6 +1,3 @@
-import javafx.application.Platform;
-
-import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -61,22 +58,21 @@ public class TreeSearch {
      * @return The node that is at the end of the created schedule
      */
     public TaskNode aStar() {
-        PriorityQueue<TaskNode> openList = new PriorityQueue<TaskNode>(new NodeComparator<>());
+        PriorityQueue<TaskNode> openList = new PriorityQueue<TaskNode>(new NodeComparator<TaskNode>());
         for (Task startTask : graph.getStartTasks()) {
             TaskNode rootNode = new TaskNode(startTask, graph.getStartTasks());
-            rootNode.setCost(rootNode.getSchedule().getCost());
+            rootNode.setCost(rootNode.getSchedule().getBackwardsCost());
             openList.add(rootNode);
         }
         while (!openList.isEmpty()) {
             TaskNode node = openList.poll();
-            expandedNodesCount ++;
             if (node.getSchedule().getScheduledTasks().size() == graph.getTasks().size()) {
                 return node;
             }
 
             ArrayList<TaskNode> successorList = node.getSuccessors(processorCount);
             for (TaskNode childNode : successorList) {
-                childNode.setCost(childNode.getSchedule().getCost());
+                childNode.setCost(childNode.getSchedule().getBackwardsCost());
             }
             openList.addAll(successorList);
         }
@@ -115,30 +111,31 @@ public class TreeSearch {
             // check if node is goal
             if (bestNode.getSchedule().getScheduledTasks().size() == graph.getTasks().size()) {
                 return bestNode;
-            // check if goal not found
+            // check if goal not found    
             } else if (bestNode.getCost() == Short.MAX_VALUE) {
                 return null;
             }
 
             // get successor nodes
             ArrayList<BoundedNode> successorList = new ArrayList<BoundedNode>();
-            if (bestNode.hasBeenExpanded()) {
+            if (bestNode.getSchedule().hasBeenExpanded()) {
                 successorList = bestNode.getForgottenSuccessors();
             } else {
                 successorList = bestNode.getSuccessors(processorCount);
+                bestNode.getSchedule().setExpanded();
             }
 
             // set cost of successor nodes and add to open list
             for (BoundedNode successor : successorList) {
                 Schedule successorSchedule = successor.getSchedule();
                 if (bestNode.hasForgottenSuccessor(successor)) {
-                    successor.setCost((short) bestNode.updateForgottenSuccessor(successor));
+                    bestNode.removeForgottenSuccessor(successor);
                 } else if (successorSchedule.getScheduledTasks().size() != graph.getTasks().size() &&
                  (successorSchedule.getSchedulableTasks().isEmpty() ||
                   successorSchedule.getScheduledTasks().size() >= nodeLimit-1)) {
                     successor.setCost((short) Short.MAX_VALUE);
                 } else {
-                    successor.setCost((short) (successorSchedule.getBackwardsCost() + successorSchedule.getFinishTime()));
+                    successor.setCost(successorSchedule.getCost());
                     if (bestNode.getCost() > successor.getCost()) {
                         successor.setCost(bestNode.getCost());
                     }
@@ -146,7 +143,7 @@ public class TreeSearch {
 
                 openList.add(successor);
             }
-
+            
             // cull worst leaves
             while (openList.size() > nodeLimit) {
                 openList.cull();
@@ -160,7 +157,7 @@ public class TreeSearch {
         private MappedPriorityQueue openList;
 
         public DualOpenList(int nodeLimit) {
-            this.openList = new MappedPriorityQueue(nodeLimit + graph.getTasks().size() * processorCount);
+            this.openList = new MappedPriorityQueue(nodeLimit + graph.getTasks().size() * processorCount, graph);
         }
 
         public BoundedNode poll() {
@@ -182,12 +179,12 @@ public class TreeSearch {
 
             if (cullList == null) {
                 System.out.println("cull creation");
-                cullList = new MappedCullQueue(openList.size());
+                cullList = new MappedCullQueue(openList.size(), graph);
                 for (BoundedNode node : openList.getNodes()) {
                     if (node.isLeafNode()) {
                         cullList.insert(node);
                     }
-                }
+                }   
             }
 
             BoundedNode worstNode = cullList.pop();
@@ -263,27 +260,33 @@ public class TreeSearch {
         return min;
     }
 
-    // public TaskNode branchAndBound() {
-    //     // add start task nodes to open list
-    //     TaskNode dummy = new TaskNode(graph.getStartTasks());
-    //     short bound = dummy.getSchedule().getBackwardsCost();
-    //     dummy.setCost(dummy.getSchedule().getCost());
-    //     LinkedList<TaskNode> path = new LinkedList<TaskNode>();
-    //     path.add(dummy);
-    //     while (true) {
-    //         Short t = dfsida(path, 0, bound);
-    //         if (t == null) {
-    //             return path.getLast();
-    //         }
-    //         if (t == Short.MAX_VALUE) {
-    //             return null;
-    //         }
-    //         bound = t;
-    //     }
+    public TaskNode branchAndBound() {
+        // add start task nodes to open list
+        TaskNode dummy = new TaskNode(graph.getStartTasks());
+        short upperBound = Short.MAX_VALUE;
+        TaskNode currentBest = dummy;
 
+        dummy.setCost(dummy.getSchedule().getCost());
 
-    //     short bestValue = Short.MIN_VALUE;
-    //     short currentBest
-    // }
+        LinkedList<TaskNode> path = new LinkedList<>();
+        path.add(dummy);
+
+        while (!path.isEmpty()) {
+            TaskNode node = path.pop();
+            if (node.getSchedule().getScheduledTasks().size() == graph.getTasks().size()) {
+                if (node.getSchedule().getCost() < upperBound) {
+                    currentBest = node;
+                    upperBound = node.getSchedule().getCost();
+                }
+            } else {
+                for (TaskNode childNode : node.getSuccessors(processorCount)) {
+                    if (childNode.getSchedule().getCost() <= upperBound) {
+                        path.addFirst(childNode);
+                    }
+                }
+            }
+        }
+        return currentBest;
+        }
 
 }
