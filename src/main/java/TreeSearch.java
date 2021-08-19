@@ -24,7 +24,7 @@ public class TreeSearch {
         PriorityQueue<TaskNode> openList = new PriorityQueue<TaskNode>(new NodeComparator<TaskNode>());
         for (Task startTask : graph.getStartTasks()) {
             TaskNode rootNode = new TaskNode(startTask, graph.getStartTasks());
-            rootNode.setCost(rootNode.getSchedule().getCost());
+            rootNode.setCost(rootNode.getSchedule().getBackwardsCost());
             openList.add(rootNode);
         }
         while (!openList.isEmpty()) {
@@ -35,7 +35,7 @@ public class TreeSearch {
 
             ArrayList<TaskNode> successorList = node.getSuccessors(processorCount);
             for (TaskNode childNode : successorList) {
-                childNode.setCost(childNode.getSchedule().getCost());
+                childNode.setCost(childNode.getSchedule().getBackwardsCost());
             }
             openList.addAll(successorList);
         }
