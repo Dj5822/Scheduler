@@ -5,17 +5,21 @@
  * of the search.
  */
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -51,6 +55,9 @@ public class Visualiser extends Application{
     private Label expandedNodesLabel;
     private Label memoryUsageLabel;
     private Label searchTimeLabel;
+    private Label expandedNodesValueLabel;
+    private Label memoryUsageValueLabel;
+    private Label searchTimeValueLabel;
 
     private Stage stage;
     private Scene scene;
@@ -81,6 +88,9 @@ public class Visualiser extends Application{
             setupView(mainPane, width, height);
 
             scene = new Scene(mainPane);
+            File styleFile = new File("src/main/resources/views/ganttchart.css");
+            scene.getStylesheets().clear();
+            scene.getStylesheets().add("file:///" + styleFile.getAbsolutePath().replace("\\", "/"));
             stage.setTitle("Scheduler Visualiser");
             stage.setScene(scene);
             stage.show();
@@ -100,22 +110,48 @@ public class Visualiser extends Application{
         GridPane statsPane = new GridPane();
 
         // Create components.
-        expandedNodesLabel = new Label("Expanded Nodes: 0");
-        memoryUsageLabel = new Label("Memory usage: 0/4 GB");
-        searchTimeLabel = new Label("Search time: 0 min 0 sec");
+        expandedNodesLabel = new Label("Expanded Nodes");
+        expandedNodesValueLabel = new Label("0");
+        memoryUsageLabel = new Label("Memory Usage");
+        memoryUsageValueLabel = new Label("0/4 GB");
+        searchTimeLabel = new Label("Search Time");
+        searchTimeValueLabel = new Label("0 min 0 sec");
 
-        // Button sizes.
-        expandedNodesLabel.setPrefHeight(height/5);
-        expandedNodesLabel.setPrefWidth(width/6);
-        memoryUsageLabel.setPrefHeight(height/5);
-        memoryUsageLabel.setPrefWidth(width/6);
-        searchTimeLabel.setPrefHeight(height/5);
-        searchTimeLabel.setPrefWidth(width/6);
+        // Label sizes.
+        expandedNodesLabel.setPrefHeight(height/6);
+        expandedNodesLabel.setPrefWidth(width/7);
+        expandedNodesValueLabel.setPrefHeight(height/6);
+        expandedNodesValueLabel.setPrefWidth(width/7);
+        memoryUsageLabel.setPrefHeight(height/6);
+        memoryUsageLabel.setPrefWidth(width/7);
+        memoryUsageValueLabel.setPrefHeight(height/6);
+        memoryUsageValueLabel.setPrefWidth(width/7);
+        searchTimeLabel.setPrefHeight(height/6);
+        searchTimeLabel.setPrefWidth(width/7);
+        searchTimeValueLabel.setPrefHeight(height/6);
+        searchTimeValueLabel.setPrefWidth(width/7);
 
+        // Label alignment.
+        expandedNodesLabel.setAlignment(Pos.BOTTOM_CENTER);
+        expandedNodesValueLabel.setAlignment(Pos.TOP_CENTER);
+        memoryUsageLabel.setAlignment(Pos.BOTTOM_CENTER);
+        memoryUsageValueLabel.setAlignment(Pos.TOP_CENTER);
+        searchTimeLabel.setAlignment(Pos.BOTTOM_CENTER);
+        searchTimeValueLabel.setAlignment(Pos.TOP_CENTER);
+
+        // Apply styling.
+        expandedNodesLabel.getStyleClass().add("boldLabel");
+        memoryUsageLabel.getStyleClass().add("boldLabel");
+        searchTimeLabel.getStyleClass().add("boldLabel");
+
+        // Add to the pane.
         statsPane.add(expandedNodesLabel, 0, 0);
-        statsPane.add(memoryUsageLabel, 0, 1);
-        statsPane.add(searchTimeLabel, 0, 2);
-
+        statsPane.add(expandedNodesValueLabel, 0, 1);
+        statsPane.add(memoryUsageLabel, 0, 2);
+        statsPane.add(memoryUsageValueLabel, 0, 3);
+        statsPane.add(searchTimeLabel, 0, 4);
+        statsPane.add(searchTimeValueLabel, 0, 5);
+        statsPane.setPadding(new Insets(10, 0, 0, 0));
         mainPane.add(statsPane,5,0, 1, 1);
     }
 
