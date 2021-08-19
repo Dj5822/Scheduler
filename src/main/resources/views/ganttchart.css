@@ -2,6 +2,13 @@
     -fx-background-color:rgba(0,0,128,0.7);
 }
 
+.red {
+    -fx-background-color:rgba(128,0,0,0.7);
+}
+.green {
+    -fx-background-color:rgba(0,128,0,0.7);
+}
+
 .boldLabel {
     -fx-font-weight: BOLD;
     -fx-font-size: 16px;

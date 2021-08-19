@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -212,6 +213,37 @@ public class Visualiser extends Application{
         memoryUsageValueLabel.setText(df.format((double)freeMemory/1000000000) + "/" + df.format((double)totalMemory/1000000000) + " GB");
         searchTimeValueLabel.setText(String.valueOf(timePassed/1000) + " sec");
 
-        System.out.println(schedule);
+        updateGanttChart(schedule);
+    }
+
+    private void updateGanttChart(Schedule schedule) {
+        // clear the existing data.
+        ganttChart.getData().clear();
+
+        HashMap<Task,TaskVariant> scheduledTasks = schedule.getScheduledTasks();
+
+        // Clear every row.
+        for (XYChart.Series processor : processorSchedule) {
+            processor.getData().clear();
+        }
+
+        /*
+        We need the following information for each scheduled task:
+        - Processor
+        - Start time
+        - Weight
+         */
+        for (Task scheduledTask : scheduledTasks.keySet()) {
+            byte processor = scheduledTasks.get(scheduledTask).getProcessor();
+            short startTime = scheduledTasks.get(scheduledTask).getStartTime();
+            short weight = scheduledTask.getWeight();
+
+            processorSchedule[processor].getData().add(new XYChart.Data(startTime, "processor " + processor,
+                    new GanttChart.ExtraData( weight, "blue")));
+        }
+
+
+        // add the new data.
+        ganttChart.getData().addAll(processorSchedule);
     }
 }
