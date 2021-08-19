@@ -195,8 +195,14 @@ public class Visualiser extends Application{
         mainPane.add(ganttChart, 0, 0, 1, 4);
     }
 
-    public void updateVisualiser(int expandedNodesCount) {
+    /**
+     * The control layer method that updates the view components.
+     * @param expandedNodesCount the number of expanded nodes.
+     * @param timePassed the amount of time passed.
+     */
+    public void updateVisualiser(int expandedNodesCount, long timePassed) {
         expandedNodesValueLabel.setText(Integer.toString(expandedNodesCount));
+        searchTimeValueLabel.setText(String.valueOf(timePassed/1000) + " sec");
     }
 
 }

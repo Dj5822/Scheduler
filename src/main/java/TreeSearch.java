@@ -1,5 +1,6 @@
 import javafx.application.Platform;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -14,6 +15,7 @@ public class TreeSearch {
 
     private Visualiser visualiser;
 
+    private long startTime;
     private int expandedNodesCount;
 
 
@@ -36,12 +38,15 @@ public class TreeSearch {
             }
             this.visualiser.setupGanttChart(processorCount);
 
+            // Record the start time.
+            startTime = System.currentTimeMillis();
+
             // Updates the visualiser every second.
             Timer timer = new Timer();
             timer.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
-                    Platform.runLater(() -> visualiser.updateVisualiser(expandedNodesCount));
+                    Platform.runLater(() -> visualiser.updateVisualiser(expandedNodesCount, (new Date()).getTime() - startTime));
                 }
             }, 0, 1000);
 
