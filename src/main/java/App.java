@@ -47,7 +47,7 @@ public class App {
         //Visualiser.launch(Visualiser.class);
 
         // Start searching the solutions tree.
-        TreeSearch testSearch = TreeSearch.GetTreeSearch(graph, processorCount, true);
+        TreeSearch testSearch = new TreeSearch(graph, processorCount, true);
 
         Node node = testSearch.idaStar();
         graph.generateOutputGraph(node);

@@ -36,14 +36,19 @@ public class Visualiser extends Application{
     private Scene scene;
     private int exploredNodesCount = 0;
     private MainController controller;
+    private static Visualiser visualiser;
+
+    public static Visualiser getVisualiser(){
+        return visualiser;
+    }
 
     @Override
     public void start(Stage stage) throws Exception {
         try {
+            visualiser=this;
             stage = new Stage();
             String location = "views/test_page.fxml";
             FXMLLoader loader = new FXMLLoader(getClass().getResource(location));
-            
             AnchorPane pane = loader.load();
             controller = loader.getController();
             scene = new Scene(pane);
