@@ -45,8 +45,10 @@ public class Visualiser extends Application{
             stage = new Stage();
             String location = "views/test_page.fxml";
             FXMLLoader loader = new FXMLLoader(getClass().getResource(location));
-            controller = loader.getController();
+            
             AnchorPane pane = loader.load();
+            controller = loader.getController();
+            controller.changeLabel("random stuffxyz");
             scene = new Scene(pane);
             stage.setScene(scene);
             stage.show();

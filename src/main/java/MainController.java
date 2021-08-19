@@ -6,6 +6,8 @@ import javafx.scene.control.Label;
 
 public class MainController {
 
+    private TreeSearch treeSearch;
+
     @FXML
     protected Label TestLabel;
 
@@ -14,19 +16,9 @@ public class MainController {
     }
 
     public void initialize(){
-        //Platform.runLater(() -> fetchData());
+        //treeSearch=TreeSearch.GetTreeSearch();
+        changeLabel("random words");
     }
 
-    private void fetchData(){
-        while (true) {
-            int data = Data.data;
-            TestLabel.setText(Integer.toString(data));
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-    }
+    
 }

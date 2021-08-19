@@ -44,10 +44,10 @@ public class App {
             processorCount = 2;
         }
 
-        Visualiser.launch(Visualiser.class);
+        //Visualiser.launch(Visualiser.class);
 
         // Start searching the solutions tree.
-        TreeSearch testSearch = new TreeSearch(graph, processorCount, true);
+        TreeSearch testSearch = TreeSearch.GetTreeSearch(graph, processorCount, true);
 
         Node node = testSearch.idaStar();
         graph.generateOutputGraph(node);
