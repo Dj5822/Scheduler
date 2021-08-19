@@ -45,7 +45,7 @@ public class TreeSearch {
      * @return The node that is at the end of the created schedule
      */
     public TaskNode aStar() {
-        PriorityQueue<TaskNode> openList = new PriorityQueue<TaskNode>(new NodeComparator<TaskNode>());
+        PriorityQueue<TaskNode> openList = new PriorityQueue<TaskNode>(new NodeComparator<>());
         for (Task startTask : graph.getStartTasks()) {
             TaskNode rootNode = new TaskNode(startTask, graph.getStartTasks());
             rootNode.setCost(rootNode.getSchedule().getCost());
@@ -53,6 +53,7 @@ public class TreeSearch {
         }
         while (!openList.isEmpty()) {
             TaskNode node = openList.poll();
+            expandedNodesCount ++;
             if (node.getSchedule().getScheduledTasks().size() == graph.getTasks().size()) {
                 return node;
             }
@@ -62,6 +63,9 @@ public class TreeSearch {
                 childNode.setCost(childNode.getSchedule().getCost());
             }
             openList.addAll(successorList);
+            if (expandedNodesCount % 10000 == 0) {
+                Platform.runLater(() -> visualiser.setExpandedNodesCount(expandedNodesCount));
+            }
         }
         return null;
     }

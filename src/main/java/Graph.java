@@ -101,7 +101,7 @@ public class Graph {
     }
 
     public Task getDummyStart() {
-        Task dummy = new Task(0, "%%%");
+        Task dummy = new Task((short) 0, "%%%");
         dummy.findBottomLevel();
         for (Task startTask : getStartTasks()) {
             dummy.addChild(new Edge(startTask, dummy, 0));

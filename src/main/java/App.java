@@ -6,12 +6,7 @@
  */
 public class App {
 
-
-
     public static void main(String[] args) {
-
-
-
         try {
             checkArgs(args);
         } catch (IllegalArgumentException e) {
@@ -33,7 +28,7 @@ public class App {
         The name of the input graph should be passed in as an argument.
         Should be passed in as a commandline argument later.
          */
-        Graph graph = new Graph("examples/" + args[0]);
+        Graph graph = new Graph("examples/" + args[0], outputFileName);
 
         /*
          The number of processors.
