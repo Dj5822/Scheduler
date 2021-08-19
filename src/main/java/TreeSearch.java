@@ -17,6 +17,8 @@ public class TreeSearch {
     private long startTime;
     private int expandedNodesCount;
 
+    private Schedule currentBestSchedule;
+    private Timer updateTimer;
 
 
 
@@ -41,11 +43,11 @@ public class TreeSearch {
             startTime = System.currentTimeMillis();
 
             // Updates the visualiser every second.
-            Timer timer = new Timer();
-            timer.scheduleAtFixedRate(new TimerTask() {
+            updateTimer = new Timer();
+            updateTimer.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
-                    Platform.runLater(() -> visualiser.updateVisualiser(expandedNodesCount,
+                    Platform.runLater(() -> visualiser.updateVisualiser(currentBestSchedule, expandedNodesCount,
                             Runtime.getRuntime().totalMemory(), Runtime.getRuntime().freeMemory(),
                             (new Date()).getTime() - startTime));
                 }
@@ -280,6 +282,7 @@ public class TreeSearch {
                 if (node.getSchedule().getCost() < upperBound) {
                     currentBest = node;
                     upperBound = node.getSchedule().getCost();
+                    currentBestSchedule = node.getSchedule();
                 }
             } else {
                 for (TaskNode childNode : node.getSuccessors(processorCount)) {
@@ -289,6 +292,7 @@ public class TreeSearch {
                 }
             }
         }
+        updateTimer.cancel();
         return currentBest;
         }
 

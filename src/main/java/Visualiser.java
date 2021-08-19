@@ -207,9 +207,11 @@ public class Visualiser extends Application{
      * @param expandedNodesCount the number of expanded nodes.
      * @param timePassed the amount of time passed.
      */
-    public void updateVisualiser(int expandedNodesCount, long totalMemory, long freeMemory, long timePassed) {
+    public void updateVisualiser(Schedule schedule, int expandedNodesCount, long totalMemory, long freeMemory, long timePassed) {
         expandedNodesValueLabel.setText(Integer.toString(expandedNodesCount));
         memoryUsageValueLabel.setText(df.format((double)freeMemory/1000000000) + "/" + df.format((double)totalMemory/1000000000) + " GB");
         searchTimeValueLabel.setText(String.valueOf(timePassed/1000) + " sec");
+
+        System.out.println(schedule);
     }
 }
