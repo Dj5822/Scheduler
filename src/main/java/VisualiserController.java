@@ -4,14 +4,14 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
-public class MainController {
+public class VisualiserController {
 
     private TreeSearch treeSearch;
 
     @FXML
-    protected Label ExpandedNodeCountLabel;
+    protected Label expandedNodeCountLabel;
 
     public void setExpandedNodeCountLabel(int count) {
-        ExpandedNodeCountLabel.setText("Explored Nodes Count: " + count);
+        expandedNodeCountLabel.setText("Explored Nodes Count: " + count);
     }
 }

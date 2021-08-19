@@ -8,10 +8,8 @@
 import java.io.IOException;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
@@ -34,8 +32,7 @@ public class Visualiser extends Application{
 
     private Stage stage;
     private Scene scene;
-    private int exploredNodesCount = 0;
-    private MainController controller;
+    private VisualiserController controller;
     private static Visualiser visualiser;
 
     public static Visualiser getVisualiser(){
@@ -63,8 +60,7 @@ public class Visualiser extends Application{
         }
     }
 
-    public void incrementExploredNodesCount() {
-        exploredNodesCount ++;
-        controller.setExpandedNodeCountLabel(exploredNodesCount);
+    public void setExpandedNodesCount(int count) {
+        controller.setExpandedNodeCountLabel(count);
     }
 }

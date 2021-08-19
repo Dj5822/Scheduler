@@ -15,15 +15,21 @@ public class TreeSearch {
 
     private Graph graph;
     private int processorCount;
-    boolean visualize;
+    private boolean visualize;
 
-    Visualiser visualiser;
+    private Visualiser visualiser;
+
+    private int expandedNodesCount;
+
+
 
 
     public TreeSearch(Graph graph, int processorCount, boolean visualize){
         this.graph = graph;
         this.processorCount = processorCount;
         this.visualize = visualize;
+
+        this.expandedNodesCount = 0;
 
         if (this.visualize) {
             new Thread(() -> {
@@ -153,9 +159,6 @@ public class TreeSearch {
             Node rootNode = new Node(startTask);
             rootNode.setCost(getBackwardsCost(rootNode) + startTask.getWeight());
             openList.add(rootNode);
-            if (visualize) {
-                Data.data++;
-            }
         }
         while (!openList.isEmpty()) {
             Node node = openList.poll();
@@ -167,9 +170,6 @@ public class TreeSearch {
             ArrayList<Node> nodesToAdd = expandNode(node, schedule);
 
             openList.addAll(nodesToAdd);
-            if (visualize) {
-                Data.data++;
-            }
         }
         return null;
     }
@@ -227,6 +227,7 @@ public class TreeSearch {
                 }
                 newNode.setCost(getBackwardsCost(newNode) + finishTime);
                 nodeList.add(newNode);
+                expandedNodesCount ++;
             }
         }
         return nodeList;
@@ -381,8 +382,9 @@ public class TreeSearch {
                 return null;
             }
             bound = t;
-            Data.data++;
-            Platform.runLater(() -> visualiser.incrementExploredNodesCount());
+            if (visualize){
+                Platform.runLater(() -> visualiser.setExpandedNodesCount(expandedNodesCount));
+            }
         }
     }
 
