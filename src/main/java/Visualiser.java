@@ -7,6 +7,8 @@
 
 import java.io.File;
 import java.io.IOException;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 
 import javafx.application.Application;
@@ -67,6 +69,8 @@ public class Visualiser extends Application{
 
     private int processorCount;
 
+    private DecimalFormat df;
+
     public static Visualiser getVisualiser(){
         return visualiser;
     }
@@ -86,6 +90,9 @@ public class Visualiser extends Application{
             mainPane.setPrefHeight(height);
 
             setupView(mainPane, width, height);
+
+            df = new DecimalFormat("#.####");
+            df.setRoundingMode(RoundingMode.CEILING);
 
             scene = new Scene(mainPane);
             File styleFile = new File("src/main/resources/views/ganttchart.css");
@@ -200,9 +207,9 @@ public class Visualiser extends Application{
      * @param expandedNodesCount the number of expanded nodes.
      * @param timePassed the amount of time passed.
      */
-    public void updateVisualiser(int expandedNodesCount, long timePassed) {
+    public void updateVisualiser(int expandedNodesCount, long totalMemory, long freeMemory, long timePassed) {
         expandedNodesValueLabel.setText(Integer.toString(expandedNodesCount));
+        memoryUsageValueLabel.setText(df.format((double)freeMemory/1000000000) + "/" + df.format((double)totalMemory/1000000000) + " GB");
         searchTimeValueLabel.setText(String.valueOf(timePassed/1000) + " sec");
     }
-
 }

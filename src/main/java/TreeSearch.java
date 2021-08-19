@@ -46,10 +46,11 @@ public class TreeSearch {
             timer.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
-                    Platform.runLater(() -> visualiser.updateVisualiser(expandedNodesCount, (new Date()).getTime() - startTime));
+                    Platform.runLater(() -> visualiser.updateVisualiser(expandedNodesCount,
+                            Runtime.getRuntime().totalMemory(), Runtime.getRuntime().freeMemory(),
+                            (new Date()).getTime() - startTime));
                 }
             }, 0, 1000);
-
         }
     }
 
