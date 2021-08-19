@@ -9,8 +9,11 @@ import java.io.IOException;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class Visualiser extends Application{
@@ -30,6 +33,9 @@ public class Visualiser extends Application{
      * up to date information
      */
 
+    private int width;
+    private int height;
+
     private Stage stage;
     private Scene scene;
     private VisualiserController controller;
@@ -43,24 +49,25 @@ public class Visualiser extends Application{
     public void start(Stage stage) throws Exception {
         try {
             visualiser=this;
-            stage = new Stage();
-            String location = "views/test_page.fxml";
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(location));
-            AnchorPane pane = loader.load();
-            controller = loader.getController();
-            scene = new Scene(pane);
+
+            Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+
+            height = (int) (screenBounds.getHeight()/1.1);
+            width = (int) screenBounds.getWidth();
+
+            GridPane mainPane = new GridPane();
+            mainPane.setPrefWidth(width);
+            mainPane.setPrefHeight(height);
+
+            // Initialise View.
+            VisualiserView view = new VisualiserView(mainPane, width, height);
+
+            scene = new Scene(mainPane);
+            stage.setTitle("Scheduler Visualiser");
             stage.setScene(scene);
             stage.show();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
-    }
-
-    public void setExpandedNodesCount(int count) {
-        controller.setExpandedNodeCountLabel(count);
     }
 }

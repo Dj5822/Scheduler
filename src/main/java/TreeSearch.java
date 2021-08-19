@@ -33,6 +33,7 @@ public class TreeSearch {
             while (visualiser == null) {
                 this.visualiser = Visualiser.getVisualiser();
             }
+            /*
             Timer timer = new Timer();
             timer.scheduleAtFixedRate(new TimerTask() {
                 @Override
@@ -40,10 +41,9 @@ public class TreeSearch {
                     Platform.runLater(() -> visualiser.setExpandedNodesCount(expandedNodesCount));
                 }
             }, 0, 1000);
+             */
         }
     }
-
-
 
     /**
      * Implementation of the A* algorithm, traversing the tree and creating a
