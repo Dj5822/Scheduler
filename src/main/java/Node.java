@@ -3,27 +3,22 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 abstract class Node<N extends Node<N>> {
-    protected N parent;
     protected short cost;
     protected Schedule schedule;
 
-    public Node(N parent, short cost, Schedule schedule) {
-        this.parent = parent;
+    public Node(short cost, Schedule schedule) {
         this.schedule = schedule;
     }
 
-    public Node(N parent, Schedule schedule) {
-        this.parent = parent;
+    public Node(Schedule schedule) {
         this.schedule = schedule;
     }
 
     public Node(Task task, ArrayList<Task> startTasks)  {
-        this.parent = null;
         this.schedule = new Schedule(task, startTasks);
     }
 
     public Node(ArrayList<Task> startTasks) {
-        this.parent = null;
         this.schedule = new Schedule(startTasks);
     }
 
@@ -37,10 +32,6 @@ abstract class Node<N extends Node<N>> {
 
     public void setCost(short cost) {
         this.cost = cost;
-    }
-
-    public N getParent() {
-        return this.parent;
     }
 
     /**
@@ -80,12 +71,12 @@ abstract class Node<N extends Node<N>> {
  */
 class TaskNode extends Node<TaskNode> {
 
-    public TaskNode(TaskNode parent, short cost, Schedule schedule) {
-        super(parent, cost, schedule);
+    public TaskNode(short cost, Schedule schedule) {
+        super(cost, schedule);
     }
 
-    public TaskNode(TaskNode parent, Schedule schedule) {
-        super(parent, schedule);
+    public TaskNode(Schedule schedule) {
+        super(schedule);
     }
 
     public TaskNode(Task task, ArrayList<Task> startTasks) {
@@ -99,7 +90,7 @@ class TaskNode extends Node<TaskNode> {
     public ArrayList<TaskNode> getSuccessors(int processorCount) {
         ArrayList<TaskNode> successorList = new ArrayList<TaskNode>();
         for (Schedule newSchedule : expandNode(processorCount)) {
-            TaskNode node = new TaskNode(this, newSchedule);
+            TaskNode node = new TaskNode(newSchedule);
             successorList.add(node);
         }
         return successorList;
@@ -109,15 +100,19 @@ class TaskNode extends Node<TaskNode> {
 class BoundedNode extends Node<BoundedNode> {
     private HashMap<Schedule, Short> forgottenMap = new HashMap<Schedule, Short>();
     private int numChildren = 0;
+    private BoundedNode parent;
     
     public BoundedNode(BoundedNode parent, short cost, Schedule schedule) {
-        super(parent, cost, schedule);
+        super(cost, schedule);
+        this.parent = parent;
     }
     public BoundedNode(BoundedNode parent,Schedule schedule) {
-        super(parent, schedule);
+        super(schedule);
+        this.parent = parent;
     }
     public BoundedNode(Task task, ArrayList<Task> startTasks) {
         super(task, startTasks);
+        this.parent = null;
     }
 
     public boolean hasBeenExpanded() {
@@ -166,6 +161,10 @@ class BoundedNode extends Node<BoundedNode> {
 
     public int getChildCount() {
         return numChildren;
+    }
+
+    public BoundedNode getParent() {
+        return parent;
     }
 
 }

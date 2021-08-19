@@ -4,11 +4,12 @@ import java.util.Set;
 
 class MappedPriorityQueue {
     private ArrayList<BoundedNode> heap;
-    private int maxsize;
     private HashMap<BoundedNode,Integer> indexMap = new HashMap<BoundedNode,Integer>();
+    private Graph graph;
 
-    public MappedPriorityQueue(int maxsize) {
-        heap = new ArrayList<BoundedNode>(this.maxsize);
+    public MappedPriorityQueue(int maxsize, Graph graph) {
+        heap = new ArrayList<BoundedNode>(maxsize);
+        this.graph = graph;
     }
 
     private int parent(int pos) {
@@ -76,12 +77,13 @@ class MappedPriorityQueue {
     }
 
     protected boolean costsLess(BoundedNode task1, BoundedNode task2) {
-        if (task1.hasBeenExpanded() && !task2.hasBeenExpanded()) {
-            return false;
-        } else if (task2.hasBeenExpanded() && !task1.hasBeenExpanded()) {
-            return true;
+        int size1 = task1.getSchedule().getScheduledTasks().size();
+        int size2 = task2.getSchedule().getScheduledTasks().size();
+        if (task1.getCost() != task2.getCost()) {
+            return task1.getCost() < task2.getCost();
+        } else {
+            return size1 > size2;
         }
-        return task1.getCost() < task2.getCost();
     }
 
     public BoundedNode pop() {
@@ -112,7 +114,6 @@ class MappedPriorityQueue {
         int index = indexMap.get(node);
 
         if (index == heap.size()-1) {
-            heap.set(index, heap.get(heap.size()-1));
             heap.remove(heap.size()-1);
             indexMap.remove(node);
             return;
@@ -141,8 +142,8 @@ class MappedPriorityQueue {
 }
 
 class MappedCullQueue extends MappedPriorityQueue {
-    public MappedCullQueue(int maxsize) {
-        super(maxsize);
+    public MappedCullQueue(int maxsize, Graph graph) {
+        super(maxsize, graph);
     }
     
     @Override
