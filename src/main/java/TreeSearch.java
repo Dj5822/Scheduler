@@ -229,18 +229,20 @@ public class TreeSearch {
         short upperBound = Short.MAX_VALUE;
         dummy.setCost(dummy.getSchedule().getCost());
         TaskNode currentBest = dummy;
-        LinkedList<TaskNode> path = new LinkedList<TaskNode>();
+        LinkedList<TaskNode> path = new LinkedList<>();
         path.add(dummy);
+
         while (!path.isEmpty()) {
             TaskNode node = path.pop();
-            if (node.getSchedule().getScheduledTasks().size() == graph.getTasks().size()
-            && node.getSchedule().getCost() < upperBound) {
-                currentBest = node;
-                upperBound = node.getSchedule().getCost();
+            if (node.getSchedule().getScheduledTasks().size() == graph.getTasks().size()) {
+                if (node.getSchedule().getCost() < upperBound) {
+                    currentBest = node;
+                    upperBound = node.getSchedule().getCost();
+                }
             } else {
                 for (TaskNode childNode : node.getSuccessors(processorCount)) {
                     if (childNode.getSchedule().getCost() <= upperBound) {
-                        path.add(childNode);
+                        path.addFirst(childNode);
                     }
                 }
             }
