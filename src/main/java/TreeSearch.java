@@ -1,3 +1,5 @@
+import javafx.application.Platform;
+
 import java.util.*;
 
 /**
@@ -47,7 +49,7 @@ public class TreeSearch {
                             Runtime.getRuntime().totalMemory(), Runtime.getRuntime().freeMemory(),
                             (new Date()).getTime() - startTime));
                 }
-            }, 0, 1000);
+            }, 0, 150);
         }
     }
 
