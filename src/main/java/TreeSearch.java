@@ -15,7 +15,6 @@ public class TreeSearch {
     private Graph graph;
     private int processorCount;
     boolean visualize;
-    //private int expandedCount;
 
     public static TreeSearch GetTreeSearch(Graph graph, int processorCount, boolean visualize) {
         if (treeSearch==null) {
