@@ -9,16 +9,9 @@ public class MainController {
     private TreeSearch treeSearch;
 
     @FXML
-    protected Label TestLabel;
+    protected Label ExpandedNodeCountLabel;
 
-    public void changeLabel(String newText) {
-        TestLabel.setText(newText);
+    public void setExpandedNodeCountLabel(int count) {
+        ExpandedNodeCountLabel.setText("Explored Nodes Count: " + count);
     }
-
-    public void initialize(){
-        //treeSearch=TreeSearch.GetTreeSearch();
-        changeLabel("random words");
-    }
-
-    
 }

@@ -29,7 +29,9 @@ public class TreeSearch {
         this.visualize = visualize;
 
         if (this.visualize) {
-            new Thread(() -> Visualiser.launch(Visualiser.class)).start();
+            new Thread(() -> {
+                Visualiser.launch(Visualiser.class);
+            }).start();
         }
     }
 

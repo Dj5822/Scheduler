@@ -34,7 +34,7 @@ public class Visualiser extends Application{
 
     private Stage stage;
     private Scene scene;
-    private static int exploredNodesCount = 0;
+    private int exploredNodesCount = 0;
     private MainController controller;
 
     @Override
@@ -46,7 +46,6 @@ public class Visualiser extends Application{
             
             AnchorPane pane = loader.load();
             controller = loader.getController();
-            controller.changeLabel("random stuffxyz");
             scene = new Scene(pane);
             stage.setScene(scene);
             stage.show();
@@ -61,7 +60,6 @@ public class Visualiser extends Application{
 
     public void incrementExploredNodesCount() {
         exploredNodesCount ++;
-        System.out.println(exploredNodesCount);
-        Platform.runLater(() -> controller.changeLabel(Integer.toString(exploredNodesCount)));;
+        controller.setExpandedNodeCountLabel(exploredNodesCount);
     }
 }
