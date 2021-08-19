@@ -7,7 +7,7 @@ import java.util.Set;
  * it stores its bottomlevel and weight as well as the list of child edges and map of parent tasks
  */
 public class Task {
-    private final int weight;
+    private final short weight;
     private final String id;
 
     /*
@@ -18,7 +18,7 @@ public class Task {
     // The tasks that this task points towards.
     private final ArrayList<Edge> children;
 
-    private Integer bottomLevel;
+    private Short bottomLevel;
 
 
     /**
@@ -26,7 +26,7 @@ public class Task {
      * @param weight the amount of time needed for the task to finish
      * @param id the character used to identify the task.
      */
-    Task(int weight, String id) {
+    Task(short weight, String id) {
         this.weight = weight;
         this.id = id;
 
@@ -40,7 +40,7 @@ public class Task {
      * Recursively set the bottom level of this task and all children
      * Assumes unset bottom levels are null
      */
-    public Integer findBottomLevel() {
+    public Short findBottomLevel() {
         
         // bottom level may have already been set by a parent task
         // do not recalculate, as bottom level never changes
@@ -49,18 +49,18 @@ public class Task {
         }
         
         // find longest path length
-        int criticalPathTime = 0;
+        short criticalPathTime = 0;
         for (Edge childEdge : getChildren()) {
             Task child = childEdge.getChild();
             // recursively call this function on all children
-            int pathTime = child.findBottomLevel();
+            short pathTime = child.findBottomLevel();
             // update longest path
             if (pathTime > criticalPathTime) {
                 criticalPathTime = pathTime;
             }
         }
 
-        bottomLevel = criticalPathTime + weight;
+        bottomLevel = (short) (criticalPathTime + weight);
         return getBottomLevel();
     }
 
@@ -87,9 +87,7 @@ public class Task {
      * 
      * @return The Id of this task
      */
-    String getId(){
-        return id; 
-    }
+    String getId(){ return id; }
 
     /**
      * Gets the BottomLevel of the task, which is the 
@@ -97,9 +95,7 @@ public class Task {
      * 
      * @return The bottom level of this task
      */
-    Integer getBottomLevel() {
-        return bottomLevel;
-    }
+    Short getBottomLevel() {return bottomLevel;}
 
     /**
      * Gets the weight of the task, which is the
@@ -107,9 +103,7 @@ public class Task {
      * 
      * @return the weight of this task
      */
-    int getWeight() {
-        return weight;
-    }
+    short getWeight() {return weight;}
 
     /**
      * Gets a list of the tasks children, as a list
@@ -159,5 +153,6 @@ public class Task {
      */
     public Set<Task> getParents() {
         return parentMap.keySet();
-    }   
+    }
+    
 }
