@@ -33,6 +33,13 @@ public class TreeSearch {
             while (visualiser == null) {
                 this.visualiser = Visualiser.getVisualiser();
             }
+            Timer timer = new Timer();
+            timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    Platform.runLater(() -> visualiser.setExpandedNodesCount(expandedNodesCount));
+                }
+            }, 0, 1000);
         }
     }
 
@@ -63,9 +70,6 @@ public class TreeSearch {
                 childNode.setCost(childNode.getSchedule().getCost());
             }
             openList.addAll(successorList);
-            if (expandedNodesCount % 10000 == 0) {
-                Platform.runLater(() -> visualiser.setExpandedNodesCount(expandedNodesCount));
-            }
         }
         return null;
     }
