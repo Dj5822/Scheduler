@@ -171,7 +171,7 @@ public class Visualiser extends Application{
         ganttChart = new GanttChart<Number,String>(xAxis,yAxis);
 
         for (int i=0; i<processors.length; i ++) {
-            processors[i] = "processor " + (i + 1);
+            processors[i] = "processor " + i;
         }
 
         xAxis.setLabel("Allocated Time");
