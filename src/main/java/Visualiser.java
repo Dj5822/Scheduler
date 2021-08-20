@@ -236,7 +236,8 @@ public class Visualiser extends Application{
         expandedNodesValueLabel.setText(Integer.toString(expandedNodesCount));
         memoryUsageValueLabel.setText(df.format((double)freeMemory/1000000000) + "/" + df.format((double)totalMemory/1000000000) + " GB");
         searchTimeValueLabel.setText(String.valueOf(timePassed/1000) + " sec");
-        
+
+        //Only update the gantt chart if the schedule is new, this removes flickering of the on hover objects as they are not being recreated every second
         if (currentSchedule != schedule){
             updateGanttChart(schedule);
             currentSchedule = schedule;
@@ -273,7 +274,7 @@ public class Visualiser extends Application{
             To avoid the same adjacent color, make the color dependent on the start time.
              */
             processorSchedule[processor].getData().add(new XYChart.Data(startTime, "processor " + processor,
-                    new GanttChart.ExtraData( weight, "rgba(" + weight % 255 + "," + (startTime*20) % 255 + "," + startTime % 255 + ",0.7)")));
+                    new GanttChart.ExtraData( weight, "rgba(" + weight % 255 + "," + (startTime*20) % 255 + "," + startTime % 255 + ",0.7)", scheduledTask)));
 
             currentColorIndex ++;
         }
