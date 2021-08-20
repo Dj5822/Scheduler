@@ -69,6 +69,8 @@ public class Visualiser extends Application{
     private static Visualiser visualiser;
     private GridPane mainPane;
 
+    private Schedule currentSchedule;
+
     private int processorCount;
 
     private DecimalFormat df;
@@ -234,8 +236,12 @@ public class Visualiser extends Application{
         expandedNodesValueLabel.setText(Integer.toString(expandedNodesCount));
         memoryUsageValueLabel.setText(df.format((double)freeMemory/1000000000) + "/" + df.format((double)totalMemory/1000000000) + " GB");
         searchTimeValueLabel.setText(String.valueOf(timePassed/1000) + " sec");
-
-        updateGanttChart(schedule);
+        
+        if (currentSchedule != schedule){
+            updateGanttChart(schedule);
+            currentSchedule = schedule;
+        }
+        
     }
 
 
