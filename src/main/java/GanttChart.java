@@ -171,10 +171,14 @@ public class GanttChart<X,Y> extends XYChart<X,Y> {
             container = new StackPane();
             item.setNode(container);
         }
-
+        //System.out.println("made container");
         container.setStyle("-fx-background-color:" + getColor( item.getExtraValue()));
-        container.hoverProperty().addListener((observable)->{
-            System.out.println("i have been hovered");
+        container.setOnMouseEntered(e -> {
+            System.out.println("hover");
+            Visualiser.getVisualiser().showTaskInfo();
+        });
+        container.setOnMouseExited(e -> {
+            Visualiser.getVisualiser().hideTaskInfo();
         });
 
         return container;

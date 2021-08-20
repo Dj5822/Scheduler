@@ -61,6 +61,7 @@ public class Visualiser extends Application{
     private Label expandedNodesValueLabel;
     private Label memoryUsageValueLabel;
     private Label searchTimeValueLabel;
+    private Label taskInfoLabel;
 
     private Stage stage;
     private Scene scene;
@@ -126,6 +127,8 @@ public class Visualiser extends Application{
         searchTimeLabel = new Label("Search Time");
         searchTimeValueLabel = new Label("0 min 0 sec");
 
+        taskInfoLabel = new Label("some text here");
+
         // Label sizes.
         expandedNodesLabel.setPrefHeight(height/6);
         expandedNodesLabel.setPrefWidth(width/7);
@@ -140,6 +143,9 @@ public class Visualiser extends Application{
         searchTimeValueLabel.setPrefHeight(height/6);
         searchTimeValueLabel.setPrefWidth(width/7);
 
+        taskInfoLabel.setPrefWidth(width/7);
+        taskInfoLabel.setPrefHeight(height/7);
+
         // Label alignment.
         expandedNodesLabel.setAlignment(Pos.BOTTOM_CENTER);
         expandedNodesValueLabel.setAlignment(Pos.TOP_CENTER);
@@ -148,10 +154,14 @@ public class Visualiser extends Application{
         searchTimeLabel.setAlignment(Pos.BOTTOM_CENTER);
         searchTimeValueLabel.setAlignment(Pos.TOP_CENTER);
 
+        taskInfoLabel.setAlignment(Pos.TOP_LEFT);
+
         // Apply styling.
         expandedNodesLabel.getStyleClass().add("boldLabel");
         memoryUsageLabel.getStyleClass().add("boldLabel");
         searchTimeLabel.getStyleClass().add("boldLabel");
+
+        taskInfoLabel.getStyleClass().add("boldLabel");
 
         // Add to the pane.
         statsPane.add(expandedNodesLabel, 0, 0);
@@ -162,6 +172,17 @@ public class Visualiser extends Application{
         statsPane.add(searchTimeValueLabel, 0, 5);
         statsPane.setPadding(new Insets(10, 0, 0, 0));
         mainPane.add(statsPane,5,0, 1, 1);
+
+        mainPane.add(taskInfoLabel, 0, 0);
+        taskInfoLabel.setVisible(false);
+    }
+
+    public void showTaskInfo(){
+        taskInfoLabel.setVisible(true);   
+    }
+
+    public void hideTaskInfo(){
+        taskInfoLabel.setVisible(false);   
     }
 
     public void setupGanttChart(int processorCount) {
@@ -216,6 +237,7 @@ public class Visualiser extends Application{
 
         updateGanttChart(schedule);
     }
+
 
     private void updateGanttChart(Schedule schedule) {
         // clear the existing data.
