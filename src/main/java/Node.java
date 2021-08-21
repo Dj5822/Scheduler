@@ -4,6 +4,7 @@ class Node {
     protected short cost;
     protected Schedule schedule;
     protected ArrayList<Node> successors = null;
+    private String stringForm = null;
 
     public Node(short cost, Schedule schedule) {
         this.schedule = schedule;
@@ -86,6 +87,13 @@ class Node {
     }
 
     public String toString() {
+        if (this.stringForm == null) {
+            this.stringForm = buildString();
+        }
+        return this.stringForm;
+    }
+
+    private String buildString() {
         StringBuilder stringBuilder = new StringBuilder();
         for (TaskVariant task : getSchedule().scheduleOrder) {
             stringBuilder.append(task.getTask().getId());
