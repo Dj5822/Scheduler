@@ -1,6 +1,8 @@
 import com.paypal.digraph.parser.GraphEdge;
 import com.paypal.digraph.parser.GraphNode;
 
+import org.abego.treelayout.NodeExtentProvider;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ public class Graph {
     private HashMap<String, Task> tasks;
     private HashMap<String, GraphNode> nodes;
     private DotParser parser;
+    private int totalWeight;
 
     /**
      * Creates a graph based on a dot file.
@@ -26,6 +29,11 @@ public class Graph {
             tasks = new HashMap<>();
             nodes = new HashMap<>();
             setupGraph();
+            int weightSum = 0;
+            for (Task task: getTasks()) {
+                weightSum += task.getWeight();
+            }
+            this.totalWeight = weightSum;
         }
         catch (FileNotFoundException e) {
             System.out.println("File not found.");
@@ -100,11 +108,15 @@ public class Graph {
         return rootTasks;
     }
 
+    public int getTotalWeight() {
+        return this.totalWeight;
+    }
+
     /**
      * Converts the graph back into a dot file.
      * @param node used to find processor and start times.
      */
-    public void generateOutputGraph(Node<?> node) {
+    public void generateOutputGraph(Node node) {
         for (TaskVariant state : node.getSchedule().getScheduledTasks().values()) {
             GraphNode mappedNode = nodes.get(state.getTask().getId());
             if (mappedNode != null) {
