@@ -25,10 +25,16 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Border;
 
 public class Visualiser extends Application{
     /**
@@ -72,6 +78,7 @@ public class Visualiser extends Application{
     private Label taskIDValue;
 
     private GridPane taskInfoPane;
+    private Pane taskInfoOuterPane;
 
     private Stage stage;
     private Scene scene;
@@ -208,14 +215,14 @@ public class Visualiser extends Application{
         taskEndTimeValue.setPrefWidth(width/7);
         
         
-        taskWeight.setAlignment(Pos.BOTTOM_CENTER);
-        taskWeightValue.setAlignment(Pos.TOP_CENTER);
-        taskStartTime.setAlignment(Pos.BOTTOM_CENTER);
-        taskStartTimeValue.setAlignment(Pos.TOP_CENTER);
-        taskID.setAlignment(Pos.BOTTOM_CENTER);
-        taskIDValue.setAlignment(Pos.TOP_CENTER);
-        taskEndTime.setAlignment(Pos.BOTTOM_CENTER);
-        taskEndTimeValue.setAlignment(Pos.TOP_CENTER);
+        taskWeight.setAlignment(Pos.CENTER);
+        taskWeightValue.setAlignment(Pos.CENTER);
+        taskStartTime.setAlignment(Pos.CENTER);
+        taskStartTimeValue.setAlignment(Pos.CENTER);
+        taskID.setAlignment(Pos.CENTER);
+        taskIDValue.setAlignment(Pos.CENTER);
+        taskEndTime.setAlignment(Pos.CENTER);
+        taskEndTimeValue.setAlignment(Pos.CENTER);
 
         //taskWeight.getStyleClass().add("boldLabel");
         //taskStartTime.getStyleClass().add("boldLabel");
@@ -232,8 +239,9 @@ public class Visualiser extends Application{
         taskInfoPane.add(taskEndTimeValue, 7, 0);
         taskInfoPane.setPadding(new Insets(10, 0, 0, 0));
         taskInfoPane.setVisible(false);
-        mainPane.add(taskInfoPane, 0, 1, 8, 8);
-    
+        
+        taskInfoPane.setBorder(new Border(new BorderStroke(new Color(0f,0f,0f,.5f ), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(50, 5, 50, 5))));
+        mainPane.add(taskInfoPane, 0, 1, 5, 5);
     }
 
     public void showTaskInfo(){

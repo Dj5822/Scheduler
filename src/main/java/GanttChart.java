@@ -1,13 +1,20 @@
 import java.util.Arrays;
 
+import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+
+import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -191,12 +198,58 @@ public class GanttChart<X,Y> extends XYChart<X,Y> {
         }
         //System.out.println("made container");
         container.setStyle("-fx-background-color:" + getColor( item.getExtraValue()));
-        container.setOnMouseEntered(e -> {
+
+        ColorAdjust colorAdjust = new ColorAdjust();
+        colorAdjust.setBrightness(0);
+        container.setEffect(colorAdjust);
+
+        container.setOnMouseEntered(e -> {         
+            String color = getColor( item.getExtraValue());
+            String[] colorElements = color.split("\\(|\\)|,");
+            for (int i=1;i<4;i++){
+                colorElements[i]=Integer.toString(Math.min((Integer.parseInt(colorElements[i])+20), 255));
+            }
+            /**
+            String newColor = "rgba(";
+            newColor += colorElements[1];
+            newColor += ",";
+            newColor += colorElements[2];
+            newColor += ",";
+            newColor += colorElements[3];
+            newColor += ",";
+            newColor += colorElements[4];
+            newColor += ")";
+            setStyle("-fx-background-color:" + newColor);
+            System.out.println(color);
+            System.out.println(newColor);
+            **/
+
+            //https://stackoverflow.com/questions/29879023/javafx-transition-darken-button-on-hover
+
+            Timeline fadeInTimeline = new Timeline(
+
+                        new KeyFrame(Duration.seconds(0), 
+                                new KeyValue(colorAdjust.brightnessProperty(), colorAdjust.brightnessProperty().getValue(), Interpolator.LINEAR)), 
+                                new KeyFrame(Duration.seconds(0.3), new KeyValue(colorAdjust.brightnessProperty(), -0.4, Interpolator.LINEAR)
+                                ));
+                fadeInTimeline.setCycleCount(1);
+                fadeInTimeline.setAutoReverse(false);
+                fadeInTimeline.play();
+
             Visualiser.getVisualiser().setTaskLabelInfo(getTask( item.getExtraValue()), getStartTime( item.getExtraValue()));
             Visualiser.getVisualiser().showTaskInfo();
         });
         container.setOnMouseExited(e -> {
             Visualiser.getVisualiser().hideTaskInfo();
+
+            Timeline fadeOutTimeline = new Timeline(
+                        new KeyFrame(Duration.seconds(0), 
+                                new KeyValue(colorAdjust.brightnessProperty(), colorAdjust.brightnessProperty().getValue(), Interpolator.LINEAR)), 
+                                new KeyFrame(Duration.seconds(0.3), new KeyValue(colorAdjust.brightnessProperty(), 0, Interpolator.LINEAR)
+                                ));
+                fadeOutTimeline.setCycleCount(1);
+                fadeOutTimeline.setAutoReverse(false);
+                fadeOutTimeline.play();
         });
 
         return container;
