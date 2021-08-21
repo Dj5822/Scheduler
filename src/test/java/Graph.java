@@ -136,7 +136,7 @@ public class Graph {
     public Collection<Task> getTasks() {
         return tasks.values();
     }
-
+    public Collection<GraphNode> getGraphNodes() { return nodes.values(); }
     /**
      * Debugging tool - prints out the bottom level of every task
      */
