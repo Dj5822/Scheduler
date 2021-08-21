@@ -31,13 +31,15 @@ public class GanttChart<X,Y> extends XYChart<X,Y> {
         public long length;
         public String color;
         public Task task;
+        public short startTime;
 
 
-        public ExtraData(long lengthMs, String color, Task task) {
+        public ExtraData(long lengthMs, String color, Task task, short startTime) {
             super();
             this.length = lengthMs;
             this.color = color;
             this.task = task;
+            this.startTime = startTime;
         }
         public long getLength() {
             return length;
@@ -53,6 +55,9 @@ public class GanttChart<X,Y> extends XYChart<X,Y> {
         }
         public Task getTask() {
             return task;
+        }
+        public short getStartTime() {
+            return startTime;
         }
 
 
@@ -82,6 +87,10 @@ public class GanttChart<X,Y> extends XYChart<X,Y> {
 
     private static Task getTask( Object obj) {
         return ((ExtraData) obj).getTask();
+    }
+    
+    private static short getStartTime( Object obj){
+        return ((ExtraData) obj).getStartTime();
     }
 
     @Override protected void layoutPlotChildren() {
@@ -183,8 +192,7 @@ public class GanttChart<X,Y> extends XYChart<X,Y> {
         //System.out.println("made container");
         container.setStyle("-fx-background-color:" + getColor( item.getExtraValue()));
         container.setOnMouseEntered(e -> {
-            System.out.println("hover");
-            System.out.println("Cost: " + getTask( item.getExtraValue()).getWeight());
+            Visualiser.getVisualiser().setTaskLabelInfo(getTask( item.getExtraValue()), getStartTime( item.getExtraValue()));
             Visualiser.getVisualiser().showTaskInfo();
         });
         container.setOnMouseExited(e -> {

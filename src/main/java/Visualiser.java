@@ -61,7 +61,17 @@ public class Visualiser extends Application{
     private Label expandedNodesValueLabel;
     private Label memoryUsageValueLabel;
     private Label searchTimeValueLabel;
-    private Label taskInfoLabel;
+
+    private Label taskWeight;
+    private Label taskStartTime;
+    private Label taskEndTime;
+    private Label taskID;
+    private Label taskWeightValue;
+    private Label taskStartTimeValue;
+    private Label taskEndTimeValue;
+    private Label taskIDValue;
+
+    private GridPane taskInfoPane;
 
     private Stage stage;
     private Scene scene;
@@ -129,7 +139,6 @@ public class Visualiser extends Application{
         searchTimeLabel = new Label("Search Time");
         searchTimeValueLabel = new Label("0 min 0 sec");
 
-        taskInfoLabel = new Label("some text here");
 
         // Label sizes.
         expandedNodesLabel.setPrefHeight(height/6);
@@ -145,9 +154,6 @@ public class Visualiser extends Application{
         searchTimeValueLabel.setPrefHeight(height/6);
         searchTimeValueLabel.setPrefWidth(width/7);
 
-        taskInfoLabel.setPrefWidth(width/7);
-        taskInfoLabel.setPrefHeight(height/7);
-
         // Label alignment.
         expandedNodesLabel.setAlignment(Pos.BOTTOM_CENTER);
         expandedNodesValueLabel.setAlignment(Pos.TOP_CENTER);
@@ -156,14 +162,12 @@ public class Visualiser extends Application{
         searchTimeLabel.setAlignment(Pos.BOTTOM_CENTER);
         searchTimeValueLabel.setAlignment(Pos.TOP_CENTER);
 
-        taskInfoLabel.setAlignment(Pos.TOP_LEFT);
 
         // Apply styling.
         expandedNodesLabel.getStyleClass().add("boldLabel");
         memoryUsageLabel.getStyleClass().add("boldLabel");
         searchTimeLabel.getStyleClass().add("boldLabel");
 
-        taskInfoLabel.getStyleClass().add("boldLabel");
 
         // Add to the pane.
         statsPane.add(expandedNodesLabel, 0, 0);
@@ -175,16 +179,79 @@ public class Visualiser extends Application{
         statsPane.setPadding(new Insets(10, 0, 0, 0));
         mainPane.add(statsPane,5,0, 1, 1);
 
-        mainPane.add(taskInfoLabel, 0, 0);
-        taskInfoLabel.setVisible(false);
+
+        taskInfoPane = new GridPane();
+        taskWeight = new Label("Weight: ");
+        taskStartTime = new Label("Start Time: ");
+        taskEndTime = new Label("End Time: ");
+        taskID = new Label("Task: ");
+        taskWeightValue = new Label();
+        taskStartTimeValue = new Label();
+        taskEndTimeValue = new Label();
+        taskIDValue = new Label();
+
+        taskWeight.setPrefHeight(height/6);
+        taskWeight.setPrefWidth(width/7);
+        taskStartTime.setPrefHeight(height/6);
+        taskStartTime.setPrefWidth(width/7);
+        taskID.setPrefHeight(height/6);
+        taskID.setPrefWidth(width/7);
+        taskWeightValue.setPrefHeight(height/6);
+        taskWeightValue.setPrefWidth(width/7);
+        taskStartTimeValue.setPrefHeight(height/6);
+        taskStartTimeValue.setPrefWidth(width/7);
+        taskIDValue.setPrefHeight(height/6);
+        taskIDValue.setPrefWidth(width/7);
+        taskEndTime.setPrefHeight(height/6);
+        taskEndTime.setPrefWidth(width/7); 
+        taskEndTimeValue.setPrefHeight(height/6);  
+        taskEndTimeValue.setPrefWidth(width/7);
+        
+        
+        taskWeight.setAlignment(Pos.BOTTOM_CENTER);
+        taskWeightValue.setAlignment(Pos.TOP_CENTER);
+        taskStartTime.setAlignment(Pos.BOTTOM_CENTER);
+        taskStartTimeValue.setAlignment(Pos.TOP_CENTER);
+        taskID.setAlignment(Pos.BOTTOM_CENTER);
+        taskIDValue.setAlignment(Pos.TOP_CENTER);
+        taskEndTime.setAlignment(Pos.BOTTOM_CENTER);
+        taskEndTimeValue.setAlignment(Pos.TOP_CENTER);
+
+        //taskWeight.getStyleClass().add("boldLabel");
+        //taskStartTime.getStyleClass().add("boldLabel");
+        //taskID.getStyleClass().add("boldLabel");
+        //taskEndTime.getStyleClass().add("boldLabel");
+
+        taskInfoPane.add(taskID, 0, 0);
+        taskInfoPane.add(taskIDValue, 1, 0);
+        taskInfoPane.add(taskWeight, 2, 0);
+        taskInfoPane.add(taskWeightValue, 3, 0);
+        taskInfoPane.add(taskStartTime, 4, 0);
+        taskInfoPane.add(taskStartTimeValue, 5, 0);
+        taskInfoPane.add(taskEndTime, 6, 0);
+        taskInfoPane.add(taskEndTimeValue, 7, 0);
+        taskInfoPane.setPadding(new Insets(10, 0, 0, 0));
+        taskInfoPane.setVisible(false);
+        mainPane.add(taskInfoPane, 0, 1, 8, 8);
+    
     }
 
     public void showTaskInfo(){
-        taskInfoLabel.setVisible(true);   
+        taskInfoPane.setVisible(true);  
+        //System.out.println("shown"); 
     }
 
     public void hideTaskInfo(){
-        taskInfoLabel.setVisible(false);   
+        taskInfoPane.setVisible(false);   
+        //System.out.println("hidden");
+    }
+
+    public void setTaskLabelInfo(Task task, short startTime){
+        taskIDValue.setText(task.getId());
+        taskStartTimeValue.setText(Short.toString(startTime));
+        int weight = task.getWeight();
+        taskEndTimeValue.setText(Integer.toString(startTime+weight));
+        taskWeightValue.setText(Integer.toString(weight));
     }
 
     public void setupGanttChart(int processorCount) {
@@ -274,7 +341,7 @@ public class Visualiser extends Application{
             To avoid the same adjacent color, make the color dependent on the start time.
              */
             processorSchedule[processor].getData().add(new XYChart.Data(startTime, "processor " + processor,
-                    new GanttChart.ExtraData( weight, "rgba(" + weight % 255 + "," + (startTime*20) % 255 + "," + startTime % 255 + ",0.7)", scheduledTask)));
+                    new GanttChart.ExtraData( weight, "rgba(" + weight % 255 + "," + (startTime*20) % 255 + "," + startTime % 255 + ",0.7)", scheduledTask, startTime)));
 
             currentColorIndex ++;
         }
