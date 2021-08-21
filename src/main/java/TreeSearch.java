@@ -29,7 +29,7 @@ public class TreeSearch {
             openList.add(rootNode);
         }
         while (!openList.isEmpty()) {
-            Node node = openList.poll();
+            Node node = openList.peek();
             if (node.getSchedule().getScheduledTasks().size() == graph.getTasks().size()) {
                 return node;
             }
@@ -40,6 +40,9 @@ public class TreeSearch {
                     openList.add(successorNode);
                 }
                 createdNodes.add(successorNode.toString());
+            }
+            if (node.getSchedule().getSchedulableTasks().isEmpty()) {
+                openList.poll();
             }
         }
         return null;

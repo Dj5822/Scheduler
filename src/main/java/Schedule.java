@@ -1,9 +1,10 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 class Schedule {
     private HashMap<Task,TaskVariant> scheduled;
-    private ArrayList<Task> schedulable;
+    private HashSet<Task> schedulable;
     protected ArrayList<TaskVariant> scheduleOrder;
     private short[] processorFinishTimes;
     protected short bottomLevelHeuristic = 0;
@@ -19,7 +20,7 @@ class Schedule {
      */
     public Schedule(Task task, byte processor, Schedule parentSchedule) {
 
-        schedulable = new ArrayList<Task>(parentSchedule.getSchedulableTasks());
+        schedulable = new HashSet<Task>(parentSchedule.getSchedulableTasks());
         schedulable.remove(task);
 
         scheduled = new HashMap<Task, TaskVariant>(parentSchedule.getScheduledTasks());
@@ -94,7 +95,7 @@ class Schedule {
         this.scheduleOrder = new ArrayList<TaskVariant>(1);
         scheduleOrder.add(state);
         
-        schedulable = new ArrayList<Task>(startTasks);
+        schedulable = new HashSet<Task>(startTasks);
         schedulable.remove(task);
 
         processorFinishTimes = new short[1];
@@ -130,7 +131,7 @@ class Schedule {
         return scheduled;
     }
 
-    public ArrayList<Task> getSchedulableTasks() {
+    public HashSet<Task> getSchedulableTasks() {
         return schedulable;
     }
 

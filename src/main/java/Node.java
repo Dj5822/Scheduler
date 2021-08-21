@@ -3,6 +3,7 @@ import java.util.ArrayList;
 class Node {
     protected short cost;
     protected Schedule schedule;
+    protected ArrayList<Node> successors = null;
 
     public Node(short cost, Schedule schedule) {
         this.schedule = schedule;
@@ -41,7 +42,7 @@ class Node {
      * @param queue the priority queue of nodes
      * @param node the node to be expanded
      */
-    public ArrayList<Schedule> expandNode(int processorCount) {
+    public ArrayList<Schedule> expandNode(int processorCount, Graph graph) {
         int processorsInUse = schedule.getProcessorFinishTimes().length;
 
         // attempt to minimise repeated branches by limiting duplicate empty processors
@@ -51,21 +52,32 @@ class Node {
 
         ArrayList<Schedule> successorList = new ArrayList<Schedule>();
         // make a child node for every processor * schedulable task
+        boolean tight = false;
+        ArrayList<Task> examinedTasks = new ArrayList<Task>();
         for (Task task : schedule.getSchedulableTasks()) {
             for (byte processor = 0; processor < processorsInUse; processor++) {
                 Schedule newSchedule = new Schedule(task, processor, schedule);
                 successorList.add(newSchedule);
+                if (newSchedule.getCost(graph, processorCount) == schedule.getCost(graph, processorCount)) {
+                    tight = true;
+                } 
+            }
+            examinedTasks.add(task);
+            if (tight) {
+                break;
             }
         }
+        schedule.getSchedulableTasks().removeAll(examinedTasks);
         return successorList;
     }
 
     public ArrayList<Node> getSuccessors(int processorCount, Graph graph) {
         ArrayList<Node> successorList = new ArrayList<Node>();
-        for (Schedule newSchedule : expandNode(processorCount)) {
+        for (Schedule newSchedule : expandNode(processorCount, graph)) {
             Node node = new Node(newSchedule, graph, processorCount);
             successorList.add(node);
         }
+        successors = successorList;
         return successorList;
     }
 
