@@ -35,6 +35,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Border;
+import javafx.scene.layout.StackPane;
 
 public class Visualiser extends Application{
     /**
@@ -85,6 +86,8 @@ public class Visualiser extends Application{
     private VisualiserController controller;
     private static Visualiser visualiser;
     private GridPane mainPane;
+    //private StackPane stackPane;
+    private AnchorPane anchorPane;
 
     private Schedule currentSchedule;
 
@@ -107,16 +110,25 @@ public class Visualiser extends Application{
             height = (int) (screenBounds.getHeight()/1.1);
             width = (int) screenBounds.getWidth();
 
+            anchorPane = new AnchorPane();
+            anchorPane.setPrefWidth(width);
+            anchorPane.setPrefHeight(height);
+
+
             GridPane mainPane = new GridPane();
             mainPane.setPrefWidth(width);
             mainPane.setPrefHeight(height);
+
+            anchorPane.getChildren().add(mainPane);
+            
 
             setupView(mainPane, width, height);
 
             df = new DecimalFormat("#.####");
             df.setRoundingMode(RoundingMode.CEILING);
 
-            scene = new Scene(mainPane);
+            //scene = new Scene(mainPane);
+            scene = new Scene(anchorPane);
             File styleFile = new File("src/main/resources/views/ganttchart.css");
             scene.getStylesheets().clear();
             scene.getStylesheets().add("file:///" + styleFile.getAbsolutePath().replace("\\", "/"));
@@ -231,22 +243,31 @@ public class Visualiser extends Application{
 
         taskInfoPane.add(taskID, 0, 0);
         taskInfoPane.add(taskIDValue, 1, 0);
-        taskInfoPane.add(taskWeight, 2, 0);
-        taskInfoPane.add(taskWeightValue, 3, 0);
-        taskInfoPane.add(taskStartTime, 4, 0);
-        taskInfoPane.add(taskStartTimeValue, 5, 0);
-        taskInfoPane.add(taskEndTime, 6, 0);
-        taskInfoPane.add(taskEndTimeValue, 7, 0);
-        taskInfoPane.setPadding(new Insets(10, 0, 0, 0));
+        taskInfoPane.add(taskWeight, 0, 1);
+        taskInfoPane.add(taskWeightValue, 1, 1);
+        taskInfoPane.add(taskStartTime, 0, 2);
+        taskInfoPane.add(taskStartTimeValue, 1, 2);
+        taskInfoPane.add(taskEndTime, 0, 3);
+        taskInfoPane.add(taskEndTimeValue, 1, 3);
+        taskInfoPane.setPadding(new Insets(2, 0, 0, 0));
         taskInfoPane.setVisible(false);
         
-        taskInfoPane.setBorder(new Border(new BorderStroke(new Color(0f,0f,0f,.5f ), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(50, 5, 50, 5))));
-        mainPane.add(taskInfoPane, 0, 1, 5, 5);
+        taskInfoPane.setPrefSize(200, 200);
+
+        //taskInfoPane.setPrefHeight(height/5);
+        taskInfoPane.setBorder(new Border(new BorderStroke(new Color(0f,0f,0f,0.5f ), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(5, 5, 5, 5))));
+        //mainPane.add(taskInfoPane, 0, 2, 5, 1);
+        anchorPane.getChildren().addAll(taskInfoPane);
     }
 
     public void showTaskInfo(){
+        taskInfoPane.toFront();
         taskInfoPane.setVisible(true);  
         //System.out.println("shown"); 
+    }
+
+    public void moveTaskInfo(double xvalue, double yvalue){
+        taskInfoPane.relocate(xvalue, yvalue);
     }
 
     public void hideTaskInfo(){
@@ -349,7 +370,7 @@ public class Visualiser extends Application{
             To avoid the same adjacent color, make the color dependent on the start time.
              */
             processorSchedule[processor].getData().add(new XYChart.Data(startTime, "processor " + processor,
-                    new GanttChart.ExtraData( weight, "rgba(" + weight % 255 + "," + (startTime*20) % 255 + "," + startTime % 255 + ",0.7)", scheduledTask, startTime)));
+                    new GanttChart.ExtraData( weight, "rgba(" + weight % 255 + "," + (startTime*20) % 255 + "," + startTime % 255 + ",0.7)", scheduledTask, startTime, processor)));
 
             currentColorIndex ++;
         }
@@ -357,5 +378,13 @@ public class Visualiser extends Application{
 
         // add the new data.
         ganttChart.getData().addAll(processorSchedule);
+    }
+
+    public int getProcessorCount() {
+        return processorCount;
+    }
+
+    public int getheight() {
+        return height;
     }
 }

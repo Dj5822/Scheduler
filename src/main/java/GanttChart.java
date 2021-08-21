@@ -39,14 +39,19 @@ public class GanttChart<X,Y> extends XYChart<X,Y> {
         public String color;
         public Task task;
         public short startTime;
+        public byte processor;
 
 
-        public ExtraData(long lengthMs, String color, Task task, short startTime) {
+        public ExtraData(long lengthMs, String color, Task task, short startTime, byte processor) {
             super();
             this.length = lengthMs;
             this.color = color;
             this.task = task;
             this.startTime = startTime;
+            this.processor = processor;
+        }
+        public byte getProcessor(){
+            return processor;
         }
         public long getLength() {
             return length;
@@ -98,6 +103,10 @@ public class GanttChart<X,Y> extends XYChart<X,Y> {
     
     private static short getStartTime( Object obj){
         return ((ExtraData) obj).getStartTime();
+    }
+
+    private static byte getProcessor( Object obj){
+        return ((ExtraData) obj).getProcessor();
     }
 
     @Override protected void layoutPlotChildren() {
@@ -203,26 +212,26 @@ public class GanttChart<X,Y> extends XYChart<X,Y> {
         colorAdjust.setBrightness(0);
         container.setEffect(colorAdjust);
 
-        container.setOnMouseEntered(e -> {         
-            String color = getColor( item.getExtraValue());
-            String[] colorElements = color.split("\\(|\\)|,");
-            for (int i=1;i<4;i++){
-                colorElements[i]=Integer.toString(Math.min((Integer.parseInt(colorElements[i])+20), 255));
-            }
-            /**
-            String newColor = "rgba(";
-            newColor += colorElements[1];
-            newColor += ",";
-            newColor += colorElements[2];
-            newColor += ",";
-            newColor += colorElements[3];
-            newColor += ",";
-            newColor += colorElements[4];
-            newColor += ")";
-            setStyle("-fx-background-color:" + newColor);
-            System.out.println(color);
-            System.out.println(newColor);
-            **/
+        container.setOnMouseEntered(e -> {   
+            //need to determine the location of center top side of the gantt chart element
+            Visualiser visualiser = Visualiser.getVisualiser();
+
+            int startTime = getStartTime( item.getExtraValue());
+            int processor = getProcessor( item.getExtraValue());
+            double length = getLength( item.getExtraValue());
+            int processorCount = visualiser.getProcessorCount();
+            double totalHeight = getHeight();
+
+            double yvalue = (getYAxis().getHeight())*(processorCount - processor)/(visualiser.getProcessorCount());
+            //System.out.println(visualiser.getheight());
+            System.out.println(processor+1);
+            System.out.println(visualiser.getProcessorCount());
+            System.out.println(getYAxis().getHeight());
+            //System.out.println(yvalue);
+            visualiser.moveTaskInfo(200, yvalue);
+
+
+
 
             //https://stackoverflow.com/questions/29879023/javafx-transition-darken-button-on-hover
 
