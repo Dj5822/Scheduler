@@ -94,7 +94,8 @@ public class TreeSearch {
             boolean active = true;
             while (activeThreads != 0) {
                 // check if there are nodes available for expansion in the central list
-                if (openList.isEmpty() || openList.peek().getCost() >= incumbent.getCost()) {
+                Node testNode = openList.peek();
+                if (testNode == null || testNode.getCost() >= incumbent.getCost()) {
                     if (active) {
                         active = false;
                         decrementActiveThreads();
@@ -107,7 +108,10 @@ public class TreeSearch {
                     incrementActiveThreads();
                 }
 
-                Node node =openList.poll();
+                Node node = openList.poll();
+                if (node == null) {
+                    continue;
+                }
 
                 // check if goal node
                 if (node.getSchedule().getScheduledTasks().size() == graph.getTasks().size()) {
