@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.concurrent.PriorityBlockingQueue;
 
 /**
  * The method responsible for the creation and traversal of the
@@ -8,6 +9,27 @@ public class TreeSearch {
 
     private Graph graph;
     private int processorCount;
+
+    private Node incumbent = new Node();
+    private int activeThreads = 0;
+
+    private synchronized void incrementActiveThreads() {
+        activeThreads++;
+    }
+
+    private synchronized void decrementActiveThreads() {
+        activeThreads--;
+    }
+    
+    private synchronized void updateEncumbent(Node candidate) {
+        if (candidate.getCost() < incumbent.getCost()) {
+            incumbent = candidate;
+        }
+    }
+
+    public synchronized Node getEncumbent() {
+        return incumbent;
+    }
 
     TreeSearch(Graph graph, int processorCount){
         this.graph = graph;
@@ -46,6 +68,80 @@ public class TreeSearch {
             }
         }
         return null;
+    }
+
+    /**
+     * Simple Centralised Parallel A*
+     * @return goal node, or null if goal not found
+     */
+    public Node aStarCentralized(int threadCount) {
+        PriorityBlockingQueue<Node> openList = new PriorityBlockingQueue<Node>(100000, new NodeComparator());
+        Set<String> createdNodes = Collections.synchronizedSet(new HashSet<String>());
+
+        // Add start tasks
+        for (Task startTask : graph.getStartTasks()) {
+            Node rootNode = new Node(startTask, graph.getStartTasks(), graph, processorCount);
+            openList.add(rootNode);
+            createdNodes.add(rootNode.toString());
+        }
+
+        activeThreads = threadCount;
+
+        /**
+         * Main A* loop for each thread
+         */
+        Runnable searchLoop = () -> {
+            boolean active = true;
+            while (activeThreads != 0) {
+                // check if there are nodes available for expansion in the central list
+                if (openList.isEmpty() || openList.peek().getCost() >= incumbent.getCost()) {
+                    if (active) {
+                        active = false;
+                        decrementActiveThreads();
+                    }
+                    continue;
+                }
+
+                if (!active) {
+                    active = true;
+                    incrementActiveThreads();
+                }
+
+                Node node =openList.poll();
+
+                // check if goal node
+                if (node.getSchedule().getScheduledTasks().size() == graph.getTasks().size()) {
+                    updateEncumbent(node);
+                }
+
+                // partial expansion - see Oliver's research
+                for (Node successorNode : node.getSuccessors(processorCount, graph)) {
+                    if (!createdNodes.contains(successorNode.toString())) {
+                        openList.add(successorNode);
+                    }
+                    createdNodes.add(successorNode.toString());
+                }
+                // if fully expanded, remove the node from the open list
+                if (!node.getSchedule().getSchedulableTasks().isEmpty()) {
+                    openList.add(node);
+                }
+            }
+        };
+
+        // initialise threads
+        for (int i = 0; i < threadCount-1; i++) {
+            Thread thread = new Thread(searchLoop);
+            thread.start();
+        }
+        searchLoop.run();
+
+        // return solution
+        Node solution = getEncumbent();
+        if (solution.getCost() == 0) {
+            return null;
+        } else {
+            return solution;
+        }
     }
 
     private boolean NodeAlreadyExists(HashSet<String> createdNodes, Node node) {

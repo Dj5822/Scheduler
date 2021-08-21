@@ -21,7 +21,7 @@ public class App {
         // Start searching the solutions tree.
         TreeSearch testSearch = new TreeSearch(graph, processorCount);
 
-        Node node = testSearch.aStar();
+        Node node = testSearch.aStarCentralized(4);
         graph.generateOutputGraph(node);
         System.out.println("\nFinish Time: \n" + node.getSchedule().getFinishTime() + "\n");
     }

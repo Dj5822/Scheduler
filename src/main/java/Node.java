@@ -20,6 +20,10 @@ class Node {
         this.cost = schedule.getCost(graph, numProcessors);
     }
 
+    public Node() {
+        this.cost = Short.MAX_VALUE;
+    }
+
     public Schedule getSchedule() {
         return this.schedule;
     }
