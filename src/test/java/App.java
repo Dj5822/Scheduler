@@ -1,10 +1,12 @@
+//import javax.swing.ViewportLayout;
+
 /**
- * The main class for the program, interacting with the other major classes 
+ * The main class for the program, interacting with the other major classes
  * in order to create a final solution.
  */
 public class App {
-    public static void main(String[] args) {
 
+    public static void main(String[] args) {
         try {
             checkArgs(args);
         } catch (IllegalArgumentException e) {
@@ -23,33 +25,29 @@ public class App {
         }
 
         /*
+         The number of processors.
+         */
+        int processorCount = Integer.parseInt(args[1]);
+
+        /*
         The name of the input graph should be passed in as an argument.
         Should be passed in as a commandline argument later.
          */
-        Graph graph = new Graph(args[0], outputFileName);
-
-        /*
-         The number of processors.
-         Should be passed in as a commandline argument later.
-         */
-        int processorCount = 1;
-        if (!args[1].matches("1")) {
-            processorCount = 2;
-        }
+        Graph graph = new Graph("examples/" + args[0], outputFileName);
 
         // Start searching the solutions tree.
-        TreeSearch testSearch = new TreeSearch(graph, processorCount);
+        TreeSearch testSearch = new TreeSearch(graph, processorCount, true);
 
-        Node node = testSearch.idaStar();
+        Node<?> node = testSearch.branchAndBound();
         graph.generateOutputGraph(node);
+        graph.printBottomLevels();
         System.out.println("output file generated.");
-        //graph.printBottomLevels();
     }
 
     /**
      * Checks the args that are provided in the input to ensure that they are valid,
      * throwing an exception if they are not
-     * 
+     *
      * @param args The args to be checked
      * @throws IllegalArgumentException an exception indicating that the args are not valid
      */
@@ -67,5 +65,6 @@ public class App {
                 throw new IllegalArgumentException("Please enter a valid number of processors.");
             }
         }
+
     }
 }

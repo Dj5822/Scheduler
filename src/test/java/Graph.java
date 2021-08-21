@@ -49,7 +49,7 @@ public class Graph {
     private void assignTasks() {
         // create tasks from parsed nodes
         for (GraphNode node : parser.parseNodes()) {
-            int weight = Integer.parseInt((String) node.getAttribute("Weight"));
+            short weight = Short.parseShort((String) node.getAttribute("Weight"));
             Task task = new Task(weight, node.getId());
             tasks.put(node.getId(), task);
             nodes.put(node.getId(), node);
@@ -101,7 +101,7 @@ public class Graph {
     }
 
     public Task getDummyStart() {
-        Task dummy = new Task(0, "%%%");
+        Task dummy = new Task((short) 0, "%%%");
         dummy.findBottomLevel();
         for (Task startTask : getStartTasks()) {
             dummy.addChild(new Edge(startTask, dummy, 0));
@@ -113,18 +113,13 @@ public class Graph {
      * Converts the graph back into a dot file.
      * @param node used to find processor and start times.
      */
-    public void generateOutputGraph(Node node) {
-        while (node != null) {
-            State state = node.getState();
-            Task task = state.getTask();
-
-            GraphNode mappedNode = nodes.get(task.getId());
+    public void generateOutputGraph(Node<?> node) {
+        for (TaskVariant state : node.getSchedule().getScheduledTasks().values()) {
+            GraphNode mappedNode = nodes.get(state.getTask().getId());
             if (mappedNode != null) {
                 mappedNode.setAttribute("Start",state.getStartTime());
                 mappedNode.setAttribute("Processor",state.getProcessor());
             }
-
-            node = node.getParent();
         }
         parser.writeScheduleToDot();
     }
