@@ -22,9 +22,7 @@ public class TreeSearch {
     }
     
     private synchronized void updateEncumbent(Node candidate) {
-        if (candidate.getCost() < incumbent.getCost()) {
-            incumbent = candidate;
-        }
+        incumbent = candidate;
     }
 
     public synchronized Node getEncumbent() {
@@ -94,8 +92,10 @@ public class TreeSearch {
             boolean active = true;
             while (activeThreads != 0) {
                 // check if there are nodes available for expansion in the central list
-                Node testNode = openList.peek();
-                if (testNode == null || testNode.getCost() >= incumbent.getCost()) {
+                Node node = openList.poll();
+
+                // mark this thread's activity status
+                if (node == null || node.getCost() >= incumbent.getCost()) {
                     if (active) {
                         active = false;
                         decrementActiveThreads();
@@ -106,11 +106,6 @@ public class TreeSearch {
                 if (!active) {
                     active = true;
                     incrementActiveThreads();
-                }
-
-                Node node = openList.poll();
-                if (node == null) {
-                    continue;
                 }
 
                 // check if goal node
