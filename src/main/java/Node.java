@@ -1,6 +1,4 @@
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map.Entry;
 
 class Node {
     protected short cost;
@@ -69,6 +67,17 @@ class Node {
             successorList.add(node);
         }
         return successorList;
+    }
+
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (TaskVariant task : getSchedule().scheduleOrder) {
+            stringBuilder.append(task.getTask().getId());
+            stringBuilder.append('%');
+            stringBuilder.append(task.getStartTime());
+            stringBuilder.append('@');
+        }
+        return stringBuilder.toString();
     }
 
 }

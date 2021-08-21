@@ -22,6 +22,7 @@ public class TreeSearch {
      */
     public Node aStar() {
         PriorityQueue<Node> openList = new PriorityQueue<Node>(new NodeComparator());
+        HashSet<String> createdNodes = new HashSet<String>();
         
         for (Task startTask : graph.getStartTasks()) {
             Node rootNode = new Node(startTask, graph.getStartTasks(), graph, processorCount);
@@ -34,9 +35,18 @@ public class TreeSearch {
             }
 
             ArrayList<Node> successorList = node.getSuccessors(processorCount, graph);
-            openList.addAll(successorList);
+            for (Node successorNode : successorList) {
+                if (!NodeAlreadyExists(createdNodes, successorNode)) {
+                    openList.add(successorNode);
+                }
+                createdNodes.add(successorNode.toString());
+            }
         }
         return null;
+    }
+
+    private boolean NodeAlreadyExists(HashSet<String> createdNodes, Node node) {
+        return createdNodes.contains(node.toString());
     }
 
     /**

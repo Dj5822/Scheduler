@@ -23,7 +23,7 @@ public class App {
 
         Node node = testSearch.aStar();
         graph.generateOutputGraph(node);
-        graph.printBottomLevels();
+        System.out.println("\nFinish Time: \n" + node.getSchedule().getFinishTime() + "\n");
     }
 
     public static void checkArgs(String[] args) throws IllegalArgumentException {

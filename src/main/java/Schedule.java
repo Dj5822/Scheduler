@@ -4,6 +4,7 @@ import java.util.HashMap;
 class Schedule {
     private HashMap<Task,TaskVariant> scheduled;
     private ArrayList<Task> schedulable;
+    protected ArrayList<TaskVariant> scheduleOrder;
     private short[] processorFinishTimes;
     protected short bottomLevelHeuristic = 0;
     private boolean expanded = false;
@@ -48,7 +49,19 @@ class Schedule {
         TaskVariant state = new TaskVariant(task, startTime, processor);
         scheduled.put(task, state);
 
-        this.idleTime = (short)(parentSchedule.idleTime + state.getFinishTime() - processorFinishTimes[processor]);
+        this.scheduleOrder = new ArrayList<TaskVariant>(parentSchedule.scheduleOrder);
+        int i = 0;
+        for (; i< scheduleOrder.size(); i++) {
+            if (scheduleOrder.get(i).getTask().getId().compareTo(task.getId()) > 0) {
+                scheduleOrder.add(i, state);
+                break;
+            }
+        }
+        if (i == scheduleOrder.size()) {
+            scheduleOrder.add(state);
+        }
+
+        this.idleTime = (short)(parentSchedule.idleTime + state.getStartTime() - processorFinishTimes[processor]);
         processorFinishTimes[processor] = state.getFinishTime();
 
         bottomLevelHeuristic = parentSchedule.bottomLevelHeuristic;
@@ -75,7 +88,11 @@ class Schedule {
 
     public Schedule(Task task, ArrayList<Task> startTasks) {
         this.scheduled = new HashMap<Task, TaskVariant>();
-        scheduled.put(task, new TaskVariant(task));
+        TaskVariant state = new TaskVariant(task);
+        scheduled.put(task, state);
+
+        this.scheduleOrder = new ArrayList<TaskVariant>(1);
+        scheduleOrder.add(state);
         
         schedulable = new ArrayList<Task>(startTasks);
         schedulable.remove(task);
