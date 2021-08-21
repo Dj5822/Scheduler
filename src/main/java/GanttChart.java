@@ -213,6 +213,8 @@ public class GanttChart<X,Y> extends XYChart<X,Y> {
         container.setEffect(colorAdjust);
 
         container.setOnMouseEntered(e -> {   
+
+            /** 
             //need to determine the location of center top side of the gantt chart element
             Visualiser visualiser = Visualiser.getVisualiser();
 
@@ -229,8 +231,18 @@ public class GanttChart<X,Y> extends XYChart<X,Y> {
             System.out.println(getYAxis().getHeight());
             //System.out.println(yvalue);
             visualiser.moveTaskInfo(200, yvalue);
+            */
 
-
+            /**Visualiser visualiser = Visualiser.getVisualiser();
+            double mouseX = e.getSceneX();
+            double mouseY = e.getSceneY();
+            System.out.println(mouseY);
+            if (mouseY < visualiser.getheight()/2){
+                visualiser.moveTaskInfo(mouseX, mouseY+50);
+            }
+            else {
+                visualiser.moveTaskInfo(mouseX, mouseY-260);
+            }**/
 
 
             //https://stackoverflow.com/questions/29879023/javafx-transition-darken-button-on-hover
