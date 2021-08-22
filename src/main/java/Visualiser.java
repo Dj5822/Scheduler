@@ -158,7 +158,7 @@ public class Visualiser extends Application{
 
             //scene = new Scene(mainPane);
             scene = new Scene(anchorPane);
-            File styleFile = new File("src/main/resources/views/ganttchart.css");
+            File styleFile = new File("ganttchart.css");
             scene.getStylesheets().clear();
             scene.getStylesheets().add("file:///" + styleFile.getAbsolutePath().replace("\\", "/"));
             stage.setTitle("Scheduler Visualiser");

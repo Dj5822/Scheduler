@@ -1,9 +1,15 @@
 DotParser.class
 Task.class
+VisualiserController.class
+GanttChart$ExtraData.class
+Schedule.class
+TreeSearch$1.class
 App.class
+GanttChart.class
 Visualiser.class
 Node.class
 TreeSearch.class
 Graph.class
 TreeSearch$NodeComparator.class
+TaskVariant.class
 Edge.class
