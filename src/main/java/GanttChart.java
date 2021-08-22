@@ -230,7 +230,7 @@ public class GanttChart<X,Y> extends XYChart<X,Y> {
             int finishTime = visualiser.getCurrentSchedule().getFinishTime();
             //System.out.println(getXAxis().getTickLength());
             ObservableList<TickMark<X>> tickMarks = getXAxis().getTickMarks();
-            double maxXAxisValue = (double)tickMarks.get(tickMarks.size()-1).getValue();
+            double maxXAxisValue = Double.parseDouble(tickMarks.get(tickMarks.size()-1).getValue().toString());
             //System.out.print(finishTime);
             //int maxXAxisValue;
             //if (finishTime%50>0){
