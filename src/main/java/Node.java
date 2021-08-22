@@ -100,6 +100,8 @@ class Node {
             stringBuilder.append('%');
             stringBuilder.append(task.getStartTime());
             stringBuilder.append('@');
+            stringBuilder.append(task.getProcessor());
+            stringBuilder.append('`');
         }
         return stringBuilder.toString();
     }
