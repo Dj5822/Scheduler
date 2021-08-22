@@ -104,7 +104,7 @@ public class Visualiser extends Application{
     private DecimalFormat df;
     private String[] colorSelection = {"blue", "red", "green"};
 
-    public static Visualiser getVisualiser(){
+    public synchronized static Visualiser getVisualiser(){
         return visualiser;
     }
 
@@ -122,8 +122,6 @@ public class Visualiser extends Application{
     @Override
     public void start(Stage stage) throws Exception {
         try {
-            visualiser=this;
-
             Rectangle2D screenBounds = Screen.getPrimary().getBounds();
 
             height = (int) (screenBounds.getHeight()/1.1);
@@ -145,6 +143,8 @@ public class Visualiser extends Application{
 
             setupView(mainPane, width, height);
             setupGanttChart(Integer.parseInt("" + getParameters().getRaw().get(0)));
+
+            visualiser=this;
 
             df = new DecimalFormat("#.####");
             df.setRoundingMode(RoundingMode.CEILING);
