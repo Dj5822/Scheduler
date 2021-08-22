@@ -12,6 +12,7 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXMLLoader;
@@ -35,6 +36,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.StackPane;
@@ -81,7 +83,8 @@ public class Visualiser extends Application{
     private Label taskIDValue;
 
     private GridPane taskInfoPane;
-    private Pane taskInfoOuterPane;
+    private FadeTransition fadeIn;
+    private FadeTransition fadeOut;
 
     private Stage stage;
     private Scene scene;
@@ -104,6 +107,13 @@ public class Visualiser extends Application{
 
     public GridPane getTaskInfoPane(){
         return taskInfoPane;
+    }
+    
+    public FadeTransition getFadeIn(){
+        return fadeIn;
+    }
+    public FadeTransition getFadeOut(){
+        return fadeOut;
     }
 
     @Override
@@ -202,6 +212,7 @@ public class Visualiser extends Application{
         statsPane.add(searchTimeLabel, 0, 4);
         statsPane.add(searchTimeValueLabel, 0, 5);
         statsPane.setPadding(new Insets(10, 0, 0, 0));
+
         mainPane.add(statsPane,5,0, 1, 1);
 
 
@@ -286,6 +297,20 @@ public class Visualiser extends Application{
         taskInfoPane.setVisible(false);
         
         taskInfoPane.setPrefSize(200, 200);
+
+        fadeIn = new FadeTransition(Duration.millis(250));
+        fadeIn.setNode(taskInfoPane);
+        fadeIn.setFromValue(0.0);
+        fadeIn.setToValue(1.0);
+        fadeIn.setCycleCount(1);
+        fadeIn.setAutoReverse(false);
+
+        fadeOut = new FadeTransition(Duration.millis(250));
+        fadeOut.setNode(taskInfoPane);
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.0);
+        fadeOut.setCycleCount(1);
+        fadeOut.setAutoReverse(false);
         
         //taskInfoPane.setPrefHeight(height/5);
         //taskInfoPane.setBorder(new Border(new BorderStroke(new Color(0f,0f,0f,0.5f ), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(5, 5, 5, 5))));
