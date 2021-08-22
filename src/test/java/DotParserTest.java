@@ -15,8 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DotParserTest {
 
     private static DotParser parser;
-    private Collection<GraphNode> outputNodes;
-    private Collection<GraphEdge> outputEdges;
+
 
     @BeforeAll
     public static void setUp() throws FileNotFoundException {
