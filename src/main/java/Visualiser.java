@@ -269,12 +269,12 @@ public class Visualiser extends Application{
         taskEndTime.setAlignment(Pos.CENTER);
         taskEndTimeValue.setAlignment(Pos.CENTER);
 
-        /**taskWeight.getStyleClass().add("boldLabel");
+        taskWeight.getStyleClass().add("boldLabel");
         taskStartTime.getStyleClass().add("boldLabel");
         taskID.getStyleClass().add("boldLabel");
         taskEndTime.getStyleClass().add("boldLabel");
-        
 
+        /**
         statsPane.add(taskID, 0, 6);
         statsPane.add(taskIDValue, 0, 7);
         statsPane.add(taskStartTime, 0, 8);
