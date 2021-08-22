@@ -62,6 +62,12 @@ public class TreeSearch {
                 (new Date()).getTime() - startTime));
     }
 
+    private void endVisualiser() {
+        Platform.runLater(() -> visualiser.finish(currentSchedule, expandedNodesCount,
+                Runtime.getRuntime().totalMemory(), Runtime.getRuntime().freeMemory(),
+                (new Date()).getTime() - startTime));
+    }
+
     private synchronized void incrementActiveThreads() {
         activeThreads++;
     }
@@ -189,7 +195,7 @@ public class TreeSearch {
             return null;
         } else {
             currentSchedule = solution.getSchedule();
-            updateVisualiser();
+            endVisualiser();
             updateTimer.cancel();
             return solution;
         }

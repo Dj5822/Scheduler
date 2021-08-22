@@ -351,7 +351,7 @@ public class Visualiser extends Application{
         yAxis.setTickLabelGap(10);
         yAxis.setCategories(FXCollections.<String>observableArrayList(Arrays.asList(processors)));
 
-        ganttChart.setTitle("Current Best Schedule");
+        ganttChart.setTitle("Schedule Being Considered");
         ganttChart.setLegendVisible(false);
         ganttChart.setBlockHeight( 50);
 
@@ -368,6 +368,11 @@ public class Visualiser extends Application{
         ganttChart.setPrefHeight(height);
 
         mainPane.add(ganttChart, 0, 0, 1, 4);
+    }
+
+    public void finish(Schedule schedule, int expandedNodesCount, long totalMemory, long freeMemory, long timePassed) {
+        ganttChart.setTitle("Optimal Schedule");
+        updateVisualiser(schedule, expandedNodesCount, totalMemory, freeMemory, timePassed);
     }
 
     /**

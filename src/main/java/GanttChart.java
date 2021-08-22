@@ -243,7 +243,7 @@ public class GanttChart<X,Y> extends XYChart<X,Y> {
             if (processor>processorCount/2){
                 yvalue = yvalue + visualiser.getTaskInfoPane().getHeight() + blockHeight + 10;
             }
-            System.out.println(length);
+            //System.out.println(length);
             //System.out.println(visualiser.getheight());
             //System.out.println(blockHeight);
             //System.out.println(processor+1);
