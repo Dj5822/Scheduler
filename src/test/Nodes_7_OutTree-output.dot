@@ -1,8 +1,0 @@
-digraph  "src/test/Nodes_7_OutTree-output" {
-	0 -> 1	[Weight=15];
-	0 -> 2	[Weight=11];
-	0 -> 3	[Weight=11];
-	1 -> 4	[Weight=19];
-	1 -> 5	[Weight=4];
-	1 -> 6	[Weight=21];
-}
