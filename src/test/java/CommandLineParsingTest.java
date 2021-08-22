@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CommandLineParsingTest {
     @BeforeAll
     public void setUp() {
-        App app = new App
+
     }
 
 
