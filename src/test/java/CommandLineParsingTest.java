@@ -13,5 +13,5 @@ import static org.junit.jupiter.api.Assertions.*;
  * argument parsing in App class
  */
 public class CommandLineParsingTest {
-    
+
 }

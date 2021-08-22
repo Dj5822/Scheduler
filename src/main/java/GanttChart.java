@@ -1,15 +1,24 @@
 import java.util.Arrays;
 
+import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Label;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+
+import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import javafx.scene.chart.Axis.TickMark;
 
 import javafx.beans.NamedArg;
 import javafx.collections.ObservableList;
@@ -29,12 +38,21 @@ public class GanttChart<X,Y> extends XYChart<X,Y> {
 
         public long length;
         public String color;
+        public Task task;
+        public short startTime;
+        public byte processor;
 
 
-        public ExtraData(long lengthMs, String color) {
+        public ExtraData(long lengthMs, String color, Task task, short startTime, byte processor) {
             super();
             this.length = lengthMs;
             this.color = color;
+            this.task = task;
+            this.startTime = startTime;
+            this.processor = processor;
+        }
+        public byte getProcessor(){
+            return processor;
         }
         public long getLength() {
             return length;
@@ -47,6 +65,12 @@ public class GanttChart<X,Y> extends XYChart<X,Y> {
         }
         public void setColor(String color) {
             this.color = color;
+        }
+        public Task getTask() {
+            return task;
+        }
+        public short getStartTime() {
+            return startTime;
         }
 
 
@@ -72,6 +96,18 @@ public class GanttChart<X,Y> extends XYChart<X,Y> {
 
     private static double getLength( Object obj) {
         return ((ExtraData) obj).getLength();
+    }
+
+    private static Task getTask( Object obj) {
+        return ((ExtraData) obj).getTask();
+    }
+    
+    private static short getStartTime( Object obj){
+        return ((ExtraData) obj).getStartTime();
+    }
+
+    private static byte getProcessor( Object obj){
+        return ((ExtraData) obj).getProcessor();
     }
 
     @Override protected void layoutPlotChildren() {
@@ -103,6 +139,7 @@ public class GanttChart<X,Y> extends XYChart<X,Y> {
                         ellipse.setWidth( getLength( item.getExtraValue()) * ((getXAxis() instanceof NumberAxis) ? Math.abs(((NumberAxis)getXAxis()).getScale()) : 1));
                         ellipse.setHeight(getBlockHeight() * ((getYAxis() instanceof NumberAxis) ? Math.abs(((NumberAxis)getYAxis()).getScale()) : 1));
                         y -= getBlockHeight() / 2.0;
+                        
 
                         // Note: workaround for RT-7689 - saw this in ProgressControlSkin
                         // The region doesn't update itself when the shape is mutated in place, so we
@@ -169,8 +206,99 @@ public class GanttChart<X,Y> extends XYChart<X,Y> {
             container = new StackPane();
             item.setNode(container);
         }
-
+        //System.out.println("made container");
         container.setStyle("-fx-background-color:" + getColor( item.getExtraValue()));
+
+        ColorAdjust colorAdjust = new ColorAdjust();
+        colorAdjust.setBrightness(0);
+        container.setEffect(colorAdjust);
+
+        container.setOnMouseEntered(e -> {   
+
+             
+            //need to determine the location of center top side of the gantt chart element
+            Visualiser visualiser = Visualiser.getVisualiser();
+
+            int startTime = getStartTime( item.getExtraValue());
+            int processor = getProcessor( item.getExtraValue());
+            double length = getLength( item.getExtraValue());
+            int processorCount = visualiser.getProcessorCount();
+            double totalHeight = getYAxis().getHeight();
+            double blockHeight = getBlockHeight();
+            double emptyHeight = totalHeight - blockHeight * processorCount;
+            double segmentHeight = emptyHeight / (processorCount * 2);
+            int finishTime = visualiser.getCurrentSchedule().getFinishTime();
+            //System.out.println(getXAxis().getTickLength());
+            ObservableList<TickMark<X>> tickMarks = getXAxis().getTickMarks();
+            double maxXAxisValue = Double.parseDouble(tickMarks.get(tickMarks.size()-1).getValue().toString());
+            //System.out.print(finishTime);
+            //int maxXAxisValue;
+            //if (finishTime%50>0){
+            //maxXAxisValue = finishTime + (50-finishTime%50);
+            //}
+            //else {
+            //    maxXAxisValue = finishTime;
+            //}
+            //System.out.print(maxXAxisValue);
+            
+            
+            double xvalue = startTime*(getXAxis().getWidth())/ maxXAxisValue  + length*getXAxis().getWidth()/(2*maxXAxisValue) + 5;
+            double yvalue = (getYAxis().getHeight() - 10)*(processorCount - processor)/(visualiser.getProcessorCount()) - visualiser.getTaskInfoPane().getHeight() - segmentHeight -10;
+            if (processor>processorCount/2){
+                yvalue = yvalue + visualiser.getTaskInfoPane().getHeight() + blockHeight + 10;
+            }
+            //System.out.println(length);
+            //System.out.println(visualiser.getheight());
+            //System.out.println(blockHeight);
+            //System.out.println(processor+1);
+            //System.out.println(visualiser.getProcessorCount());
+            //System.out.println(getYAxis().getHeight());
+            //System.out.println(yvalue);
+            visualiser.moveTaskInfo(xvalue, yvalue);
+
+            /**
+            double mouseX = e.getSceneX();
+            double mouseY = e.getSceneY();
+            System.out.println(mouseY);
+            if (mouseY < visualiser.getheight()/2){
+                visualiser.moveTaskInfo(mouseX, mouseY+50);
+            }
+            else {
+                visualiser.moveTaskInfo(mouseX, mouseY-260);
+            }
+            **/
+            
+            visualiser.getFadeIn().playFromStart();
+
+            //https://stackoverflow.com/questions/29879023/javafx-transition-darken-button-on-hover
+
+            Timeline fadeInTimeline = new Timeline(
+
+                        new KeyFrame(Duration.seconds(0), 
+                                new KeyValue(colorAdjust.brightnessProperty(), colorAdjust.brightnessProperty().getValue(), Interpolator.LINEAR)), 
+                                new KeyFrame(Duration.seconds(0.3), new KeyValue(colorAdjust.brightnessProperty(), -0.4, Interpolator.LINEAR)
+                                ));
+                fadeInTimeline.setCycleCount(1);
+                fadeInTimeline.setAutoReverse(false);
+                fadeInTimeline.play();
+
+            Visualiser.getVisualiser().setTaskLabelInfo(getTask( item.getExtraValue()), getStartTime( item.getExtraValue()));
+            Visualiser.getVisualiser().showTaskInfo();
+        });
+        container.setOnMouseExited(e -> {
+            
+            Visualiser.getVisualiser().getFadeOut().playFromStart();
+            Visualiser.getVisualiser().hideTaskInfo();
+
+            Timeline fadeOutTimeline = new Timeline(
+                        new KeyFrame(Duration.seconds(0), 
+                                new KeyValue(colorAdjust.brightnessProperty(), colorAdjust.brightnessProperty().getValue(), Interpolator.LINEAR)), 
+                                new KeyFrame(Duration.seconds(0.3), new KeyValue(colorAdjust.brightnessProperty(), 0, Interpolator.LINEAR)
+                                ));
+                fadeOutTimeline.setCycleCount(1);
+                fadeOutTimeline.setAutoReverse(false);
+                fadeOutTimeline.play();
+        });
 
         return container;
     }

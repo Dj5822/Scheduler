@@ -1,25 +1,28 @@
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map.Entry;
 
-abstract class Node<N extends Node<N>> {
+class Node {
     protected short cost;
     protected Schedule schedule;
+    protected ArrayList<Node> successors = null;
+    private String stringForm = null;
 
     public Node(short cost, Schedule schedule) {
         this.schedule = schedule;
+        this.cost = cost;
     }
 
-    public Node(Schedule schedule) {
+    public Node(Schedule schedule, Graph graph, int numProcessors) {
         this.schedule = schedule;
+        this.cost = schedule.getCost(graph, numProcessors);
     }
 
-    public Node(Task task, ArrayList<Task> startTasks)  {
+    public Node(Task task, ArrayList<Task> startTasks, Graph graph, int numProcessors)  {
         this.schedule = new Schedule(task, startTasks);
+        this.cost = schedule.getCost(graph, numProcessors);
     }
 
-    public Node(ArrayList<Task> startTasks) {
-        this.schedule = new Schedule(startTasks);
+    public Node() {
+        this.cost = Short.MAX_VALUE;
     }
 
     public Schedule getSchedule() {
@@ -44,7 +47,7 @@ abstract class Node<N extends Node<N>> {
      * @param queue the priority queue of nodes
      * @param node the node to be expanded
      */
-    public ArrayList<Schedule> expandNode(int processorCount) {
+    public ArrayList<Schedule> expandNode(int processorCount, Graph graph) {
         int processorsInUse = schedule.getProcessorFinishTimes().length;
 
         // attempt to minimise repeated branches by limiting duplicate empty processors
@@ -54,117 +57,53 @@ abstract class Node<N extends Node<N>> {
 
         ArrayList<Schedule> successorList = new ArrayList<Schedule>();
         // make a child node for every processor * schedulable task
+        boolean tight = false;
+        ArrayList<Task> examinedTasks = new ArrayList<Task>();
         for (Task task : schedule.getSchedulableTasks()) {
             for (byte processor = 0; processor < processorsInUse; processor++) {
                 Schedule newSchedule = new Schedule(task, processor, schedule);
                 successorList.add(newSchedule);
+                if (newSchedule.getCost(graph, processorCount) == schedule.getCost(graph, processorCount)) {
+                    tight = true;
+                } 
+            }
+            examinedTasks.add(task);
+            if (tight) {
+                break;
             }
         }
+        schedule.getSchedulableTasks().removeAll(examinedTasks);
         return successorList;
     }
 
-    abstract public ArrayList<N> getSuccessors(int processorCount);
-}
-
-/**
- * A Node in the search tree. Represents a possible scheduling State for a single Task.
- */
-class TaskNode extends Node<TaskNode> {
-
-    public TaskNode(short cost, Schedule schedule) {
-        super(cost, schedule);
-    }
-
-    public TaskNode(Schedule schedule) {
-        super(schedule);
-    }
-
-    public TaskNode(Task task, ArrayList<Task> startTasks) {
-        super(task, startTasks);
-    }
-
-    public TaskNode(ArrayList<Task> startTasks) {
-        super(startTasks);
-    } 
-
-    public ArrayList<TaskNode> getSuccessors(int processorCount) {
-        ArrayList<TaskNode> successorList = new ArrayList<TaskNode>();
-        for (Schedule newSchedule : expandNode(processorCount)) {
-            TaskNode node = new TaskNode(newSchedule);
+    public ArrayList<Node> getSuccessors(int processorCount, Graph graph) {
+        ArrayList<Node> successorList = new ArrayList<Node>();
+        for (Schedule newSchedule : expandNode(processorCount, graph)) {
+            Node node = new Node(newSchedule, graph, processorCount);
             successorList.add(node);
         }
-        return successorList;
-    }
-}
-
-class BoundedNode extends Node<BoundedNode> {
-    private HashMap<Schedule, Short> forgottenMap = new HashMap<Schedule, Short>();
-    private int numChildren = 0;
-    private BoundedNode parent;
-    
-    public BoundedNode(BoundedNode parent, short cost, Schedule schedule) {
-        super(cost, schedule);
-        this.parent = parent;
-    }
-    public BoundedNode(BoundedNode parent,Schedule schedule) {
-        super(schedule);
-        this.parent = parent;
-    }
-    public BoundedNode(Task task, ArrayList<Task> startTasks) {
-        super(task, startTasks);
-        this.parent = null;
-    }
-
-    public boolean hasBeenExpanded() {
-        return !forgottenMap.isEmpty();
-    }
-
-    public void removeForgottenSuccessor(BoundedNode node) {
-        forgottenMap.remove(node.getSchedule());
-    }
-
-    public boolean hasForgottenSuccessor(BoundedNode node) {
-        return forgottenMap.containsKey(node.getSchedule());
-    }
-
-    public void addForgottenSuccessor(BoundedNode node) {
-        if (cost > node.getCost() || forgottenMap.isEmpty()) {
-            cost = node.getCost();
-        }
-        forgottenMap.put(node.getSchedule(), node.getCost());
-        numChildren--;
-    }
-
-    public ArrayList<BoundedNode> getForgottenSuccessors() {
-        ArrayList<BoundedNode> successors = new ArrayList<BoundedNode>();
-        for (Entry<Schedule, Short> entry : forgottenMap.entrySet()) {
-            BoundedNode successor = new BoundedNode(this, entry.getValue(), entry.getKey());
-            successors.add(successor);
-        }
-        numChildren+=successors.size();
-        return successors;
-    }
-
-    public ArrayList<BoundedNode> getSuccessors(int processorCount) {
-        ArrayList<BoundedNode> successorList = new ArrayList<BoundedNode>();
-        for (Schedule newSchedule : expandNode(processorCount)) {
-            BoundedNode node = new BoundedNode(this, newSchedule);
-            successorList.add(node);
-        }
-        numChildren+=successorList.size();
+        successors = successorList;
         return successorList;
     }
 
-    public boolean isLeafNode() {
-        return numChildren == 0;
+    public String toString() {
+        if (this.stringForm == null) {
+            this.stringForm = buildString();
+        }
+        return this.stringForm;
     }
 
-    public int getChildCount() {
-        return numChildren;
-    }
-
-    public BoundedNode getParent() {
-        return parent;
+    private String buildString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (TaskVariant task : getSchedule().scheduleOrder) {
+            stringBuilder.append(task.getTask().getId());
+            stringBuilder.append('%');
+            stringBuilder.append(task.getStartTime());
+            stringBuilder.append('@');
+            stringBuilder.append(task.getProcessor());
+            stringBuilder.append('`');
+        }
+        return stringBuilder.toString();
     }
 
 }

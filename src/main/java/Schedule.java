@@ -1,12 +1,15 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 class Schedule {
     private HashMap<Task,TaskVariant> scheduled;
-    private ArrayList<Task> schedulable;
+    private HashSet<Task> schedulable;
+    protected ArrayList<TaskVariant> scheduleOrder;
     private short[] processorFinishTimes;
-    private short backwardsCost = 0;
+    protected short bottomLevelHeuristic = 0;
     private boolean expanded = false;
+    protected short idleTime = 0;
 
     /**
      * Constructor for a schedule derived from a parent schedule
@@ -17,7 +20,7 @@ class Schedule {
      */
     public Schedule(Task task, byte processor, Schedule parentSchedule) {
 
-        schedulable = new ArrayList<Task>(parentSchedule.getSchedulableTasks());
+        schedulable = new HashSet<Task>(parentSchedule.getSchedulableTasks());
         schedulable.remove(task);
 
         scheduled = new HashMap<Task, TaskVariant>(parentSchedule.getScheduledTasks());
@@ -47,12 +50,25 @@ class Schedule {
         TaskVariant state = new TaskVariant(task, startTime, processor);
         scheduled.put(task, state);
 
+        this.scheduleOrder = new ArrayList<TaskVariant>(parentSchedule.scheduleOrder);
+        int i = 0;
+        for (; i< scheduleOrder.size(); i++) {
+            if (scheduleOrder.get(i).getTask().getId().compareTo(task.getId()) > 0) {
+                scheduleOrder.add(i, state);
+                break;
+            }
+        }
+        if (i == scheduleOrder.size()) {
+            scheduleOrder.add(state);
+        }
+
+        this.idleTime = (short)(parentSchedule.idleTime + state.getStartTime() - processorFinishTimes[processor]);
         processorFinishTimes[processor] = state.getFinishTime();
 
-        backwardsCost = parentSchedule.getBackwardsCost();
+        bottomLevelHeuristic = parentSchedule.bottomLevelHeuristic;
         short tempBackwardsCost = (short) (startTime + task.getBottomLevel());
-        if (tempBackwardsCost > backwardsCost) {
-            backwardsCost = tempBackwardsCost;
+        if (tempBackwardsCost > bottomLevelHeuristic) {
+            bottomLevelHeuristic = tempBackwardsCost;
         }
 
         // mark children whose parents are all scheduled for scheduling
@@ -73,15 +89,19 @@ class Schedule {
 
     public Schedule(Task task, ArrayList<Task> startTasks) {
         this.scheduled = new HashMap<Task, TaskVariant>();
-        scheduled.put(task, new TaskVariant(task));
+        TaskVariant state = new TaskVariant(task);
+        scheduled.put(task, state);
+
+        this.scheduleOrder = new ArrayList<TaskVariant>(1);
+        scheduleOrder.add(state);
         
-        schedulable = new ArrayList<Task>(startTasks);
+        schedulable = new HashSet<Task>(startTasks);
         schedulable.remove(task);
 
         processorFinishTimes = new short[1];
         processorFinishTimes[0] = task.getWeight();
 
-        this.backwardsCost = task.getBottomLevel();
+        this.bottomLevelHeuristic = task.getBottomLevel();
 
         // mark children whose parents are all scheduled for scheduling
         for (Edge childEdge : task.getChildren()) {
@@ -99,18 +119,6 @@ class Schedule {
         }
     }
 
-    public Schedule(ArrayList<Task> startTasks) {
-        Task dummy = new Task((short)0, "Dummy");
-        dummy.findBottomLevel();
-        for (Task startTask : startTasks) {
-            Edge fakeEdge = new Edge(startTask, dummy, 0);
-            dummy.addChild(fakeEdge);
-        }
-        scheduled = new HashMap<Task, TaskVariant>();
-        this.schedulable = new ArrayList<Task>(startTasks);
-        this.processorFinishTimes = new short[0];
-    }
-
     public boolean taskisScheduled(Task task) {
         return scheduled.containsKey(task);
     }
@@ -123,7 +131,7 @@ class Schedule {
         return scheduled;
     }
 
-    public ArrayList<Task> getSchedulableTasks() {
+    public HashSet<Task> getSchedulableTasks() {
         return schedulable;
     }
 
@@ -131,12 +139,12 @@ class Schedule {
         return processorFinishTimes;
     }
 
-    public short getBackwardsCost() {
-        return backwardsCost;
+    public short getBackwardsCost(Graph graph, int numProcessors) {
+        return (short)Math.max(bottomLevelHeuristic, (graph.getTotalWeight() + idleTime)/numProcessors);
     }
 
-    public short getCost() {
-        return (short) (getBackwardsCost() + getFinishTime());
+    public short getCost(Graph graph, int numProcessors) {
+        return (short) (getBackwardsCost(graph, numProcessors) + getFinishTime());
     }
 
     public short getFinishTime() {
