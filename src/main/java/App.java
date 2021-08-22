@@ -47,7 +47,7 @@ public class App {
             Node node = testSearch.aStarCentralized(threadCount);
             graph.generateOutputGraph(node);
             System.out.println("\nFinish Time: \n" + node.getSchedule().getFinishTime() + "\n");
-            
+
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             return;
@@ -119,7 +119,6 @@ public class App {
 
                 }
             }
-
         }
         return options;
 
