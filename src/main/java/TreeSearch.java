@@ -197,7 +197,11 @@ public class TreeSearch {
             return null;
         } else {
             currentSchedule = solution.getSchedule();
-            endVisualiser();
+
+            if (visualize) {
+                endVisualiser();
+            }
+
             return solution;
         }
     }
