@@ -144,6 +144,7 @@ public class Visualiser extends Application{
             
 
             setupView(mainPane, width, height);
+            setupGanttChart(Integer.parseInt("" + getParameters().getRaw().get(0)));
 
             df = new DecimalFormat("#.####");
             df.setRoundingMode(RoundingMode.CEILING);
@@ -362,7 +363,7 @@ public class Visualiser extends Application{
         taskWeightValue.setText(Integer.toString(weight));
     }
 
-    public void setupGanttChart(int processorCount) {
+    private void setupGanttChart(int processorCount) {
         this.processorCount = processorCount;
         String[] processors = new String[processorCount];
 

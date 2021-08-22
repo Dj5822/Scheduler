@@ -35,12 +35,11 @@ public class TreeSearch {
         if (this.visualize) {
             // Sets up the visualiser.
             new Thread(() -> {
-                Visualiser.launch(Visualiser.class);
+                Visualiser.launch(Visualiser.class, "" + processorCount);
             }).start();
             while (visualiser == null) {
                 this.visualiser = Visualiser.getVisualiser();
             }
-            this.visualiser.setupGanttChart(processorCount);
 
             // Record the start time.
             startTime = System.currentTimeMillis();
