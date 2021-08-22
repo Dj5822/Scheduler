@@ -18,29 +18,11 @@ public class TreeSearch {
     private Node incumbent = new Node();
     private int activeThreads = 0;
 
-    private synchronized void incrementActiveThreads() {
-        activeThreads++;
-    }
-
-    private synchronized void decrementActiveThreads() {
-        activeThreads--;
-    }
-
-    private synchronized void updateEncumbent(Node candidate) {
-        incumbent = candidate;
-    }
-
-    public synchronized Node getEncumbent() {
-        return incumbent;
-    }
-
-    TreeSearch(Graph graph, int processorCount){
     private long startTime;
     private int expandedNodesCount;
 
     private Schedule currentBestSchedule;
     private Timer updateTimer;
-
 
 
     public TreeSearch(Graph graph, int processorCount, boolean visualize){
@@ -68,12 +50,32 @@ public class TreeSearch {
             updateTimer.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
-                    Platform.runLater(() -> visualiser.updateVisualiser(currentBestSchedule, expandedNodesCount,
-                            Runtime.getRuntime().totalMemory(), Runtime.getRuntime().freeMemory(),
-                            (new Date()).getTime() - startTime));
+                    updateVisualiser();
                 }
             }, 0, 150);
         }
+    }
+
+    private void updateVisualiser() {
+        Platform.runLater(() -> visualiser.updateVisualiser(currentBestSchedule, expandedNodesCount,
+                Runtime.getRuntime().totalMemory(), Runtime.getRuntime().freeMemory(),
+                (new Date()).getTime() - startTime));
+    }
+
+    private synchronized void incrementActiveThreads() {
+        activeThreads++;
+    }
+
+    private synchronized void decrementActiveThreads() {
+        activeThreads--;
+    }
+
+    private synchronized void updateEncumbent(Node candidate) {
+        incumbent = candidate;
+    }
+
+    public synchronized Node getEncumbent() {
+        return incumbent;
     }
 
     /**
@@ -153,6 +155,7 @@ public class TreeSearch {
                 // check if goal node
                 if (node.getSchedule().getScheduledTasks().size() == graph.getTasks().size()) {
                     updateEncumbent(node);
+                    currentBestSchedule = node.getSchedule();
                 }
 
                 // partial expansion - see Oliver's research
@@ -181,6 +184,9 @@ public class TreeSearch {
         if (solution.getCost() == 0) {
             return null;
         } else {
+            currentBestSchedule = solution.getSchedule();
+            updateVisualiser();
+            updateTimer.cancel();
             return solution;
         }
     }

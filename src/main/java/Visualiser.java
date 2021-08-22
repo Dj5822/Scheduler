@@ -209,21 +209,21 @@ public class Visualiser extends Application{
         taskEndTimeValue = new Label();
         taskIDValue = new Label();
 
-        taskWeight.setPrefHeight(height/6);
+        taskWeight.setPrefHeight(height/12);
         taskWeight.setPrefWidth(width/7);
-        taskStartTime.setPrefHeight(height/6);
+        taskStartTime.setPrefHeight(height/12);
         taskStartTime.setPrefWidth(width/7);
-        taskID.setPrefHeight(height/6);
+        taskID.setPrefHeight(height/12);
         taskID.setPrefWidth(width/7);
-        taskWeightValue.setPrefHeight(height/6);
+        taskWeightValue.setPrefHeight(height/12);
         taskWeightValue.setPrefWidth(width/7);
-        taskStartTimeValue.setPrefHeight(height/6);
+        taskStartTimeValue.setPrefHeight(height/12);
         taskStartTimeValue.setPrefWidth(width/7);
-        taskIDValue.setPrefHeight(height/6);
+        taskIDValue.setPrefHeight(height/12);
         taskIDValue.setPrefWidth(width/7);
-        taskEndTime.setPrefHeight(height/6);
+        taskEndTime.setPrefHeight(height/12);
         taskEndTime.setPrefWidth(width/7); 
-        taskEndTimeValue.setPrefHeight(height/6);  
+        taskEndTimeValue.setPrefHeight(height/12);
         taskEndTimeValue.setPrefWidth(width/7);
         
         
@@ -356,7 +356,7 @@ public class Visualiser extends Application{
     public void updateVisualiser(Schedule schedule, int expandedNodesCount, long totalMemory, long freeMemory, long timePassed) {
         expandedNodesValueLabel.setText(Integer.toString(expandedNodesCount));
         memoryUsageValueLabel.setText(df.format((double)freeMemory/1000000000) + "/" + df.format((double)totalMemory/1000000000) + " GB");
-        searchTimeValueLabel.setText(String.valueOf(timePassed/1000) + " sec");
+        searchTimeValueLabel.setText(((double) timePassed / 1000) + " sec");
 
         //Only update the gantt chart if the schedule is new, this removes flickering of the on hover objects as they are not being recreated every second
         if (currentSchedule != schedule){
