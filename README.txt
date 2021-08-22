@@ -12,8 +12,14 @@ INPUT.dot can be replaced with the path to the
 INPUT.dot file. For instance, in Windows, you can do:
 java -jar scheduler.jar examples/INPUT.dot P
 
-Optional: '-o OUTPUT' can be used to set the name and output path of
-the output file. 
+Optional: 
+'-o OUTPUT' can be used to set the name and output path of
+the output file (default is INPUT-output.dot).
+
+'-v' can be used to visualise the search progress.
+
+'-p N' can be used to execute N cores in parallel
+(default is sequential).
 
 
 3) Press enter. If "output file generated"
