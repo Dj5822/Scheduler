@@ -19,6 +19,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
@@ -86,6 +87,8 @@ public class Visualiser extends Application{
     private FadeTransition fadeIn;
     private FadeTransition fadeOut;
 
+    private Group group;
+
     private Stage stage;
     private Scene scene;
     private VisualiserController controller;
@@ -135,6 +138,8 @@ public class Visualiser extends Application{
             mainPane.setPrefWidth(width);
             mainPane.setPrefHeight(height);
 
+            //group = new Group();
+            //group.getChildren().addAll(elements)
             anchorPane.getChildren().add(mainPane);
             
 
@@ -314,7 +319,7 @@ public class Visualiser extends Application{
         
         //taskInfoPane.setPrefHeight(height/5);
         //taskInfoPane.setBorder(new Border(new BorderStroke(new Color(0f,0f,0f,0.5f ), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(5, 5, 5, 5))));
-        taskInfoPane.setBackground(new Background(new BackgroundFill(new Color(0f, 0f, 0f, 0.4f), CornerRadii.EMPTY, Insets.EMPTY)));
+        taskInfoPane.setBackground(new Background(new BackgroundFill(new Color(0.2f, 0.2f, 0.2f, 0.6f), CornerRadii.EMPTY, Insets.EMPTY)));
         //mainPane.add(taskInfoPane, 0, 2, 5, 1);
         anchorPane.getChildren().addAll(taskInfoPane);
         
@@ -339,7 +344,9 @@ public class Visualiser extends Application{
     }
 
     public void hideTaskInfo(){
-        taskInfoPane.setVisible(false);   
+        taskInfoPane.toBack();
+        taskInfoPane.setVisible(false);  
+        
         //System.out.println("hidden");
         //taskIDValue.setVisible(false);
         //taskEndTimeValue.setVisible(false);
