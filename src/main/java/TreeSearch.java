@@ -35,12 +35,11 @@ public class TreeSearch {
         if (this.visualize) {
             // Sets up the visualiser.
             new Thread(() -> {
-                Visualiser.launch(Visualiser.class);
+                Visualiser.launch(Visualiser.class, "" + processorCount);
             }).start();
             while (visualiser == null) {
                 this.visualiser = Visualiser.getVisualiser();
             }
-            this.visualiser.setupGanttChart(processorCount);
 
             // Record the start time.
             startTime = System.currentTimeMillis();
@@ -58,6 +57,12 @@ public class TreeSearch {
 
     private void updateVisualiser() {
         Platform.runLater(() -> visualiser.updateVisualiser(currentSchedule, expandedNodesCount,
+                Runtime.getRuntime().totalMemory(), Runtime.getRuntime().freeMemory(),
+                (new Date()).getTime() - startTime));
+    }
+
+    private void endVisualiser() {
+        Platform.runLater(() -> visualiser.finish(currentSchedule, expandedNodesCount,
                 Runtime.getRuntime().totalMemory(), Runtime.getRuntime().freeMemory(),
                 (new Date()).getTime() - startTime));
     }
@@ -189,10 +194,12 @@ public class TreeSearch {
             return null;
         } else {
             currentSchedule = solution.getSchedule();
+
             if (visualize) {
-                updateVisualiser();
+                endVisualiser();
                 updateTimer.cancel();
             }
+            
             return solution;
         }
     }

@@ -18,6 +18,7 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import javafx.scene.chart.Axis.TickMark;
 
 import javafx.beans.NamedArg;
 import javafx.collections.ObservableList;
@@ -227,14 +228,17 @@ public class GanttChart<X,Y> extends XYChart<X,Y> {
             double emptyHeight = totalHeight - blockHeight * processorCount;
             double segmentHeight = emptyHeight / (processorCount * 2);
             int finishTime = visualiser.getCurrentSchedule().getFinishTime();
+            //System.out.println(getXAxis().getTickLength());
+            ObservableList<TickMark<X>> tickMarks = getXAxis().getTickMarks();
+            double maxXAxisValue = (double)tickMarks.get(tickMarks.size()-1).getValue();
             //System.out.print(finishTime);
-            int maxXAxisValue;
-            if (finishTime%50>0){
-                maxXAxisValue = finishTime + (50-finishTime%50);
-            }
-            else {
-                maxXAxisValue = finishTime;
-            }
+            //int maxXAxisValue;
+            //if (finishTime%50>0){
+            //maxXAxisValue = finishTime + (50-finishTime%50);
+            //}
+            //else {
+            //    maxXAxisValue = finishTime;
+            //}
             //System.out.print(maxXAxisValue);
             
             
@@ -243,7 +247,7 @@ public class GanttChart<X,Y> extends XYChart<X,Y> {
             if (processor>processorCount/2){
                 yvalue = yvalue + visualiser.getTaskInfoPane().getHeight() + blockHeight + 10;
             }
-            System.out.println(length);
+            //System.out.println(length);
             //System.out.println(visualiser.getheight());
             //System.out.println(blockHeight);
             //System.out.println(processor+1);
@@ -264,7 +268,7 @@ public class GanttChart<X,Y> extends XYChart<X,Y> {
             }
             **/
             
-
+            visualiser.getFadeIn().playFromStart();
 
             //https://stackoverflow.com/questions/29879023/javafx-transition-darken-button-on-hover
 
@@ -282,6 +286,8 @@ public class GanttChart<X,Y> extends XYChart<X,Y> {
             Visualiser.getVisualiser().showTaskInfo();
         });
         container.setOnMouseExited(e -> {
+            
+            Visualiser.getVisualiser().getFadeOut().playFromStart();
             Visualiser.getVisualiser().hideTaskInfo();
 
             Timeline fadeOutTimeline = new Timeline(

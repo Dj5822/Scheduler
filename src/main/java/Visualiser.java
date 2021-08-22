@@ -12,12 +12,14 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
@@ -35,6 +37,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.StackPane;
@@ -81,7 +84,10 @@ public class Visualiser extends Application{
     private Label taskIDValue;
 
     private GridPane taskInfoPane;
-    private Pane taskInfoOuterPane;
+    private FadeTransition fadeIn;
+    private FadeTransition fadeOut;
+
+    private Group group;
 
     private Stage stage;
     private Scene scene;
@@ -105,6 +111,13 @@ public class Visualiser extends Application{
     public GridPane getTaskInfoPane(){
         return taskInfoPane;
     }
+    
+    public FadeTransition getFadeIn(){
+        return fadeIn;
+    }
+    public FadeTransition getFadeOut(){
+        return fadeOut;
+    }
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -125,10 +138,13 @@ public class Visualiser extends Application{
             mainPane.setPrefWidth(width);
             mainPane.setPrefHeight(height);
 
+            //group = new Group();
+            //group.getChildren().addAll(elements)
             anchorPane.getChildren().add(mainPane);
             
 
             setupView(mainPane, width, height);
+            setupGanttChart(Integer.parseInt("" + getParameters().getRaw().get(0)));
 
             df = new DecimalFormat("#.####");
             df.setRoundingMode(RoundingMode.CEILING);
@@ -202,6 +218,7 @@ public class Visualiser extends Application{
         statsPane.add(searchTimeLabel, 0, 4);
         statsPane.add(searchTimeValueLabel, 0, 5);
         statsPane.setPadding(new Insets(10, 0, 0, 0));
+
         mainPane.add(statsPane,5,0, 1, 1);
 
 
@@ -286,10 +303,24 @@ public class Visualiser extends Application{
         taskInfoPane.setVisible(false);
         
         taskInfoPane.setPrefSize(200, 200);
+
+        fadeIn = new FadeTransition(Duration.millis(250));
+        fadeIn.setNode(taskInfoPane);
+        fadeIn.setFromValue(0.0);
+        fadeIn.setToValue(1.0);
+        fadeIn.setCycleCount(1);
+        fadeIn.setAutoReverse(false);
+
+        fadeOut = new FadeTransition(Duration.millis(250));
+        fadeOut.setNode(taskInfoPane);
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.0);
+        fadeOut.setCycleCount(1);
+        fadeOut.setAutoReverse(false);
         
         //taskInfoPane.setPrefHeight(height/5);
         //taskInfoPane.setBorder(new Border(new BorderStroke(new Color(0f,0f,0f,0.5f ), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(5, 5, 5, 5))));
-        taskInfoPane.setBackground(new Background(new BackgroundFill(new Color(0f, 0f, 0f, 0.4f), CornerRadii.EMPTY, Insets.EMPTY)));
+        taskInfoPane.setBackground(new Background(new BackgroundFill(new Color(0.2f, 0.2f, 0.2f, 0.6f), CornerRadii.EMPTY, Insets.EMPTY)));
         //mainPane.add(taskInfoPane, 0, 2, 5, 1);
         anchorPane.getChildren().addAll(taskInfoPane);
         
@@ -314,7 +345,9 @@ public class Visualiser extends Application{
     }
 
     public void hideTaskInfo(){
-        taskInfoPane.setVisible(false);   
+        taskInfoPane.toBack();
+        taskInfoPane.setVisible(false);  
+        
         //System.out.println("hidden");
         //taskIDValue.setVisible(false);
         //taskEndTimeValue.setVisible(false);
@@ -330,7 +363,7 @@ public class Visualiser extends Application{
         taskWeightValue.setText(Integer.toString(weight));
     }
 
-    public void setupGanttChart(int processorCount) {
+    private void setupGanttChart(int processorCount) {
         this.processorCount = processorCount;
         String[] processors = new String[processorCount];
 
@@ -351,7 +384,7 @@ public class Visualiser extends Application{
         yAxis.setTickLabelGap(10);
         yAxis.setCategories(FXCollections.<String>observableArrayList(Arrays.asList(processors)));
 
-        ganttChart.setTitle("Current Best Schedule");
+        ganttChart.setTitle("Schedule Being Considered");
         ganttChart.setLegendVisible(false);
         ganttChart.setBlockHeight( 50);
 
@@ -368,6 +401,11 @@ public class Visualiser extends Application{
         ganttChart.setPrefHeight(height);
 
         mainPane.add(ganttChart, 0, 0, 1, 4);
+    }
+
+    public void finish(Schedule schedule, int expandedNodesCount, long totalMemory, long freeMemory, long timePassed) {
+        ganttChart.setTitle("Optimal Schedule");
+        updateVisualiser(schedule, expandedNodesCount, totalMemory, freeMemory, timePassed);
     }
 
     /**
