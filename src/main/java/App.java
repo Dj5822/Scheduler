@@ -11,6 +11,7 @@ public class App {
         int threadCount = 1;
         boolean doVisualise = false;
         String outputFileName = "";
+
         try {
             HashMap<Integer, String> options = checkArgs(args);
             for (Integer key : options.keySet()) {
@@ -21,7 +22,6 @@ public class App {
                         break;
                     case ("2"):
                         doVisualise = true;
-
                     case ("3"):
                         outputFileName = value;
                 }
@@ -38,18 +38,23 @@ public class App {
             if (outputFileName.isEmpty()) {
                 outputFileName = args[0].replaceAll("(.dot)$", "-output.dot");
             }
-            Graph graph = new Graph("examples/" + args[0], outputFileName);
+            Graph graph = new Graph(args[0], outputFileName);
 
             // Start searching the solutions tree.
             TreeSearch testSearch = new TreeSearch(graph, processorCount, doVisualise);
+            Node node;
+            if (threadCount == 1) {
+                node = testSearch.aStar();
+            }
+            else {
+                node = testSearch.aStarCentralized(threadCount);
+            }
 
-            Node node = testSearch.aStarCentralized(threadCount);
             graph.generateOutputGraph(node);
             System.out.println("\nFinish Time: \n" + node.getSchedule().getFinishTime() + "\n");
 
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
-            return;
         }
     }
 

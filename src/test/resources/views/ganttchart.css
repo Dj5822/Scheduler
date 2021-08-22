@@ -1,4 +1,17 @@
-.boldLabel {
+.small-bold-label {
     -fx-font-weight: BOLD;
     -fx-font-size: 16px;
+}
+
+.big-bold-label {
+    -fx-font-weight: BOLD;
+    -fx-font-size: 22px;
+}
+
+.main-pane {
+    -fx-background-color: rgba(251,251,250,255);
+}
+
+.stats-pane {
+    -fx-background-color: rgba(251,251,250,255);
 }
