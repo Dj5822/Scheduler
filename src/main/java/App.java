@@ -10,7 +10,7 @@ public class App {
 
     public static void main(String[] args) {
         int threadCount = 1;
-        boolean doVisualise = true;
+        boolean doVisualise = false;
         String outputFileName = "";
 
         try {
@@ -23,7 +23,6 @@ public class App {
                         break;
                     case ("2"):
                         doVisualise = true;
-
                     case ("3"):
                         outputFileName = value;
                 }
@@ -44,15 +43,19 @@ public class App {
 
             // Start searching the solutions tree.
             TreeSearch testSearch = new TreeSearch(graph, processorCount, doVisualise);
-
-            Node node = testSearch.aStarCentralized(threadCount);
+            Node node;
+            if (threadCount == 1) {
+                node = testSearch.aStar();
+            }
+            else {
+                node = testSearch.aStarCentralized(threadCount);
+            }
 
             graph.generateOutputGraph(node);
             System.out.println("\nFinish Time: \n" + node.getSchedule().getFinishTime() + "\n");
 
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
-            return;
         }
     }
 
