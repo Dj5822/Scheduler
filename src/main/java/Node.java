@@ -1,24 +1,29 @@
 import java.util.ArrayList;
+import java.util.Set;
 
 class Node {
     protected short cost;
     protected Schedule schedule;
     protected ArrayList<Node> successors = null;
     private String stringForm = null;
+    protected Set<Task> schedulable;
 
     public Node(short cost, Schedule schedule) {
         this.schedule = schedule;
         this.cost = cost;
+        this.schedulable = schedule.getSchedulableTasks().keySet();
     }
 
     public Node(Schedule schedule, Graph graph, int numProcessors) {
         this.schedule = schedule;
         this.cost = schedule.getCost(graph, numProcessors);
+        this.schedulable = schedule.getSchedulableTasks().keySet();
     }
 
     public Node(Task task, ArrayList<Task> startTasks, Graph graph, int numProcessors)  {
         this.schedule = new Schedule(task, startTasks);
         this.cost = schedule.getCost(graph, numProcessors);
+        this.schedulable = schedule.getSchedulableTasks().keySet();
     }
 
     public Node() {
@@ -59,20 +64,20 @@ class Node {
         // make a child node for every processor * schedulable task
         boolean tight = false;
         ArrayList<Task> examinedTasks = new ArrayList<Task>();
-        for (Task task : schedule.getSchedulableTasks()) {
+        for (Task task : schedulable) {
             for (byte processor = 0; processor < processorsInUse; processor++) {
                 Schedule newSchedule = new Schedule(task, processor, schedule);
                 successorList.add(newSchedule);
                 if (newSchedule.getCost(graph, processorCount) == schedule.getCost(graph, processorCount)) {
                     tight = true;
-                } 
+                }
             }
             examinedTasks.add(task);
             if (tight) {
                 break;
             }
         }
-        schedule.getSchedulableTasks().removeAll(examinedTasks);
+        schedulable.removeAll(examinedTasks);
         return successorList;
     }
 
