@@ -26,28 +26,28 @@ public class App {
                     case ("3"):
                         outputFileName = value;
                 }
-                
-                /*
+            }
+            /*
                 The number of processors.
                 */
-                int processorCount = Integer.parseInt(args[1]);
+            int processorCount = Integer.parseInt(args[1]);
 
                 /*
                 The name of the input graph should be passed in as an argument.
                 Should be passed in as a commandline argument later.
                 */
-                if (outputFileName.isEmpty()) {
-                    outputFileName = args[0].replaceAll("(.dot)$", "-output.dot");
-                }
-                Graph graph = new Graph("examples/" + args[0], outputFileName);
-
-                // Start searching the solutions tree.
-                TreeSearch testSearch = new TreeSearch(graph, processorCount, doVisualise);
-
-                Node node = testSearch.aStarCentralized(threadCount);
-                graph.generateOutputGraph(node);
-                System.out.println("\nFinish Time: \n" + node.getSchedule().getFinishTime() + "\n");
+            if (outputFileName.isEmpty()) {
+                outputFileName = args[0].replaceAll("(.dot)$", "-output.dot");
             }
+            Graph graph = new Graph("examples/" + args[0], outputFileName);
+
+            // Start searching the solutions tree.
+            TreeSearch testSearch = new TreeSearch(graph, processorCount, doVisualise);
+
+            Node node = testSearch.aStarCentralized(threadCount);
+            graph.generateOutputGraph(node);
+            System.out.println("\nFinish Time: \n" + node.getSchedule().getFinishTime() + "\n");
+            
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             return;
