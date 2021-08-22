@@ -214,7 +214,7 @@ public class GanttChart<X,Y> extends XYChart<X,Y> {
 
         container.setOnMouseEntered(e -> {   
 
-            /** 
+             
             //need to determine the location of center top side of the gantt chart element
             Visualiser visualiser = Visualiser.getVisualiser();
 
@@ -222,18 +222,37 @@ public class GanttChart<X,Y> extends XYChart<X,Y> {
             int processor = getProcessor( item.getExtraValue());
             double length = getLength( item.getExtraValue());
             int processorCount = visualiser.getProcessorCount();
-            double totalHeight = getHeight();
-
-            double yvalue = (getYAxis().getHeight())*(processorCount - processor)/(visualiser.getProcessorCount());
+            double totalHeight = getYAxis().getHeight();
+            double blockHeight = getBlockHeight();
+            double emptyHeight = totalHeight - blockHeight * processorCount;
+            double segmentHeight = emptyHeight / (processorCount * 2);
+            int finishTime = visualiser.getCurrentSchedule().getFinishTime();
+            //System.out.print(finishTime);
+            int maxXAxisValue;
+            if (finishTime%50>0){
+                maxXAxisValue = finishTime + (50-finishTime%50);
+            }
+            else {
+                maxXAxisValue = finishTime;
+            }
+            //System.out.print(maxXAxisValue);
+            
+            
+            double xvalue = startTime*(getXAxis().getWidth())/ maxXAxisValue  + length*getXAxis().getWidth()/(2*maxXAxisValue) + 5;
+            double yvalue = (getYAxis().getHeight() - 10)*(processorCount - processor)/(visualiser.getProcessorCount()) - visualiser.getTaskInfoPane().getHeight() - segmentHeight -10;
+            if (processor>processorCount/2){
+                yvalue = yvalue + visualiser.getTaskInfoPane().getHeight() + blockHeight + 10;
+            }
+            System.out.println(length);
             //System.out.println(visualiser.getheight());
-            System.out.println(processor+1);
-            System.out.println(visualiser.getProcessorCount());
-            System.out.println(getYAxis().getHeight());
+            //System.out.println(blockHeight);
+            //System.out.println(processor+1);
+            //System.out.println(visualiser.getProcessorCount());
+            //System.out.println(getYAxis().getHeight());
             //System.out.println(yvalue);
-            visualiser.moveTaskInfo(200, yvalue);
-            */
+            visualiser.moveTaskInfo(xvalue, yvalue);
 
-            /**Visualiser visualiser = Visualiser.getVisualiser();
+            /**
             double mouseX = e.getSceneX();
             double mouseY = e.getSceneY();
             System.out.println(mouseY);
@@ -242,7 +261,9 @@ public class GanttChart<X,Y> extends XYChart<X,Y> {
             }
             else {
                 visualiser.moveTaskInfo(mouseX, mouseY-260);
-            }**/
+            }
+            **/
+            
 
 
             //https://stackoverflow.com/questions/29879023/javafx-transition-darken-button-on-hover

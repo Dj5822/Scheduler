@@ -25,6 +25,8 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.BorderWidths;
@@ -98,6 +100,10 @@ public class Visualiser extends Application{
 
     public static Visualiser getVisualiser(){
         return visualiser;
+    }
+
+    public GridPane getTaskInfoPane(){
+        return taskInfoPane;
     }
 
     @Override
@@ -226,7 +232,7 @@ public class Visualiser extends Application{
         taskEndTimeValue.setPrefHeight(height/12);
         taskEndTimeValue.setPrefWidth(width/7);
         
-        
+        /**
         taskWeight.setAlignment(Pos.BOTTOM_CENTER);
         taskWeightValue.setAlignment(Pos.TOP_CENTER);
         taskStartTime.setAlignment(Pos.BOTTOM_CENTER);
@@ -235,11 +241,22 @@ public class Visualiser extends Application{
         taskIDValue.setAlignment(Pos.TOP_CENTER);
         taskEndTime.setAlignment(Pos.BOTTOM_CENTER);
         taskEndTimeValue.setAlignment(Pos.TOP_CENTER);
+        **/
 
-        taskWeight.getStyleClass().add("boldLabel");
+        taskWeight.setAlignment(Pos.CENTER);
+        taskWeightValue.setAlignment(Pos.CENTER);
+        taskStartTime.setAlignment(Pos.CENTER);
+        taskStartTimeValue.setAlignment(Pos.CENTER);
+        taskID.setAlignment(Pos.CENTER);
+        taskIDValue.setAlignment(Pos.CENTER);
+        taskEndTime.setAlignment(Pos.CENTER);
+        taskEndTimeValue.setAlignment(Pos.CENTER);
+
+        /**taskWeight.getStyleClass().add("boldLabel");
         taskStartTime.getStyleClass().add("boldLabel");
         taskID.getStyleClass().add("boldLabel");
         taskEndTime.getStyleClass().add("boldLabel");
+        
 
         statsPane.add(taskID, 0, 6);
         statsPane.add(taskIDValue, 0, 7);
@@ -254,10 +271,10 @@ public class Visualiser extends Application{
         taskEndTimeValue.setVisible(false);
         taskStartTimeValue.setVisible(false);
         taskWeightValue.setVisible(false);
+        **/
 
-
-        /**
-         * taskInfoPane.add(taskID, 0, 0);
+        
+        taskInfoPane.add(taskID, 0, 0);
         taskInfoPane.add(taskIDValue, 1, 0);
         taskInfoPane.add(taskWeight, 0, 1);
         taskInfoPane.add(taskWeightValue, 1, 1);
@@ -271,20 +288,25 @@ public class Visualiser extends Application{
         taskInfoPane.setPrefSize(200, 200);
         
         //taskInfoPane.setPrefHeight(height/5);
-        taskInfoPane.setBorder(new Border(new BorderStroke(new Color(0f,0f,0f,0.5f ), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(5, 5, 5, 5))));
+        //taskInfoPane.setBorder(new Border(new BorderStroke(new Color(0f,0f,0f,0.5f ), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(5, 5, 5, 5))));
+        taskInfoPane.setBackground(new Background(new BackgroundFill(new Color(0f, 0f, 0f, 0.4f), CornerRadii.EMPTY, Insets.EMPTY)));
         //mainPane.add(taskInfoPane, 0, 2, 5, 1);
         anchorPane.getChildren().addAll(taskInfoPane);
-        **/
+        
+    }
+
+    public Schedule getCurrentSchedule(){
+        return currentSchedule;
     }
 
     public void showTaskInfo(){
-        //taskInfoPane.toFront();
-        //taskInfoPane.setVisible(true);  
+        taskInfoPane.toFront();
+        taskInfoPane.setVisible(true);  
         //System.out.println("shown"); 
-        taskIDValue.setVisible(true);
-        taskEndTimeValue.setVisible(true);
-        taskStartTimeValue.setVisible(true);
-        taskWeightValue.setVisible(true);
+        //taskIDValue.setVisible(true);
+        //taskEndTimeValue.setVisible(true);
+        //taskStartTimeValue.setVisible(true);
+        //taskWeightValue.setVisible(true);
     }
 
     public void moveTaskInfo(double xvalue, double yvalue){
@@ -292,12 +314,12 @@ public class Visualiser extends Application{
     }
 
     public void hideTaskInfo(){
-        //taskInfoPane.setVisible(false);   
+        taskInfoPane.setVisible(false);   
         //System.out.println("hidden");
-        taskIDValue.setVisible(false);
-        taskEndTimeValue.setVisible(false);
-        taskStartTimeValue.setVisible(false);
-        taskWeightValue.setVisible(false);
+        //taskIDValue.setVisible(false);
+        //taskEndTimeValue.setVisible(false);
+        //taskStartTimeValue.setVisible(false);
+        //taskWeightValue.setVisible(false);
     }
 
     public void setTaskLabelInfo(Task task, short startTime){
