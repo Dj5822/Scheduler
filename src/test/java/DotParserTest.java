@@ -20,12 +20,15 @@ public class DotParserTest {
 
     @BeforeAll
     public static void setUp() throws FileNotFoundException {
-        parser = new DotParser(new FileInputStream("examples/dot-inputs/Nodes_25_2p.dot"), "src/test/Nodes_25_2p-output.dot");
+        parser = new DotParser(new FileInputStream("examples/dot-inputs/Nodes_25_2p.dot"), "src/test/Nodes_25_2p-IO.dot");
     }
+    /*
+    * Test checks if IO parsing of dot files are executed correctly
+    */
     @Test
     public void testWriteToScheduleDot() throws IOException {
         File expectedFile = new File("src/test/DotParserTestExpectedFile.dot");
-        File outputFile = new File("src/test/Nodes_25_2p-output.dot");
+        File outputFile = new File("src/test/Nodes_25_2p-IO.dot");
         parser.writeScheduleToDot();
         assertEquals(FileUtils.readFileToString(expectedFile, "utf-8"),
                 FileUtils.readFileToString(outputFile, "utf-8"));
