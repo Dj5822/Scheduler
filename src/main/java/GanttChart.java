@@ -243,7 +243,7 @@ public class GanttChart<X,Y> extends XYChart<X,Y> {
             if (processor>processorCount/2){
                 yvalue = yvalue + visualiser.getTaskInfoPane().getHeight() + blockHeight + 10;
             }
-            System.out.println(length);
+            //System.out.println(length);
             //System.out.println(visualiser.getheight());
             //System.out.println(blockHeight);
             //System.out.println(processor+1);
@@ -264,7 +264,7 @@ public class GanttChart<X,Y> extends XYChart<X,Y> {
             }
             **/
             
-
+            visualiser.getFadeIn().playFromStart();
 
             //https://stackoverflow.com/questions/29879023/javafx-transition-darken-button-on-hover
 
@@ -282,7 +282,9 @@ public class GanttChart<X,Y> extends XYChart<X,Y> {
             Visualiser.getVisualiser().showTaskInfo();
         });
         container.setOnMouseExited(e -> {
-            Visualiser.getVisualiser().hideTaskInfo();
+            
+            Visualiser.getVisualiser().getFadeOut().playFromStart();
+            //Visualiser.getVisualiser().hideTaskInfo();
 
             Timeline fadeOutTimeline = new Timeline(
                         new KeyFrame(Duration.seconds(0), 
