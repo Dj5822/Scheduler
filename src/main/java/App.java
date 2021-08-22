@@ -38,10 +38,9 @@ public class App {
         // Start searching the solutions tree.
         TreeSearch testSearch = new TreeSearch(graph, processorCount, true);
 
-        Node<?> node = testSearch.branchAndBound();
+        Node node = testSearch.aStarCentralized(12);
         graph.generateOutputGraph(node);
-        graph.printBottomLevels();
-        System.out.println("output file generated.");
+        System.out.println("\nFinish Time: \n" + node.getSchedule().getFinishTime() + "\n");
     }
 
     /**
