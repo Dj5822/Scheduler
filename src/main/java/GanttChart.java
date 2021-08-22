@@ -238,8 +238,11 @@ public class GanttChart<X,Y> extends XYChart<X,Y> {
             //System.out.print(maxXAxisValue);
             
             
-            double xvalue = startTime*(getXAxis().getWidth() -10)/ maxXAxisValue  + length*getXAxis().getWidth()/(2*maxXAxisValue);
+            double xvalue = startTime*(getXAxis().getWidth())/ maxXAxisValue  + length*getXAxis().getWidth()/(2*maxXAxisValue) + 5;
             double yvalue = (getYAxis().getHeight() - 10)*(processorCount - processor)/(visualiser.getProcessorCount()) - visualiser.getTaskInfoPane().getHeight() - segmentHeight -10;
+            if (processor>processorCount/2){
+                yvalue = yvalue + visualiser.getTaskInfoPane().getHeight() + blockHeight + 10;
+            }
             System.out.println(length);
             //System.out.println(visualiser.getheight());
             //System.out.println(blockHeight);

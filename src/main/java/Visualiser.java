@@ -25,6 +25,8 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.BorderWidths;
@@ -286,7 +288,8 @@ public class Visualiser extends Application{
         taskInfoPane.setPrefSize(200, 200);
         
         //taskInfoPane.setPrefHeight(height/5);
-        taskInfoPane.setBorder(new Border(new BorderStroke(new Color(0f,0f,0f,0.5f ), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(5, 5, 5, 5))));
+        //taskInfoPane.setBorder(new Border(new BorderStroke(new Color(0f,0f,0f,0.5f ), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(5, 5, 5, 5))));
+        taskInfoPane.setBackground(new Background(new BackgroundFill(new Color(0f, 0f, 0f, 0.4f), CornerRadii.EMPTY, Insets.EMPTY)));
         //mainPane.add(taskInfoPane, 0, 2, 5, 1);
         anchorPane.getChildren().addAll(taskInfoPane);
         
