@@ -17,7 +17,7 @@ public class App {
             HashMap<Integer, String> options = checkArgs(args);
             for (Integer key : options.keySet()) {
                 String value = options.get(key);
-                switch (value) {
+                switch (key.toString()) {
                     case ("1"):
                         threadCount = Integer.parseInt(value);
                         break;
