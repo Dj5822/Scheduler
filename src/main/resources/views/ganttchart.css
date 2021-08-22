@@ -1,4 +1,9 @@
-.boldLabel {
+.small-bold-label {
     -fx-font-weight: BOLD;
     -fx-font-size: 16px;
+}
+
+.big-bold-label {
+    -fx-font-weight: BOLD;
+    -fx-font-size: 22px;
 }

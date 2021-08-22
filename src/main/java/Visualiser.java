@@ -73,6 +73,10 @@ public class Visualiser extends Application{
     private Label expandedNodesValueLabel;
     private Label memoryUsageValueLabel;
     private Label searchTimeValueLabel;
+    private Label processorCountLabel;
+    private Label processorCountValueLabel;
+    private Label runStatusLabel;
+    private Label runStatusValueLabel;
 
     private Label taskWeight;
     private Label taskStartTime;
@@ -179,21 +183,40 @@ public class Visualiser extends Application{
         memoryUsageValueLabel = new Label("0/4 GB");
         searchTimeLabel = new Label("Search Time");
         searchTimeValueLabel = new Label("0 min 0 sec");
+        processorCountLabel = new Label("Processor count");
+        processorCountValueLabel = new Label("" + getParameters().getRaw().get(0));
+        runStatusLabel = new Label("Status");
+        runStatusValueLabel = new Label("Running");
 
+        // Apply styling.
+        expandedNodesLabel.getStyleClass().add("big-bold-label");
+        memoryUsageLabel.getStyleClass().add("big-bold-label");
+        searchTimeLabel.getStyleClass().add("big-bold-label");
+        processorCountLabel.getStyleClass().add("big-bold-label");
+        runStatusLabel.getStyleClass().add("big-bold-label");
 
         // Label sizes.
-        expandedNodesLabel.setPrefHeight(height/6);
+        expandedNodesLabel.setPrefHeight(height/10);
         expandedNodesLabel.setPrefWidth(width/7);
-        expandedNodesValueLabel.setPrefHeight(height/6);
+        expandedNodesValueLabel.setPrefHeight(height/10);
         expandedNodesValueLabel.setPrefWidth(width/7);
-        memoryUsageLabel.setPrefHeight(height/6);
+        memoryUsageLabel.setPrefHeight(height/10);
         memoryUsageLabel.setPrefWidth(width/7);
-        memoryUsageValueLabel.setPrefHeight(height/6);
+        memoryUsageValueLabel.setPrefHeight(height/10);
         memoryUsageValueLabel.setPrefWidth(width/7);
-        searchTimeLabel.setPrefHeight(height/6);
+        searchTimeLabel.setPrefHeight(height/10);
         searchTimeLabel.setPrefWidth(width/7);
-        searchTimeValueLabel.setPrefHeight(height/6);
+        searchTimeValueLabel.setPrefHeight(height/10);
         searchTimeValueLabel.setPrefWidth(width/7);
+        processorCountLabel.setPrefHeight(height/10);
+        processorCountLabel.setPrefWidth(width/7);
+        processorCountValueLabel.setPrefHeight(height/10);
+        processorCountValueLabel.setPrefWidth(width/7);
+        runStatusLabel.setPrefHeight(height/10);
+        runStatusLabel.setPrefWidth(width/7);
+        runStatusValueLabel.setPrefHeight(height/10);
+        runStatusValueLabel.setPrefWidth(width/7);
+
 
         // Label alignment.
         expandedNodesLabel.setAlignment(Pos.BOTTOM_CENTER);
@@ -202,12 +225,15 @@ public class Visualiser extends Application{
         memoryUsageValueLabel.setAlignment(Pos.TOP_CENTER);
         searchTimeLabel.setAlignment(Pos.BOTTOM_CENTER);
         searchTimeValueLabel.setAlignment(Pos.TOP_CENTER);
+        searchTimeLabel.setAlignment(Pos.BOTTOM_CENTER);
+        searchTimeValueLabel.setAlignment(Pos.TOP_CENTER);
+        searchTimeLabel.setAlignment(Pos.BOTTOM_CENTER);
+        searchTimeValueLabel.setAlignment(Pos.TOP_CENTER);
 
-
-        // Apply styling.
-        expandedNodesLabel.getStyleClass().add("boldLabel");
-        memoryUsageLabel.getStyleClass().add("boldLabel");
-        searchTimeLabel.getStyleClass().add("boldLabel");
+        processorCountLabel.setAlignment(Pos.BOTTOM_CENTER);
+        processorCountValueLabel.setAlignment(Pos.TOP_CENTER);
+        runStatusLabel.setAlignment(Pos.BOTTOM_CENTER);
+        runStatusValueLabel.setAlignment(Pos.TOP_CENTER);
 
 
         // Add to the pane.
@@ -217,6 +243,10 @@ public class Visualiser extends Application{
         statsPane.add(memoryUsageValueLabel, 0, 3);
         statsPane.add(searchTimeLabel, 0, 4);
         statsPane.add(searchTimeValueLabel, 0, 5);
+        statsPane.add(processorCountLabel, 0, 6);
+        statsPane.add(processorCountValueLabel, 0, 7);
+        statsPane.add(runStatusLabel, 0, 8);
+        statsPane.add(runStatusValueLabel, 0, 9);
         statsPane.setPadding(new Insets(10, 0, 0, 0));
 
         mainPane.add(statsPane,5,0, 1, 1);
@@ -269,10 +299,10 @@ public class Visualiser extends Application{
         taskEndTime.setAlignment(Pos.CENTER);
         taskEndTimeValue.setAlignment(Pos.CENTER);
 
-        taskWeight.getStyleClass().add("boldLabel");
-        taskStartTime.getStyleClass().add("boldLabel");
-        taskID.getStyleClass().add("boldLabel");
-        taskEndTime.getStyleClass().add("boldLabel");
+        taskWeight.getStyleClass().add("small-bold-label");
+        taskStartTime.getStyleClass().add("small-bold-label");
+        taskID.getStyleClass().add("small-bold-label");
+        taskEndTime.getStyleClass().add("small-bold-label");
 
         /**
         statsPane.add(taskID, 0, 6);
@@ -405,6 +435,7 @@ public class Visualiser extends Application{
 
     public void finish(Schedule schedule, int expandedNodesCount, long totalMemory, long freeMemory, long timePassed) {
         ganttChart.setTitle("Optimal Schedule");
+        runStatusValueLabel.setText("Done");
         updateVisualiser(schedule, expandedNodesCount, totalMemory, freeMemory, timePassed);
     }
 
