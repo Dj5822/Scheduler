@@ -21,7 +21,7 @@ public class TreeSearch {
     private long startTime;
     private int expandedNodesCount;
 
-    private Schedule currentBestSchedule;
+    private Schedule currentSchedule;
     private Timer updateTimer;
 
 
@@ -57,7 +57,7 @@ public class TreeSearch {
     }
 
     private void updateVisualiser() {
-        Platform.runLater(() -> visualiser.updateVisualiser(currentBestSchedule, expandedNodesCount,
+        Platform.runLater(() -> visualiser.updateVisualiser(currentSchedule, expandedNodesCount,
                 Runtime.getRuntime().totalMemory(), Runtime.getRuntime().freeMemory(),
                 (new Date()).getTime() - startTime));
     }
@@ -156,8 +156,9 @@ public class TreeSearch {
                 // check if goal node
                 if (node.getSchedule().getScheduledTasks().size() == graph.getTasks().size()) {
                     updateEncumbent(node);
-                    currentBestSchedule = node.getSchedule();
                 }
+
+                currentSchedule = node.getSchedule();
 
                 // partial expansion - see Oliver's research
                 for (Node successorNode : node.getSuccessors(processorCount, graph)) {
@@ -187,7 +188,7 @@ public class TreeSearch {
         if (solution.getCost() == 0) {
             return null;
         } else {
-            currentBestSchedule = solution.getSchedule();
+            currentSchedule = solution.getSchedule();
             updateVisualiser();
             updateTimer.cancel();
             return solution;
