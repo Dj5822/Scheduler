@@ -39,7 +39,7 @@ public class App {
             if (outputFileName.isEmpty()) {
                 outputFileName = args[0].replaceAll("(.dot)$", "-output.dot");
             }
-            Graph graph = new Graph("examples/" + args[0], outputFileName);
+            Graph graph = new Graph(args[0], outputFileName);
 
             // Start searching the solutions tree.
             TreeSearch testSearch = new TreeSearch(graph, processorCount, doVisualise);
