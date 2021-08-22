@@ -199,7 +199,7 @@ public class TreeSearch {
                 endVisualiser();
                 updateTimer.cancel();
             }
-            
+
             return solution;
         }
     }

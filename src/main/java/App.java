@@ -26,11 +26,7 @@ public class App {
                     case ("3"):
                         outputFileName = value;
                 }
-                if (key.intValue() == 1) {
-                    threadCount = Integer.parseInt(value);
-                } else if (key.intValue() == 2) {
-
-                }
+                
                 /*
                 The number of processors.
                 */
