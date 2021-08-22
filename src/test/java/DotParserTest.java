@@ -20,26 +20,12 @@ public class DotParserTest {
 
     @BeforeAll
     public static void setUp() throws FileNotFoundException {
-        parser = new DotParser(new FileInputStream("src/test/Nodes_7_OutTree.dot"), "src/test/Nodes_7_OutTree-output.dot");
-    }
-    @Test
-    public void testParseNodes() {
-        outputNodes = parser.parseNodes();
-        assertEquals("[GraphNode-0{Weight=5}, GraphNode-1{Weight=6}, GraphNode-2{Weight=5}, " +
-                "GraphNode-3{Weight=6}, GraphNode-4{Weight=4}, GraphNode-5{Weight=7}, " +
-                "GraphNode-6{Weight=7}]", outputNodes.toString());
-    }
-    @Test
-    public void testParseEdges() {
-        outputEdges = parser.parseEdges();
-        assertEquals("[GraphEdge-0-1{Weight=15}, GraphEdge-0-2{Weight=11}, GraphEdge-0-3{Weight=11}, " +
-                "GraphEdge-1-4{Weight=19}, GraphEdge-1-5{Weight=4}, " +
-                "GraphEdge-1-6{Weight=21}]", outputEdges.toString());
+        parser = new DotParser(new FileInputStream("examples/dot-inputs/Nodes_25_2p.dot"), "src/test/Nodes_25_2p-output.dot");
     }
     @Test
     public void testWriteToScheduleDot() throws IOException {
         File expectedFile = new File("src/test/DotParserTestExpectedFile.dot");
-        File outputFile = new File("src/test/Nodes_7_OutTree-output.dot");
+        File outputFile = new File("src/test/Nodes_25_2p-output.dot");
         parser.writeScheduleToDot();
         assertEquals(FileUtils.readFileToString(expectedFile, "utf-8"),
                 FileUtils.readFileToString(outputFile, "utf-8"));
