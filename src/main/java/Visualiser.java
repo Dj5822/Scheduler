@@ -171,6 +171,9 @@ public class Visualiser extends Application{
         this.width = width;
         this.height = height;
 
+        int bigFontSize = width/100;
+        int smallFontSize = width/120;
+
         this.mainPane = mainPane;
 
         // Create pane.
@@ -194,6 +197,18 @@ public class Visualiser extends Application{
         searchTimeLabel.getStyleClass().add("big-bold-label");
         processorCountLabel.getStyleClass().add("big-bold-label");
         runStatusLabel.getStyleClass().add("big-bold-label");
+
+        expandedNodesLabel.setStyle("-fx-font-size:  " + bigFontSize + "px");
+        memoryUsageLabel.setStyle("-fx-font-size:  " + bigFontSize + "px");
+        searchTimeLabel.setStyle("-fx-font-size:  " + bigFontSize + "px");
+        processorCountLabel.setStyle("-fx-font-size:  " + bigFontSize + "px");
+        runStatusLabel.setStyle("-fx-font-size:  " + bigFontSize + "px");
+
+        expandedNodesValueLabel.setStyle("-fx-font-size:  " + smallFontSize + "px");
+        memoryUsageValueLabel.setStyle("-fx-font-size:  " + smallFontSize + "px");
+        searchTimeValueLabel.setStyle("-fx-font-size:  " + smallFontSize + "px");
+        processorCountValueLabel.setStyle("-fx-font-size: " + smallFontSize + "px");
+        runStatusValueLabel.setStyle("-fx-font-size: " + smallFontSize + "px");
 
         // Label sizes.
         expandedNodesLabel.setPrefHeight(height/10);
