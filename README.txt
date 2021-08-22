@@ -1,4 +1,4 @@
-Uses Java version 11.
+Uses Java version 8.
 To run the project, do the following:
 
 1) Open the terminal.
