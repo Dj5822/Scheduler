@@ -189,8 +189,10 @@ public class TreeSearch {
             return null;
         } else {
             currentSchedule = solution.getSchedule();
-            updateVisualiser();
-            updateTimer.cancel();
+            if (visualize) {
+                updateVisualiser();
+                updateTimer.cancel();
+            }
             return solution;
         }
     }
