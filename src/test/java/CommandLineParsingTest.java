@@ -13,11 +13,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * argument parsing functionality for App.checkArgs(String []) method
  */
 public class CommandLineParsingTest {
-    @BeforeAll
-    public void setUp() {
-
-    }
-
 
     @Test
     public void testCheckArgsArgumentLengthLessThanTwoAndValidFile() {
@@ -98,8 +93,18 @@ public class CommandLineParsingTest {
         App.checkArgs(new String[] {"input.dot", "1", "-v", "-p", "8", "-o", "output.dot"});
     }
     @Test
-    public void testCheckArgsVisualiserOption() {
-        App.checkArgs(new String[] {"input.dot", "1", "-v"});
+    public void testCheckArgsInvalidOutputOptions() {
+        assertThrows(NumberFormatException.class, () -> {
+            App.checkArgs(new String[] {"input.dot", "1", "-o"});
+            App.checkArgs(new String[] {"input.dot", "1", "-o", "-p"});
+            App.checkArgs(new String[] {"input.dot", "1", "-o", "-v"});
+        });
+    }
+    @Test
+    public void testCheckArgsValidOutputOptions() throws IllegalArgumentException {
+        App.checkArgs(new String[] {"input.dot", "1", "-o", "output"});
+        App.checkArgs(new String[] {"input.dot", "1", "-o", "output.dot"});
+        App.checkArgs(new String[] {"input.dot", "1", "-v", "-o", "output", "-p", "2"});
     }
 
 
