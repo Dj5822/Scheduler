@@ -124,6 +124,7 @@ public class TreeSearch {
         for (Task startTask : graph.getStartTasks()) {
             Node rootNode = new Node(startTask, graph.getStartTasks(), graph, processorCount);
             openList.add(rootNode);
+            expandedNodesCount ++;
             createdNodes.add(rootNode.toString());
         }
 
@@ -162,12 +163,14 @@ public class TreeSearch {
                 for (Node successorNode : node.getSuccessors(processorCount, graph)) {
                     if (!createdNodes.contains(successorNode.toString())) {
                         openList.add(successorNode);
+                        expandedNodesCount ++;
                     }
                     createdNodes.add(successorNode.toString());
                 }
                 // if fully expanded, remove the node from the open list
                 if (!node.getSchedule().getSchedulableTasks().isEmpty()) {
                     openList.add(node);
+                    expandedNodesCount ++;
                 }
             }
         };
