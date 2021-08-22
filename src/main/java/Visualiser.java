@@ -320,7 +320,7 @@ public class Visualiser extends Application{
         
         //taskInfoPane.setPrefHeight(height/5);
         //taskInfoPane.setBorder(new Border(new BorderStroke(new Color(0f,0f,0f,0.5f ), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(5, 5, 5, 5))));
-        taskInfoPane.setBackground(new Background(new BackgroundFill(new Color(0.2f, 0.2f, 0.2f, 0.6f), CornerRadii.EMPTY, Insets.EMPTY)));
+        taskInfoPane.setBackground(new Background(new BackgroundFill(new Color(1f, 1f, 0.6f, 1f), CornerRadii.EMPTY, Insets.EMPTY)));
         //mainPane.add(taskInfoPane, 0, 2, 5, 1);
         anchorPane.getChildren().addAll(taskInfoPane);
         
