@@ -51,7 +51,9 @@ public class TreeSearch {
             updateTimer.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
-                    updateVisualiser();
+                    Platform.runLater(() -> visualiser.updateVisualiser(currentSchedule, expandedNodesCount,
+                            Runtime.getRuntime().totalMemory(), Runtime.getRuntime().freeMemory(),
+                            (new Date()).getTime() - startTime));
                 }
             }, 0, 150);
         }
@@ -99,10 +101,19 @@ public class TreeSearch {
         for (Task startTask : graph.getStartTasks()) {
             Node rootNode = new Node(startTask, graph.getStartTasks(), graph, processorCount);
             openList.add(rootNode);
+            expandedNodesCount ++;
         }
         while (!openList.isEmpty()) {
             Node node = openList.peek();
+            expandedNodesCount ++;
+
+            if (visualize) {
+                currentSchedule = node.getSchedule();
+            }
             if (node.getSchedule().getScheduledTasks().size() == graph.getTasks().size()) {
+                if (visualize) {
+                    endVisualiser();
+                }
                 return node;
             }
 
@@ -116,6 +127,9 @@ public class TreeSearch {
             if (node.getSchedule().getSchedulableTasks().isEmpty()) {
                 openList.poll();
             }
+        }
+        if (visualize) {
+            endVisualiser();
         }
         return null;
     }
@@ -166,7 +180,10 @@ public class TreeSearch {
                     updateEncumbent(node);
                 }
 
-                currentSchedule = node.getSchedule();
+                if (visualize) {
+                    currentSchedule = node.getSchedule();
+                }
+
 
                 // partial expansion - see Oliver's research
                 for (Node successorNode : node.getSuccessors(processorCount, graph)) {

@@ -10,8 +10,9 @@ public class App {
 
     public static void main(String[] args) {
         int threadCount = 1;
-        boolean doVisualise = false;
+        boolean doVisualise = true;
         String outputFileName = "";
+
         try {
             HashMap<Integer, String> options = checkArgs(args);
             for (Integer key : options.keySet()) {
@@ -45,6 +46,7 @@ public class App {
             TreeSearch testSearch = new TreeSearch(graph, processorCount, doVisualise);
 
             Node node = testSearch.aStarCentralized(threadCount);
+
             graph.generateOutputGraph(node);
             System.out.println("\nFinish Time: \n" + node.getSchedule().getFinishTime() + "\n");
 
